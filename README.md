@@ -1,8 +1,8 @@
 <h1>Script</h1>
 
-<p>The Script program (script.scala) supports the Notecard program (see Notecard 
+<p>The Script program (script.scala) supports the Notecard program, (see: Notecard <br />
 Respository).  The 'script' program validates the script's command syntax <br />
-whose file extension is '.nc'. Its output file has the extension '.struct' 
+whose file extension is '.nc'. Its output file has the extension '.struct' <br />
 and is the input argument to the Notecard program.</p>
 
 <p>In the Script program, when a command syntax error is encountered, the command <br />
