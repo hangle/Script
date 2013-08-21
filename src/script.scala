@@ -4,9 +4,9 @@
 		
 */
 
-object tst  {
+object script  {
 def main(argv:Array[String]) {
-						  //default to command line filename
+					  //default to command line filename
 	if(argv.size != 1) 
 		println("Usage: filename of .nc file")
 	else {
