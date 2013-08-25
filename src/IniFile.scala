@@ -18,6 +18,8 @@ import java.io._
 
 object IniFile  {
 
+				// Default setting copied into Override settings. The Override
+				// setting are updated by the '*' commands.
 				// * command types, such as:
 				//			"size"-> "14",		// pixel size of lettering
 				//			"color"-> "black",	// color of lettering
@@ -30,9 +32,10 @@ object IniFile  {
 	def iniFile (scriptFilename:String,
 				 overrideSetting:collection.mutable.Map[String,String]	)= {
 
-				// Default setting copied into Override settings. The Override
-				// setting are updated by the '*' commands.
 			println("IniFile:  scriptFilename="+scriptFilename)
+				// 'appearance.ini' are sought in two places:  (1) local directory,
+				// and in (2) 'path' directory ('path directory supercedes local 
+				// directory). 
 			val iniFile=determineIfAppearanceFileExists(scriptFilename)
 			val iniList=if(iniFile !="") 
 					SupportFile.readFileIntoList(iniFile)  // returns List[String]
@@ -94,7 +97,7 @@ object IniFile  {
 			}
 
 				// If filename has no Path, then look for '.ini' file in local directory,
-				// otherwise chek out path.
+				// otherwise check out path.
 	def determineIfAppearanceFileExists(scriptFilename: String):String={
 		var fileCount=0
 		val path=SupportFile.extractPath(scriptFilename)

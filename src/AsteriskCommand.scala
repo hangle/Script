@@ -261,7 +261,8 @@ object AsteriskCommand  {
 		}
 			// Used by IniFile to validate keys in .ini file
 	def getDefaultSetting= defaultSetting
-			// Passed by Script to DisplayCommand as an argument
+			// Passed by Script to DisplayCommand as an argument. It is also invoked 
+			// in IniFile.
 	def getOverrideSetting=overrideSetting
 			// Default Appearance values are copied to OverrideSetting
 			// map when AsteriskCommand is initialized. 
