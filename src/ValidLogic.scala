@@ -87,17 +87,17 @@ object ValidLogic  {
 				// operator examples:  "=", ">=", "!=m" "=ns", "!=nsnc".
 				// "nc" and "ns" are optional tags to qualify the operator.
 	def validateRelationOperator(operatorExpression:String):Boolean={
-		println("ValidLogic operatorExpression="+operatorExpression)
+		//println("ValidLogic operatorExpression="+operatorExpression)
 		val (op,tag)=operatorExpression match {
 				case gestaltRegex(x,y)=>
-						println("ValidLogic x="+x+"  y="+y)
+						//println("ValidLogic x="+x+"  y="+y)
 						(x,y)
 				case relationOperatorRegex(a,b)=> 
-						println("ValidLogic a="+a+"  b="+b)
+						//println("ValidLogic a="+a+"  b="+b)
 						(a,b)
 				case _=> (null,null)
 				}
-		println("ValidLogic op="+op)
+		//println("ValidLogic op="+op)
 		if(op==null) println("ValidLogic op is null")
 		if(op==null)
 		        throw new SyntaxException(operatorExpression+" not valid operatorx")
@@ -109,7 +109,7 @@ object ValidLogic  {
 		true
 		}
 	def validateQualifier(tag:String)={
-		println("ValidLogic validateQua... tag="+tag)
+		//println("ValidLogic validateQua... tag="+tag)
 				// Add letter pairs 'nc','ns',1s' to List[String]
 		LogicSupport.parseQualifiers(tag)
 				// No spaces and one space is inconsistent

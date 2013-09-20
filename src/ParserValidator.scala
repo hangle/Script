@@ -91,10 +91,9 @@ object ParserValidator  {
 			// in 'overrideMap' (initially loaded with default values)
 	def createNotecardScript(script:collection.mutable.ArrayBuffer[String])={
 			// Placeholder values created by 'createNotecardScriptPlaceholders() are
-			// assigned assigned 'override' values. 
+			// assigned 'override' values. 
 		val overrideMap= AsteriskCommand.getOverrideSetting
 		script(1)+= "height	"+overrideMap.getOrElse("height", 10)
-		println("ParserValidator  createNotecardrScript  height="+script(1))
 		script(2)+= "width	"+overrideMap.getOrElse("width", 10)
 		script(3)+= "font_size	"+overrideMap.getOrElse("size", 10)
 		}
@@ -130,11 +129,10 @@ object ParserValidator  {
 									  lineMinusTag.drop(1), //remove space following tag 
 									  card, 
 									  overrideMap) 
-									 // addressor )
 			case 'c' => 
 						// 'c' clear command
 				CardCommand.cardCommand(script,lineMinusTag, card)
-			case 'e' =>
+			case 'e' => 
 				EditCommand.editCommand(script, lineMinusTag) // addressor)
 			case 'g' => 
 				GroupCommand.groupCommand(script,lineMinusTag)
@@ -146,6 +144,7 @@ object ParserValidator  {
 				throw new SyntaxException(commandTag+" is an unknown command tag")
 			}
 		}
+			// utility for viewing output
 	def dumpScript(script:collection.mutable.ArrayBuffer[String]) {
 		if(script.length==0) println("script is empty")
 		script.foreach(println)

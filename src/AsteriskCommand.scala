@@ -208,7 +208,7 @@ object AsteriskCommand  {
 			else
 				false
 		}
-
+			//  * status  <msg>	
 	def frameTaskStatusMessage( script:collection.mutable.ArrayBuffer[String], 
 								value:String)= {  // value is line ('  status <msg>')
 		val msg=value.drop(7) // remove " status" from line, leaving <msg>. 
@@ -217,16 +217,11 @@ object AsteriskCommand  {
 		script += "type	"+msg
 		script += "%%"
 		}
+			// * continue
 	def frameNodeTaskContinue(script:collection.mutable.ArrayBuffer[String]) {
 		script += "%CardSetTask"
 		script += "task	continue"
 		script += "type"
-		script += "%%"
-		}
-	def frameNodeTask(key: String, value:String, script:collection.mutable.ArrayBuffer[String]) {
-		script += "%CardSetTask"
-		script += "task	"+key
-		script += "type	"+value
 		script += "%%"
 		}
 
@@ -246,16 +241,18 @@ object AsteriskCommand  {
 		script += "%%"
 
 		}
+			// * manage <filename>
 	def	frameTaskManagementFile(script:collection.mutable.ArrayBuffer[String], value:String)={
 		var filename="start"
 		script += "%NotecardTask"
 		script += "task	manage"
 		if( ! value.isEmpty)
 			filename=value	
-		println("AsteriskCommand:  frameTaskManagementFile() filename="+filename)
+//		println("AsteriskCommand:  frameTaskManagementFile() filename="+filename)
 		script += "type	"+filename
 		script += "%%"
 		}
+				// to do--- need to write code for this task.
 	def	frameTaskNoManagement(script:collection.mutable.ArrayBuffer[String], value:String)={
 		println("AsteriskCommand:  frameTaskNoManagement() is not operational")
 		}
@@ -272,10 +269,6 @@ object AsteriskCommand  {
 			overrideSetting += (key-> value)
 		overrideSetting
 		}
-	def printOverrideMap {   // temp tool
-		overrideSetting.foreach{ case (a,b)=> println("a="+a+"  b="+b) }
-		}
-	
 	
 //	if(isFile(path+name)) println("file exists");else println("Not found")
 //	val fileList=readIniFile(path+name)

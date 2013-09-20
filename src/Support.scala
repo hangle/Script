@@ -15,16 +15,6 @@ object Support  {
 	def isNumber(value:String):Boolean= {
 			value.forall(_.isDigit)
 			}
-	/*
-		val numberRegex="""\s*(\d+)\s*""" .r
-		value match {
-			case numberRegex(x)=> true
-			case _=> false
-			}
-	*/
-				// "  (3 ) =  (3..."  toList 
-				//  List( ),List(( ),List(3),List()),List( ),List(=),List( ),List(3)....
-				// List((),List(3),List()),List(=), ...
 	def removeSpaces(list: List[Char]): List[Char]={
 		list match {
 			case Nil=> Nil
@@ -37,9 +27,6 @@ object Support  {
 		val list=removeSpaces(s.toList)
 		list.mkString
 		}
-//	val regexRelationOperator="""([=<>!]+)([a-zA-Z]*)""" .r
-			// '(' push on stack. ')' pops stack. When 
-				// balanced, the stack is empty
 	def isBalancedParens(l:List[Char]) = {
 		var stack=List[Int]()
 		def push {stack=1 :: stack }
@@ -74,11 +61,4 @@ object Support  {
 			case _=>    false
 			}
 		}
-	println("isRelationOperator="+isRelationOperator("<>") )
-	val s="  (1) =( 2) and ( 7 ) > (  2)  "
-	val r=removeSpacesInString(s)
-	println("r="+r)
-
-	println(" 123  "+isNumber("  123  ") )
-	println(" 1x3  "+isNumber("  1x3  ") )
 }

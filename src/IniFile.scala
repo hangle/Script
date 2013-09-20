@@ -32,7 +32,6 @@ object IniFile  {
 	def iniFile (scriptFilename:String,
 				 overrideSetting:collection.mutable.Map[String,String]	)= {
 
-			println("IniFile:  scriptFilename="+scriptFilename)
 				// 'appearance.ini' are sought in two places:  (1) local directory,
 				// and in (2) 'path' directory ('path directory supercedes local 
 				// directory). 
@@ -46,15 +45,15 @@ object IniFile  {
 								// ignore blank lines in .ini file
 					if(FilterScript.isNotBlankLine(e)) {
 						val (key,value)=extractKeyAndValue(e)
-						println("IniFile: key="+key+"  value="+value)
+						//println("IniFile: key="+key+"  value="+value)
 						validateIniKeys(key, overrideSetting)
 						validateIniValue(key,value)
 						overrideSetting +=(key->value) 
 						}
 					}
 				}	
-				else
-					println("iniList is empty")
+			//	else
+			//		println("iniList is empty")
 			overrideSetting
 			}
 
