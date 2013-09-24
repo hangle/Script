@@ -70,19 +70,19 @@ object AsteriskCommand  {
 							)
 					// Used by 'validateAppearanceValues()' to channel a key->value							
 	val appearanceList=List("height", "width", "name", "size", "color", "style", "length", "limit", "column")
-					// Used by 'writeScript() 
+					// Used by 'cardSetAsteriskDistribute() 
 	val writeScriptKeysList=List("end", "continue", "save", "status", "nobackup", "nomanage", "manage") 
 					// Invoked by ParserValidator prior to 'distributeScriptToMaker()'ag
-					// First, defaultSetting Map is copied to OverrideMap, then
+					// First, defaultSetting Map is copied to 'overrideMap', then
 					// determine if 'appearance.ini' file exists, if so, then this files 'key'/'values'
-					// are copied to Override Map, replacing default settings. 
+					// are copied to 'overrideMap', replacing default settings. 
 	def createOverrideMapping(scriptFilename:String) {
 					// Default setting copied into Override settings. The Override
 					// setting are updated by the '*' commands.
 			overrideSetting=copyMaps(defaultSetting)
 					// On finding an 'appearance.ini' file, its key/values are updated
 					// to overrideSetting Map. If .ini file not found, the Map is not
-					// changed.
+					// changed. Note: 'ini' files may be in multiple locations.
 			overrideSetting=IniFile.iniFile(scriptFilename, overrideSetting)
 
 			}
@@ -98,6 +98,7 @@ object AsteriskCommand  {
 			// writes scipt for '* manage', '* save', '* status', '* nobackup', and '* continue'
 			// and update OverrideSetting Map with '* command'
 	def parseAsteriskCommand(line:String, script:collection.mutable.ArrayBuffer[String]) {
+		println("AsteriskCommand: line="+line)
 		line match {
 						// * <cmd> with key and value
 						// [a-z] space(s) [a-zA-Z_/]
@@ -105,21 +106,22 @@ object AsteriskCommand  {
 						// throws exception for unknow keys.
 					validateAsteriskKey(key) // throws exception if key is unknown
 						// throws exception  for invalid values, e.g., value not numeric
-					if(appearanceList.contains(key))
+					if(appearanceList.contains(key)) {
 							validateAppearanceValues( key, value)
+							println("AsteriskCommand: key="+key+"   value="+value)
+							}
 					  else
 								// writes script for '* file', '* manage', '* status', and '* save'.
-						writeScript(key, value, line, script)
-//					handleAsteriskValue(key, value, line, script )
+						cardSetAsteriskDistribute(key, value, line, script)
+								// Update overrideSetting with '* command' values
 					overrideSetting += key -> value
 						// '* end' , '* continue' has key only, others have
 						// 	key and value.ag
 						// [a-z] only, that is, key only
 			case keyOnlyRegex(key)=>
 					validateAsteriskKey(key) // throws exception if key is unknown
-						// write script for '* end' and '* continue'
-					writeScript(key, "dummyValue", line, script)
-					//handleAsteriskValue(key, "dummy", line, script)
+						// write script for '* end' and '* continue'--"dummyValue"  lacks of a value
+					cardSetAsteriskDistribute(key, "dummyValue", line, script)
 					overrideSetting += key -> ""
 			case _=> throw new SyntaxException("missing key or value")
 			}				
@@ -160,13 +162,13 @@ object AsteriskCommand  {
 				else
 					throw new SyntaxException(key+" is unknown appearance * key")
 		}
-				// Write script for NotecardTask and CardSetTask.
-	def writeScript(key:String,
+				// Write script CardSetTask such as '* end'
+	def cardSetAsteriskDistribute(key:String,
 					value:String,
 					line:String,
 					script:collection.mutable.ArrayBuffer[String]) = {
-					// 'writeScrptKeysList has:
-					// 		"end", "continue", "save", "status", "nobackup", "nomanage"
+						// 'writeScrptKeysList has:
+						// 		"end", "continue", "save", "status", "nobackup", "nomanage"
 		if(writeScriptKeysList.contains(key))
 			key match {
 					case "end"=>    //value is "dummy".  write NotecardTask script
@@ -248,7 +250,6 @@ object AsteriskCommand  {
 		script += "task	manage"
 		if( ! value.isEmpty)
 			filename=value	
-//		println("AsteriskCommand:  frameTaskManagementFile() filename="+filename)
 		script += "type	"+filename
 		script += "%%"
 		}
@@ -270,7 +271,5 @@ object AsteriskCommand  {
 		overrideSetting
 		}
 	
-//	if(isFile(path+name)) println("file exists");else println("Not found")
-//	val fileList=readIniFile(path+name)
 
 }
