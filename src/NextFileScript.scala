@@ -9,12 +9,10 @@ object NextFileScript   {
 	def nextFileScript(script: collection.mutable.ArrayBuffer[String],
 						filename:String,
 						condition:String)={
-//						conditionComponents:List[String],
-//						addressor:Addressor) ={
 		script += "%NextFile"
 		script += "filename\t"+ filename
 		if(condition==null) {
-			script +="condition\t"
+			script +="condition\t0"
 			script += "%%"
 			}
 		  else {

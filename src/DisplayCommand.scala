@@ -27,8 +27,6 @@ object DisplayCommand  {
 						line:String, // Display command, minus 'd'
 						columnRowCard:ColumnRowCard, // column and row position
 						overrideSetting:collection.mutable.Map[String,String]) ={
-//						addressor:Addressor)={
-		//println("DisplayCommand: line="+line)
 				// 'd' command is added a blank character so as not to 
 				// throw an exception
 		val lineStr=isEmptyDisplayCommand(line)
@@ -49,7 +47,10 @@ object DisplayCommand  {
 		}
 	def isEmptyDisplayCommand(line:String) ={
 		line match {
-			case emptyRegex(xx)=> line+" "
+						// DisplayText.scala 'receive_objects(..) expects a value
+						// following key 'text'.  A blank character surfices.
+			//case emptyRegex(xx)=> line+" "  //
+			case emptyRegex(xx)=> line
 			case _=>line
 			}
 		}

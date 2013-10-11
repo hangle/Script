@@ -9,11 +9,10 @@ object GroupScript   {
 	def groupScript(script:collection.mutable.ArrayBuffer[String],
 					elseTag:String,
 					condition:String)={
-//					addressor:Addressor) ={
 		script += "%GroupNode"
 		script += "name\t"
 		if(condition=="") {
-				script += "condition\t"
+				script += "condition\t0"
 				}
 			else{
 				script += "condition\t"+condition
@@ -25,7 +24,7 @@ object GroupScript   {
 	def elseScript( script:collection.mutable.ArrayBuffer[String],
 					elseTag:String)={
 		if(elseTag==null) 
-				script += "post\t" // else without condition
+				script += "post\t0" // else without condition
 			else
 				script += "post\telse" //else with condition
 		}

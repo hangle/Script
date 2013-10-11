@@ -9,7 +9,6 @@ ParserValidator
 		ReadScript.readScriptFile(..)
 		FilterScript.filterScript(..)  //note. reads input <filename>.nc
 	NamedEditValidation.mapNamedEdits(..)
-	Addressor
 	distributeScriptToMaker   (iterates <filename>.nc file)
 		AsteriskCommand
 		Assigner
@@ -38,64 +37,60 @@ object ParserValidator  {
 				// Read 'appearance.ini' file for default values. Copy
 				// default Map to override Map
 		AsteriskCommand.createOverrideMapping(filename)
-			/*
-				// Default setting map was copied to overrideMap on AsteriskCommand 
-				// initalization. 'overrideMap' is Map[String,String]
-				// Passed to 'displayCommand' in 'distributeScript...'
-		val overrideMap= AsteriskCommand.getOverrideSetting  // default settings
-		*/
 				// Input <filename> or <filename.nc> to List, then filter list
 				// Filter:	drop blank lines
 				//			drop comment (#) lines
 				//			drop indentation of a line
 				//			validate command symbol,e.g., d (display command)
 		val filteredList=readAndFilterScriptFile(filename)
-				// Validate NamedEdit edits which must match Display's input
-				// Fields and must be in the Card set of their
-				// associated Fields. 
-		NamedEditValidation.mapNamedEdits(filteredList)
-				// Notecard begins the script.  BuildStructure expects it as the 1st struct element.
-				// Writes Notecard script with placeholder value (""). Actual values
-				// are assigned by 'createNotecardScript()'.
-		createNotecardScriptPlaceholders(script)
+				// Scan entire '*.nc' file for special processing of
+				// Edit-NamedEdit command and * <appearance> commands.
+		val overrideMap= AsteriskCommand.getOverrideSetting  
+				// Default values are added to Notecard script unless these values. 
+				// see: 'createNotecardScriptPlaceholders()' above
+		scanScriptFileForSpecialProcessing(filteredList, overrideMap)
 				// Default setting map was copied to overrideMap on AsteriskCommand 
 				// initalization. 'overrideMap' is Map[String,String]
 				// Passed to 'displayCommand' in 'distributeScript...'
-		val overrideMap= AsteriskCommand.getOverrideSetting  // default settings
+		createNotecardScript(script, overrideMap)
 				// process Script commands 
 		for(line <- filteredList) {
 				lineException=line  //lineException retains command tag for exception msg
-					// Employees tags (e.g., c,d,a,*,f) to channel Commands to associated modules.
-				distributeScriptToMaker(script,line, card, overrideMap) //  addressor)
+					// Employees tags (e.g., c,d,a,*,f) to channel Commands to 
+					// associated modules.
+				distributeScriptToMaker(script,line, card, overrideMap) 
 				}
-				// Default values are added to Notecard script unless these values. 
-				// see: 'createNotecardScriptPlaceholders()' above
-		createNotecardScript(script)
+				// Indicate to user a command syntax error. The script line containing
+				// the error is printed along with the description of the error.
 			}catch{ case e:SyntaxException=> e.syntax_message("line="+lineException) }
 				// Script output to <filename>.command.
 		WriteScriptFile.writeScriptFile(script,filename)
 		//dumpScript(script)
 		}
-				// Create an empty Notecard script to be populated later
-				// by 'createNotecardScript'.
-	def createNotecardScriptPlaceholders( script:collection.mutable.ArrayBuffer[String])={
-		script+= "%Notecard"
-				// placeholder script value is ""
-		script+= ""  //height   400
-		script+= ""  //width	300"
-		script+= ""  //font_size	14"
-		script+= "%%"
+				// Instead of processing one line at a time, the entired '*.nc" file
+				// is processed for gather Edit-NamedEdit commands and * <appearance>
+				// commands. 
+	def scanScriptFileForSpecialProcessing(filteredList:List[String],
+										   appearanceMap:collection.mutable.Map[String,String]) ={
+				// Validate NamedEdit edits which must match Display's input
+				// Fields and must be in the Card set of their
+				// associated Fields. 
+		NamedEditValidation.mapNamedEdits(filteredList)
+
+				// Scan '*.nc' file for all Asterisk Appearance commands to be used
+				// to update 'overrideMap'.
+		AsteriskCollect.collectAsterisk(filteredList, appearanceMap)
+
 		}
-			// 'createNotecardScriptPlaceholders(..)' established Notecard
-			// script as the root. Asterisk commands may be change values
-			// in 'overrideMap' (initially loaded with default values)
-	def createNotecardScript(script:collection.mutable.ArrayBuffer[String])={
-			// Placeholder values created by 'createNotecardScriptPlaceholders() are
-			// assigned 'override' values. 
-		val overrideMap= AsteriskCommand.getOverrideSetting
-		script(1)+= "height	"+overrideMap.getOrElse("height", 10)
-		script(2)+= "width	"+overrideMap.getOrElse("width", 10)
-		script(3)+= "font_size	"+overrideMap.getOrElse("size", 10)
+			// Established Notecard // script as the root. Asterisk commands may  
+			// change values in 'overrideMap' 
+	def createNotecardScript(script:collection.mutable.ArrayBuffer[String],
+							 overrideMap:collection.mutable.Map[String,String])={
+		script+= "%Notecard"
+		script += "height	"+overrideMap.getOrElse("height", 10)
+		script += "width	"+overrideMap.getOrElse("width", 10)
+		script += "font_size	"+overrideMap.getOrElse("size", 10)
+		script+= "%%"
 		}
 				// Inputs script file and filters each line of this file
 				//	File lines are filtered:
@@ -112,7 +107,6 @@ object ParserValidator  {
 							 line: String, 
 							 card:ColumnRowCard, //positions Display text and fields
 							 overrideMap: Map[String,String]) ={
-							 //addressor:Addressor) ={
 		val commandTag=line(0)  // tag = 'd','c','f','g','*', 'a', 'x'
 		val lineMinusTag=line.drop(1) // remove tag
 		commandTag  match {
@@ -133,7 +127,7 @@ object ParserValidator  {
 						// 'c' clear command
 				CardCommand.cardCommand(script,lineMinusTag, card)
 			case 'e' => 
-				EditCommand.editCommand(script, lineMinusTag) // addressor)
+				EditCommand.editCommand(script, lineMinusTag) 
 			case 'g' => 
 				GroupCommand.groupCommand(script,lineMinusTag)
 			case 'f' =>

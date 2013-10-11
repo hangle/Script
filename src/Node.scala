@@ -14,8 +14,9 @@ package com.server
 import scala.collection.mutable.Map
 
 trait Node  {
-
-	var id=0 // symbolic address of current object
+			 // Assigned a symbolic address by 'Node.storeIdInNode()' as generated
+			 // in 'CommandLoader.createIdsInNodes'
+	var id=0 
 			 // Stored by call to 'postChild(..) invoking 
 			 // 'parent.getFirstChild.id'
 	var idChild=0 				 
@@ -27,7 +28,8 @@ trait Node  {
 	var next:Node=null
 	def getId={id }
 	def getNext={next }
-			// CommandLoader invokes this function for every object having Node. The
+			// After CommandLoader creates "xxxCmd" objects, it invokes this 
+			// function for every object having Node. The
 			// 1st Node's id is assigned 2001, the next 2002, and so one providing each
 			// node with a unique symbolic address. 
 	def storeIdInNode(idx:Int) { id=idx }
@@ -36,24 +38,25 @@ trait Node  {
 	def loadParametersWithParent(struct:scala.collection.mutable.ArrayBuffer[String],
 								 parameters:List[String]) {
 		struct+= parameters.head   // %<name of class>  e.g.,  %RowerNodeCmd
-		struct+= idChild.toString
-		struct+= id.toString		// smybolic address of current object
-		struct+= idNextSibling.toString
+		struct+= "child\t"+idChild.toString
+		struct+= "address\t"+id.toString		// smybolic address of current object
+		struct+= "sibling\t"+idNextSibling.toString
 		parameters.tail.foreach( struct+= _ )
 		}
 	def loadParametersWithNode(struct:scala.collection.mutable.ArrayBuffer[String],
 							   parameters:List[String]) {
 		struct+= parameters.head 	// %<name of class>  e.g., %RowerNodeCmd
-		struct+= id.toString
-		struct+= idNextSibling.toString
+		struct+= "address\t"+id.toString
+		struct+= "sibling\t"+idNextSibling.toString
 		parameters.tail.foreach( struct+= _ )
 		}
 			// Notecard is a special case in that it does not have siblings
 	def loadParametersInNotecard(struct:scala.collection.mutable.ArrayBuffer[String],
 								parameters:List[String]) {
 		struct+= parameters.head 	// %<name of class>  i.e., %NotecardCmd
-		struct+= idChild.toString
-		parameters.tail.foreach( struct+= _ )
+		struct+= "child\t"+idChild.toString
+					// tail removes%<name of class>
+		parameters.tail.foreach(x=> struct += x )
 		}
 
 

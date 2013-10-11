@@ -37,27 +37,32 @@ case class NotecardCmd(parameters:List[String]) extends Node with Link with Comm
 	def postIds {
 		postChild
 		}
-	def showPost { println("NotecardCmd: id="+id+"  child="+idChild+"  next="+idNextSibling) }
+	def showPost { //println("NotecardCmd: id="+id+"  child="+idChild+"  next="+idNextSibling) 
+	}
 			// 'parameters' were assigned when object was instantiated by 'CommandLoader'.
 			// These parameters are loaded by CommandToFile (following CommandStructure)
 			// 'struct' becomes <filename>.struct file. 
 	def loadStruct( struct:scala.collection.mutable.ArrayBuffer[String]) {
 				// special case in that Notecard is a parent and has no siblings
 			loadParametersInNotecard(struct, parameters)   // Node function
-			}						//	 listenerArray:ArrayBuffer[KeyListenerObject]) //{
+			//println("NotecardCmd:  ")
+			//parameters.foreach(x=> println("\t"+x) )
+			}				
 		
 	var cardSet:CardSetCmd=null
 						// NotecardCmd parent links its children, CardSetCmd,
 						// NextFileCmd, and NotecardTaskCmd.  Grandchildren objects
 						// are passed to CardSetCmd whose parent object  will 
 						// link its children 
-	def attach(core:List[Any]) {
+	def attach(core:List[Any]) {   
 		for(c <-core) 
 		   c match {
 				case cs:CardSetCmd =>
 							//println("NotecardCmd: CardSetCmd")
 							append(parent, cs) // add cs to parent's list
-							cardSet=cs  //save to be used by attach()
+									//save parent reference so that its children can be
+									//passed to it in 'case_=>'.
+							cardSet=cs  
 				case nf:NextFileCmd =>
 							//println("NotecardCmd: NextFileCmd")
 							append(parent, nf) 
@@ -68,6 +73,7 @@ case class NotecardCmd(parameters:List[String]) extends Node with Link with Comm
 							// to be passed on to CardSet who will extract its
 							// children and pass on its grandchildren to the next
 							// parent. 
+							//println("NotecardCmd:   case_=> ??? ")
 					if(cardSet==null) throw new com.script.SyntaxException(" NotecardCmd: cardSet is null")
 							cardSet.attach(c) // c must be grandchild
 				}

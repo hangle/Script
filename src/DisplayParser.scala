@@ -25,10 +25,10 @@
 			(# $years)
 	The parsed components of the command are outputed to 'displayComponentList' which
 	is defined  List[DiplayComponent] with case classes:
-		TextComponent			i.e., Enter age
-		ColumnRowComponent		i.e., 5/3/
-		GeneralAppearance		i.e., color blue/
-		ParenthesizedComponnent	i.e., (# $years)
+		TextComponent			e.g., Enter age
+		ColumnRowComponent		e.g., 5/3/
+		GeneralAppearance		e.g., color blue/
+		ParenthesizedComponnent	e.g., (# $years)
 
 	For the script:
 				'd 5/3/color blue/Enter age (# $years)' has
@@ -60,7 +60,6 @@ object DisplayParser   {
 								line,
 								commonAppearanceMap)//Note, routine drops beginning '/'
 					// Determine if line contains a component. Tag= '(# or (%
-	//	if(Parenthesized.isParenthesizedComponent(line)) { 
 		if(Parenthesized.isParenthesisTag(line)) { 
 					// Iterate to extract multiple ParenthesizedComponent(s) storing these
 					// components in 'displayComponentList' as well as any preceding text
@@ -71,7 +70,6 @@ object DisplayParser   {
 					// 'line' contains text, 'commonAppearanceMap' is empty
 			displayComponentList=TextComponent(line,commonAppearanceMap)::displayComponentList
 			}
-		//println("DisplayParser displayComponentList.size"+displayComponentList.size)
 		displayComponentList  // components of line
 		}
 					// Extract the parentheses component, like '(# $a)' from line as well
@@ -79,7 +77,6 @@ object DisplayParser   {
 					// are collected in 'displayComponentList'. 
 	def parseParenthesizedComponents(line:String, 
 									 commonAppearanceMap:collection.mutable.Map[String,String] )= {
-		 //println("DisplayParser line="+line)
 		var appearanceMap=collection.mutable.Map[String,String]()
 		var lineStr=line
 						//Parenthesized components found and put in an iterated list
@@ -88,18 +85,15 @@ object DisplayParser   {
 		var component=""
 						// regex (\([#%]) loads array of all '(#' and '(%' in line
 		for( componentTag <- listParenthesizedTags(lineStr) ) {  // Parenthesized.scala
-					//println("DisplayParser componentTag="+componentTag)
 							// successive components will be found by removing each from 'lineStr'.
 							// Example:  'd now (# $s) is (# $b) the (%% text) time'
 							// has the parenthesized components '(# $a), (# $b), (%% text)
 							// Only the first component is extracted and returned.
 			component=extractFirstParenthesizedComponent(componentTag, lineStr)
-//			println("DisplayParser:  extractFirstPar..   component="+component)
 						 // 'leading' is text preceding component. this text along 
 						 // with the component is dropped resulting in a shorter 'lineStr'.
 			val (leading, shortenLine)=extractLeadingTextAndShortenLine(lineStr, 
 																	    component) //Parenthesized.scala
-//			println("DisplayParser  line="+lineStr+"  component="+component+"    shortenLine="+shortenLine)
 			if(leading != "")   // Has preceding text, so create text component
 						// Store text component is component list
 				displayComponentList= TextComponent(leading, commonAppearanceMap) :: displayComponentList
@@ -107,14 +101,12 @@ object DisplayParser   {
 						// or (@...).  Returns component along with xtype equal to "variable", 
 						// "text', "display", "yesNo", "multiple", "audio", or "image".
 			val xtype=extractParenthesizedTag(component) //Parenthesized.scala
-//			println("DisplayParser:  xtype="+xtype)
 						// Store component along with 'xtype' (used in DisplayScript)
 						// 'parenthesizeComponent' is added to 'displayComponentList'.
 			var parenthesizedComponent=ParenthesizedComponent(component,xtype)//DisplayComponent
 						// distinguish between '(# $one)' and '(# /color red/ $one)'	
 						// the latter return 'true' having  Appearance values
 			if(isEmbeddedAppearanceComponent(component)) { //AppearenceParameter
-					//println("DisplayParser isEmbeddedAppearanceComponent is invoked")
 						// 'mapAndLength' is tuple of 'appearanceMap' and 'keyValueLength'.
 						// Extract Appearence component from parenthesized component and
 						// break it down into key/value tuples to be stored in a Map within
@@ -145,12 +137,10 @@ object DisplayParser   {
 		var line=lineString
 						// determine if Display command starts with column/row position values.
 						// uses regex ="""^(\d?\d?)/(\d?\d?)(/?).*""" .r
-		//println("DisplayParser  isColumnRowValue(line)="+isColumnRowValue(line))
 		if(ColumnRowParser.isColumnRowValue(line) ) {
 						// uses """^(\d?\d?)(\d?\d?)(/?).*""" to extract column/row values
 						// 'tuple' holds column/row values	
 			colRowTuple=columnRowValue(line) // ColumnRowParser
- 	//			println("DisplayParser  column="+colRowTuple._1+"    row="+colRowTuple._2)
 			displayComponentList=ColumnRowComponent(colRowTuple._1, colRowTuple._2) :: displayComponentList
 						// column/row values along with slashes removed from line
 			line=removeColumnRowComponent(line,colRowTuple) //use 'tuple' to extract col/row expression

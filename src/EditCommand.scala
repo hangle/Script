@@ -46,27 +46,26 @@ object EditCommand  {
 	val numberLetterRegex="""\s*(number|letter)(.*)?""".r
 	val conditionAndStatusRegex="""\s*?(\(.+)\s+(status=.*)""" .r
 	val conditionRegex= """\s*(\(.+)""" .r
-//	val variableRegex="""\s*([$]\w+)\s*.*""" .r
-	val variableRegex="""\s*([$].+)\s*.*""" .r
+	val variableRegex="""\s*([$]\w+)\s*.*""" .r
+//	val variableRegex="""\s*([$].+)\s*.*""" .r
 	var statusMessage=""
 			// 
 	def editCommand(script: collection.mutable.ArrayBuffer[String],
 					lineStr: String ) ={
-				//	addressor:Addressor)=  {
 		var line=lineStr
 				// Edit cmd may optionally begin with a $<variable>
-		val variable=extractDollarVariable(line)
+				// return $<variable>
+		val dollarVariable=extractDollarVariable(line)
 				// Remove $<variable> from line if not null
-		line=dropDollarVariableFromLine(variable, line)
+		line=dropDollarVariableFromLine(dollarVariable, line)
 				// extract i.e., ' number status=msg' or
 				// 'letter status=msg'. 
 		val (xtype, status)=extractNumberLetter(line)
-		//		println("EditCommand xtype="+xtype+"  status="+status)
 				// xtype is either 'number', 'letter', or null
 				// if null, then command contains a logic expr
 		if(xtype !=null) {
 			EditScript.numberLetterScript ( script, 
-											variable, 
+											dollarVariable, 
 											xtype, 
 											//statusMessage) 
 											status) 
@@ -85,13 +84,13 @@ object EditCommand  {
 					EditScript.editScript(script, 
 										  reduce, 
 										  statusMessage, 
-										  variable)
+										  dollarVariable)
 					}
 				else
 					EditScript.editScript(script, 
 										  condition, 
 										  statusMessage, 
-										  variable)
+										  dollarVariable)
 			}
 		}
 			// First check line for Condition + Status, if both are null,
@@ -120,7 +119,6 @@ object EditCommand  {
 				// $<variable> is null, then return input line.
 	def dropDollarVariableFromLine(variable:String, line:String)={
 		if(variable ==null) 
-
 			line
 		else{ 
 			val index=line.indexOf(variable)+variable.size
@@ -139,7 +137,6 @@ object EditCommand  {
 	def extractNumberLetter(line:String) ={
 		line match {
 			case numberLetterRegex(xtype, statusTag)=> 
-//						println("EditCommand xtype="+xtype+"  status="+status)
 								// remove 'status='
 						if(statusTag.size> 0)
 							(xtype, statusTag.drop(statusTag.indexOf('=')+1)  )

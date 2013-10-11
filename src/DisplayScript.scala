@@ -53,7 +53,6 @@ object DisplayScript  {
 											pc.xtype,//"yesNo", "variable", "multiple", etc
 											pc.getKeyValueLength,
 											pc.getParenthesizedMap) //empty Map
-											//addressor)
 				case _=>
 				}
 			}
@@ -65,10 +64,9 @@ object DisplayScript  {
 								xtype:String,
 								keyValueLength:Int, // if 1, then no apparance parameters
 								parenthesizedMap:collection.mutable.Map[String,String])={
-			//println("DisplayScript matchParenthesizedType")
 		xtype match {
 				case "variable" =>  // (#...)
-					variableScript(script,overrideSetting, component, parenthesizedMap)// addressor)
+					variableScript(script,overrideSetting, component, parenthesizedMap)
 				case "text" =>		// (%%...)
 					textComponentScript(script, 
 										overrideSetting, 
@@ -84,19 +82,17 @@ object DisplayScript  {
 				case "image" =>		// (@...)
 
 				case _=> 
-					//println("DisplayScript: unknow xtype="+xtype)
 				 throw new SyntaxException("unknown parenthesized type: xtype="+xtype)
 				}
 		}
 				// Text component begins '(%%', followed by AppearanceComponent,
-				// followed by text, and ending with ')'  Piggyback this components
+				// followed by text, and ending with ')'  Piggyback this component
 				// as a '%DisplayText'.
 	def textComponentScript(script:ArrayBuffer[String],
 							overrideSetting:Map[String,String],
                             component:String,
 							keyValueLength:Int,
                             parenthesizedMap:collection.mutable.Map[String,String])={
-	//	println("DisplayScript:  textComponentScript  component="+component)
 		val map=copyMapToMap(overrideSetting, parenthesizedMap)
 		var text=""
 		if(keyValueLength==1) // no appearance parameters
@@ -108,9 +104,11 @@ object DisplayScript  {
 				// scan text for '\(' and '\)' and delete '\' 
 		text=AppearanceParameter.removeEscapeSlashes(text)
 		text=text.init  // remove trailing ')'
-				
-	//	println("DisplayScript:  textComponentScript  component="+component)
-	//	println("DisplayScript:  textComponentScript  text="+text)
+				// "" changed to " ".  text"\t" in list link object. e.g., CardSet.scala' 
+				// with 'receive_objects(..)' with 'split(["[\t]")' cannot handle "".
+		if(text=="") {
+				text=" "
+				}
 		script+= "%DisplayText"
 		script+= "style	"+map.getOrElse("style","error")
 		script+= "size	"+map.getOrElse("size","error")
@@ -133,8 +131,10 @@ object DisplayScript  {
 								component:String, 
 								parenthesizedMap:collection.mutable.Map[String,String])={
 		val map=copyMapToMap(overrideSetting, parenthesizedMap)
- 		val field=extractVariableFromComponent(component)
-		//println("DisplayScript:  displayVariableScript():  field="+field)
+ 		var field=extractVariableFromComponent(component)
+				// "" changed to " ".  text"\t" in list link object. e.g., CardSet.scala' 
+				// with 'receive_objects(..)' with 'split(["[\t]")' cannot handle "".
+		if(field=="") field=" "
 		script+= "%DisplayVariable"
 		script+= "text	"+field
 		script+= "column	"+overrideSetting.getOrElse("column","error")
@@ -151,13 +151,14 @@ object DisplayScript  {
 						overrideSetting:Map[String,String],
 						component:String, 
 					    parenthesizedMap:collection.mutable.Map[String,String])={
-//						addressor:Addressor)={
 				// 'map' is first made a copy of 'overrideSetting', then it is
 				// updated by the (key->value)s of 'parenthesizedMap'. 
 		val map=copyMapToMap(overrideSetting, parenthesizedMap)
- 		val field=extractVariableFromComponent(component)
-		//println("DisplayScript  field="+field)
+ 		var field=extractVariableFromComponent(component)
 		script+="%BoxField"
+				// "" changed to " ".  field"\t" in list link object. e.g., CardSet.scala' 
+				// with 'receive_objects(..)' with 'split(["[\t]")' cannot handle "".
+		if(field=="") field=" "
 		script+="field	"+field
 		script+="length	"+map.getOrElse("length", "error")
 		script+= "column	0"+map.getOrElse("column","error")
@@ -171,7 +172,7 @@ object DisplayScript  {
 				// Determine if field <variable> is a key in 
 				// NameEditValidation.namedEditMap indicating that 
 				// edits are associated with the Field $<variable>
-		testForNamedEdit(field, script) //, addressor)
+		testForNamedEdit(field, script) 
 		}
 	def yesNoVariableScript(script:ArrayBuffer[String],
 						overrideSetting:Map[String,String],
@@ -179,7 +180,6 @@ object DisplayScript  {
 					    parenthesizedMap:collection.mutable.Map[String,String])={
 		val map=copyMapToMap(overrideSetting, parenthesizedMap)
  		val field=extractVariableFromComponent(component)
-		//println("DisplayScript  field="+field)
 
 		script+="%BoxField"
 		script+="field	"+field
@@ -209,7 +209,6 @@ object DisplayScript  {
 		val options= extractNumberOfOptions(component)
 		val length= adjustFieldLength(options, map)  // size of field reduced to 1 or 2
 		extractNumberOfOptions(component)
-		//println("DisplayScript  field="+field)
 		script+="%BoxField"
 		script+="field	"+field
 							// length changed to 1 or 2.
@@ -241,41 +240,33 @@ object DisplayScript  {
 	def extractNumberOfOptions(component:String):String={
 		component match {
 			case optionRegex(number)=>
-				//println("DisplayScript: options="+number)
 				number
 			case _=>
-				//println(" DisplayScript options empty")
 				"0"
 			}
-
 		}
-
 			// Are there NamedEdit edits belonging to the Field. If so,
 			// then invoked EditCommand. 
-	def testForNamedEdit(field:String, script:ArrayBuffer[String])={// addressor:Addressor)={
-
+	def testForNamedEdit(dollarField:String, script:ArrayBuffer[String])={
 		val namedEditMap= NamedEditValidation.getNamedEditMap
-				// Input field has associated NamedEdit edits
-		if(isFieldAssociatedWithNamedEdit(field, namedEditMap)){
-			val dollarField="$"+field
+				// Input field has associated NamedEdit edits, so write Edit command script.
+		if(isFieldAssociatedWithNamedEdit(dollarField, namedEditMap)){
 			var xarray=namedEditMap.get(dollarField).get	
-			//println("DisplayScript    xarray.size="+xarray.size)
 			for (edit <- xarray) {
-					//println("DisplayScript... add edit to namedEditMap array edit="+edit)
 					// write the script for NamedEdit edits ($<variable> tag replaced).
-						EditCommand.editCommand(script, dollarField+" "+edit) // addressor)
-						}
+				EditCommand.editCommand(script, dollarField+" "+edit) 
 				}
+			}
 			else {
-				//println("DisplayScript NO association")
 				}
 		}
-			// Look up the field <variable> in the  Map containing
-			// (key-> ArrayBuffer[String]) where array holds 
-	def isFieldAssociatedWithNamedEdit( field:String, 
-				//						namedEditMap:Map[String, ArrayBuffer[String]])={
-				    namedEditMap:collection.immutable.Map[String, ArrayBuffer[String]])={
-		val namedEdit=namedEditMap.get("$"+field)
+			// Determine if Display command $<variable> has an associate
+			// Edit command  'namedEdit $<variable> key
+	def isFieldAssociatedWithNamedEdit( 
+					dollarField:String, 
+				    namedEditMap:collection.immutable.Map[String, ArrayBuffer[String]]
+					)={
+		val namedEdit=namedEditMap.get(dollarField)
 		if(namedEdit==None) false
 			else true
 		}
@@ -288,6 +279,7 @@ object DisplayScript  {
 		var filteredText=text
 			// scan text for '\(' and '\)' and delete '\'
 		filteredText=AppearanceParameter.removeEscapeSlashes(text)
+		if(filteredText=="") filteredText=" "
 
 		script+= "%DisplayText"
 		script+= "style	"+map.getOrElse("style","error")
@@ -305,7 +297,6 @@ object DisplayScript  {
 		val copy=collection.mutable.Map[String,String]()
 		val map= one.map{case (x,y)=> x->y}
 		for( (key,value)<- two){
-		//	println("DisplayScript  key="+key+"   value="+value)
 			map += (key->value)
 			}
 		map

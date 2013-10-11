@@ -14,8 +14,9 @@ object WriteStructureFile   {
 		//println("WriteStructureFile name="+name)
 		val writer=new FileWriter(name)	
 		for(s <-struct){
-			val ss=removeTagAndTab(s)
-			writer.write(ss+"\n")
+//			val ss=removeTagAndTab(s)
+//			writer.write(ss+"\n")
+			writer.write(s+"\n")
 			}
 		writer.close
 		}

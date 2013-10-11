@@ -16,15 +16,11 @@ object EditScript   {
 		// Edit with Condition expression, eg.,  '($abc)=(20)'
 	def editScript(script:collection.mutable.ArrayBuffer[String],
 				  condition:String, // logic controlling edit
-		//		  conditionComponents:List[String],
 				  status:String, // message to user
 				  variable:String)={
-			//	  addressor:Addressor) ={  // establish symbolic addrs
-		//println("EditCommand Condition Script")
 		script += "%EditNode"
-//		script += "condition\t"+addressor.namer
 		script += "condition\t"+condition.trim
-		script += "type\t"
+		script += "type\t0"
 		statusAndVariable(script,status,variable)
 		}
 		// Edit with 'number' or 'letter'
@@ -32,23 +28,27 @@ object EditScript   {
 						variable:String,
 						xtype:String,
 						status:String)={
-						//addressor:Addressor) ={   //note, Addressor not needed
-		//println("EditCommand numberLetterScript")
+		var xstatus=status
 		script += "%EditNode"
-		script += "condition\t"
+		script += "condition\t0"
 		script += "type\t"+xtype
-		statusAndVariable(script,status,variable)
+		xtype match {
+				case "number" => xstatus="number required"
+				case "letter" => xstatus="letter (non numeric) required"
+				case _=>
+				}
+		statusAndVariable(script,xstatus,variable)
 		}
 
 	def statusAndVariable(  script:collection.mutable.ArrayBuffer[String],
 							status:String, 
 							variable:String)={
-		if(status==null)
-			script+= "status\t"
+		if(status==null || status==" ")
+			script+= "status\t0"
 		else
 			script += "status\t"+status.trim
 		if(variable==null)
-			script += "variable\t"
+			script += "variable\t0"
 		else
 			script += "variable\t"+variable.trim
 		script += "%%"

@@ -20,8 +20,8 @@
 	below)
 
 	The class and companion object has two maps:
-		namedEditMap
-		fieldVariableMap
+		namedEditMap		-- Edit cmd		e $<variable> <logic>
+		fieldVariableMap	-- Display cmd  input $<variable>
 
 	The input-script file is passed to 'namedEditValidation' which operates on
 	the Card, Display, and Edit commands. The Field $<variables> of the
@@ -39,7 +39,7 @@
 	key value in 'fieldVariableMap' is not 0. This could occur when the NameEdit
 	$<variable> is found in a Card set that is outside the Card containing
 	the matching Field $<variable> . Recall that the next Card command set 
-	the 0s to 1s, thus closing the Card set scope.  The exceptions messages 
+	the 0s to 1s, thus closing out the Card set scope.  The exceptions messages 
 	are:
 			"No match on Field Variable"
 			"NamedEdit not in range of Field Var"
@@ -56,8 +56,14 @@
 	NamedEdit Script:
 
 	When the script is written for a DisplayCommand input field (e.g, 
-	'(# $age)' ),  the system determines whether a NameEdit edit is associated
-	with the input field variable ($age). If so, than the EditCommand
+	'(# $age)' ),  DisplayScript  determines whether a NameEdit edit is associated
+	with the input field variable ($age). 
+				// Determine if field <variable> is a key in 
+				// NameEditValidation.namedEditMap indicating that 
+				// edits are associated with the Field $<variable>
+		DisplayScript. testForNamedEdit(field, script) 
+	
+	If so, than the EditCommand
 	module is invoked to write the edit script.
 */
 package com.script
@@ -68,18 +74,24 @@ object NamedEditValidation  {
 	val fieldVariableRegex="""([$]\w+)""" .r // $<variable> of (# $<variable>)/
 	val fieldRegex="""(\(#.+[$].*\))""".r // (#  $<variable>)
 	val responseRegex="""(\(#\s*[$]\w+\s*\))""" .r	
-	//val namedEditRegex="""e\s+([$]\w+)\s.*""" .r // detect NamedEdit edit
 	val namedEditRegex="""e\s+([$].+)\s.*""" .r // detect NamedEdit edit
-//	val namedAndEditRegex="""e\s+([$]\w+)\s+(.*)""" .r // separates NameEdit and edit
 	val namedAndEditRegex="""e\s+([$][a-zA-Z0-9_-]+)\s+(.*)""" .r // separates NameEdit and edit
 
 	var namedEditMap= Map[String, ArrayBuffer[String]]()
-		// Holds Field $<variable> as a key along with the value 0. When
-		// a Card command is encountered, the value 0 is changed to 1.
-
-	def getNamedEditMap=namedEditMap
-
 	var fieldVariableMap= Map[String, Int]()
+			// extract namededits from input script (.nc)  file in 'structuremaker'
+			// returning input script minus these edits. the namededits are
+			// contained in 'namededitmap' map. Invoked by ParserValidator
+	def mapNamedEdits(ncFileList:List[String]) {
+				// validate namededit edits which must match display
+				// fields and must be in the card set of their
+				// associated fields.
+		namedEditValidation(ncFileList)
+				// remove namededit commands from input script file
+		val (commands,namedEdits)= separateNamedEditFromFile(ncFileList)
+				// assign namededit edits to 'namededitmap' map to be passed to editcommand
+		addAllEditsToNamedEditMap( namedEdits)
+		}
 		// Verify that NamedEdit $<variable> corresponds to a Field $<variable>
 		// within the same Card set. Routine filters our Card, Display, and
 		// Edit commands from the input script file. 
@@ -94,25 +106,34 @@ object NamedEditValidation  {
 					val array=extractDollarVariableFromDisplay(line)
 					for(key <-array) {
 						fieldVariableMap=fieldVariableMap + (key->0)
-				//		println("NamedEditValidation:  key="+key)
 						}
-				//	println("NamedEditValidation:   -:::- "+line)
 				case 'e'=>
 					matchNamedEditVariableWithFieldVariable(line)
 				case _=>
-				//	println("NamedEditValidation: unknown ="+line(0))
 				}
 			}
 		}
+		// Close out all keys in OpenClosMap setting all
+		// key values to one. This prevents an EditName
+		// edit to reference a input field of a different
+		// Card set. 
+	def closeMatchMap={
+		for((k,v)<- fieldVariableMap) {
+			fieldVariableMap=fieldVariableMap + (k -> 1)
+			}
+		}
+
+		// Holds Field $<variable> as a key along with the value 0. When
+		// a Card command is encountered, the value 0 is changed to 1.
+	def getNamedEditMap=namedEditMap
+
 		// 'namedEditValidation' handed off 'edits' and 'NamedEdit' edits. Determine if
 		// NamedEdit $<variable> match Field $<variable> within the Card set. Throw
 		// exceptions if no match, or if NamedEdit $<variable> is not within 
 		// the Card set.
 	def matchNamedEditVariableWithFieldVariable(edit:String)={
-	//	for((k,v)<-fieldVariableMap) println("fieldVariableMap  key=|"+k+"|  v="+v)
 		edit match {
 			case namedAndEditRegex(key, dummy) =>
-				println("NamedEditValidation 111 key="+key)
 				val oneOrZero=fieldVariableMap.get(key)
 				if(oneOrZero==None) {
 							// NamedEdit $<variable> does not match 
@@ -130,16 +151,6 @@ object NamedEditValidation  {
 					}
 			case _=>  // edits without NamedEdit $<variale>
 				true
-			}
-		}
-		// Close out all keys in OpenClosMap setting all
-		// key values to one. This prevents an EditName
-		// edit to reference a input field of a different
-		// Card set. 
-	def closeMatchMap={
-		for((k,v)<- fieldVariableMap) {
-				//println("key="+k)	
-			fieldVariableMap=fieldVariableMap + (k -> 1)
 			}
 		}
 		// Extract $<variable> s from Response Fields 
@@ -167,7 +178,6 @@ object NamedEditValidation  {
 					//detects NameEdit $<variable> 
 					//in edit commands
 				case namedAndEditRegex(variable, dummy)=>
-					println("NamedEditValidation (NamedEdits) /line="+f)
 					namedEdits += f
 				case _=> 
 					noNamedEdits +=f
@@ -198,37 +208,15 @@ object NamedEditValidation  {
 				// 'key' found, just add 'editcommand' to class instance
 		if(namedEditMap.contains(key)) {
 				// retrieve ('key->array') and update array with 'edit'
-				println("namedEditValidation --contains(key)"+key)
 			var xarray=namedEditMap.get(key).get	
 			xarray += editCommand
-				//println("nameeditval... add edit to namededitmap array.size ="+xarray.size)
-			//for (x <- xarray)
-			//	println("nameeditval... add edit to namededitmap array x="+x)
-
 			}
-		   else {
+		  else {
 				// key not found, create 'array' and add 'edit' to it 
 				// and then add new ('key'-> 'array') to map 
-				println("namededitvalidation does not contains(key)"+key)
 			var array=new ArrayBuffer[String]()
 			array += editCommand
 			namedEditMap=namedEditMap + (key->array)
 			}
-		}
-			// extract namededits from input script (.nc)  file in 'structuremaker'
-			// returning input script minus these edits. the namededits are
-			// contained in 'namededitmap' map
-	def mapNamedEdits(ncFileList:List[String]) {
-				// validate namededit edits which must match display
-				// fields and must be in the card set of their
-				// associated fields.
-		namedEditValidation(ncFileList)
-				// remove namededit commands from input script file
-		val (commands,namedEdits)= separateNamedEditFromFile(ncFileList)
-//		for(e<-namededits) println("namededitvalidation namededit array e="+e)
-				// assign namededit edits to 'namededitmap' map to be passed to editcommand
-		addAllEditsToNamedEditMap( namedEdits)
-		namedEdits.foreach(x=>println("NamedEditValidation mapNamedEdits x="+x) )
-		//commands
 		}
 }

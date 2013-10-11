@@ -21,21 +21,16 @@ object NextFile  {
 			// 'condition' need not be present
 			// filename and condition must be space separated
 //	val fileNameLogicRegex="""\s*(.+)\s+(\(.*)?""" .r
-	val fileNameLogicRegex="""\s*([/a-zA-Z0-9]+)\s*(\(.*)?""" .r
+	val fileNameLogicRegex="""\s*([$_/a-zA-Z0-9]+)\s*(\(.*)?""" .r
 
 	def nextFileCommand(script:collection.mutable.ArrayBuffer[String],
 						line:String)={
-						//println("NextFile nextFileCommand()")
-				//		addressor:Addressor) ={
 		var conditionComponents=List[String]()
+						// filename must be present; condition is optional
 		val (filename, condition)= extractFilenameAndLogic(line)
-						//println("NextFile:  line="+line)
-						//println("NextFile:  filename="+filename)
-						//println("NextFile:  condition="+condition)
 		if(filename ==null)
 			throw new SyntaxException("filename missing")
 		if(condition != null) {
-								//	println("condition=|"+condition+"|     is present")	
 						// e.g., '(abc) = nc ns (xyz)' becomes '(abc)=ncns(xyz)'
 			val reduced= LogicSupport.removeSpacesInOperand(condition)
 						// returns nothing but throws exception if syntax problem.
@@ -44,8 +39,6 @@ object NextFile  {
 			}
 		else
 			NextFileScript.nextFileScript(  script, filename, condition)
-//										conditionComponents,
-//										addressor)
 		}
 	def extractFilenameAndLogic(line: String):(String,String) ={
 		line match {

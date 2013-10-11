@@ -22,7 +22,7 @@ object AssignerScript  {
 				script += "special\t"+""
 	//	if(conditionComponents isEmpty) {
 		if(condition=="") {
-				script +="condition\t"
+				script +="condition\t0"
 				script +="%%"
 				}
 			else{
