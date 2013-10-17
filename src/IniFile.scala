@@ -3,6 +3,10 @@
 	The file 'appearance.ini' has key/values that are 
 	assigned to AsteriskCommand.overrideSetting Map.
 
+	Local directory is the directory from which the Notecard
+	system is executed.
+	Path directory is a subdirectory of the Local directory.
+
 	The objects looks for the 'appearance.ini' file in
 	the local directory or in the directory where the
 	'.nc' files are being accessed, 
@@ -10,6 +14,10 @@
 	If the filename path of the script file has a directory,
 	then the .ini file is read in that directory, otherwise
 	the .ini file is read in the local directory.
+
+	The '.ini' local directory file overrides the default values.
+	The '.ini' path directory file overirdes the deaault values
+	as well as the values of the '.ini' local directory file.
 
 */
 package com.script

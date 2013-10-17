@@ -163,6 +163,14 @@ object AppearanceParameter   {
    			if(Support.isNumber(value) == false)
 					throw new SyntaxException(value+": invalid Width (number required)")
 			} 
+	def validateButtonValue(value:String) {
+			value match {
+					case "on" =>
+					case "off" =>
+					case _=> 
+						throw new SyntaxException(value+" not 'on' or 'off' ")
+					}
+			}
 	def filterAppearanceParametersToMap(  // Invoked by DisplayParser
 					line:String, 
 					commonAppearanceMap:collection.mutable.Map[String,String]):String={

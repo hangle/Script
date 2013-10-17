@@ -21,7 +21,8 @@ object AsteriskAppearance  {
 								 key:String, 
 								 value:String) ={
 			// check that 'key' is an appearance key.
-			//    "height", "width", "name", "size", "color", "style", "length", "limit"
+			//    "height", "width", "name", "size", "color", "style", "length", "limit",
+			//	  "priorButton", "asteriskButton"
 		if(appearanceList.contains(key))
 			key match {
 					case "color"=> 
@@ -40,6 +41,10 @@ object AsteriskAppearance  {
 						AppearanceParameter.validateLimitValue(value)
 					case "length"=>
 						AppearanceParameter.validateLengthValue(value)
+					case "priorButton"=>
+						AppearanceParameter.validateButtonValue(value)
+					case "asteriskButton" =>
+						AppearanceParameter.validateButtonValue(value)
 					case _=> throw new SyntaxException(key+" unknown appearance key")
 					}
 				else

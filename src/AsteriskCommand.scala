@@ -1,5 +1,7 @@
 /* date: Aug 23, 2012      ASTERISK  COMMAND
    
+  Invoked in 'ParserValidator,createOverrideMapping(filename)'.
+
   Two types of asterist commands:
   		Appearance asterisk, such as:
 				* height  350
@@ -66,20 +68,21 @@ object AsteriskCommand  {
 							"limit"-> "99",	   // used in Display cmd for BoxField
 							"column"-> "0",		// not operational
 							"manage"-> "task" , //  to create FramerTask
-							"nomanage"-> "task", //  to create Frame Task
+							"asteriskButton"-> "on", //  "on" allows '* button' to be armed (active)
 							"save"-> "task" , //  n to create FramerTask-- save symbolTable data
-							"nobackup"-> "task" , //  to create FramerTask
+							"priorButton"-> "on" , //  "on" allow 'PRIOR button' to be armed (active)
 							"end"-> "task",  //  to create FramerTask-- terminate session
 							"status"->"task",   // display msg in status field
 							"continue"-> "task" // to create CardSetTask--
 							)
+
 					// Used by 'validateAppearanceValues()' to channel a key->value							
-	val appearanceList=List("height", "width", "name", "size", "color", "style", "length", "limit", "column")
+	val appearanceList=List("priorButton", "asteriskButton","height", "width", "name", "size", "color", "style", "length", "limit", "column")
 					// Used in AsteriskCollect to filter '*' appearance commands
 	val getAppearanceList= appearanceList
 
 					// Used by 'cardSetAsteriskDistribute() 
-	val writeScriptKeysList=List("end", "continue", "save", "status", "nobackup", "nomanage", "manage") 
+	val writeScriptKeysList=List("end", "continue", "save", "status", "priorButton", "asteriskButton", "manage") 
 					// Invoked by ParserValidator prior to 'distributeScriptToMaker()'ag
 					// First, defaultSetting Map is copied to 'overrideMap', then
 					// determine if 'appearance.ini' file exists, if so, then this files 'key'/'values'
@@ -103,7 +106,7 @@ object AsteriskCommand  {
 		}
 		
 			// Verifies 'key', verifies 'value's for '*' cmds that have key->value pairs,
-			// writes scipt for '* manage', '* save', '* status', '* nobackup', and '* continue'
+			// writes scipt for '* manage', '* save', '* status', '* priorButton', and '* continue'
 			// and update OverrideSetting Map with '* command'
 	def parseAsteriskCommand(line:String, script:collection.mutable.ArrayBuffer[String]) {
 		line match {
@@ -111,22 +114,20 @@ object AsteriskCommand  {
 						// [a-z] space(s) [a-zA-Z_/]
 			case keyAndValueRegex(key,value)=>
 						// throws exception for unknown keys.
-					validateAsteriskKey(key) // throws exception if key is unknown
+				validateAsteriskKey(key) // throws exception if key is unknown
 						// called when key is an appearance tag, e.g., '* heigth 350'
-					if(appearanceList.contains(key)) {
+				if(appearanceList.contains(key)) {
 								// throws exception  for invalid values, e.g., value not numeric
 								// or updates default appearance values.
-					//		overrideSetting=NotecardAsterisk.validateAppearanceValues( 
-							overrideSetting=AsteriskAppearance.validateAppearanceValues( 
+					overrideSetting=AsteriskAppearance.validateAppearanceValues( 
 																	overrideSetting, 
 																	appearanceList,
 																	key, 
 																	value)
 							}
-					  else
+		    	 else
 								// writes script for '* file', '* manage', '* status', and '* save'.
-							AsteriskCard.distributesAsteriskCommands(key, value, line, script)
-
+					AsteriskCard.distributesAsteriskCommands(key, value, line, script)
 						// '* end' , '* continue' has key only, others, such as, '* manage <filename>' 
 						// have	key and value
 			case keyOnlyRegex(key)=>
@@ -141,7 +142,7 @@ object AsteriskCommand  {
 	def validateAsteriskKey(key:String): Boolean={
 		defaultSetting.get(key) match {
 				case Some(k)=>true 
-				case None=> throw new SyntaxException("unknow key: "+key)
+				case None=> throw new SyntaxException("unknown key: "+key)
 				}
 		}
 			// Used by IniFile to validate keys in .ini file

@@ -46,16 +46,17 @@ object ParserValidator  {
 				// Scan entire '*.nc' file for special processing of
 				// Edit-NamedEdit command and * <appearance> commands.
 		val overrideMap= AsteriskCommand.getOverrideSetting  
-				// Default values are added to Notecard script unless these values. 
-				// see: 'createNotecardScriptPlaceholders()' above
+				// Read entire '*.nc' file to process '* Asterisk Appearance' commands as
+				// well as NamedEdit Edit commands. 
 		scanScriptFileForSpecialProcessing(filteredList, overrideMap)
 				// Default setting map was copied to overrideMap on AsteriskCommand 
 				// initalization. 'overrideMap' is Map[String,String]
 				// Passed to 'displayCommand' in 'distributeScript...'
 		createNotecardScript(script, overrideMap)
-				// process Script commands 
+				// process <*.nc> Script commands 
 		for(line <- filteredList) {
-				lineException=line  //lineException retains command tag for exception msg
+					//lineException retains command tag for exception msg
+				lineException=line  
 					// Employees tags (e.g., c,d,a,*,f) to channel Commands to 
 					// associated modules.
 				distributeScriptToMaker(script,line, card, overrideMap) 
@@ -90,6 +91,9 @@ object ParserValidator  {
 		script += "height	"+overrideMap.getOrElse("height", 10)
 		script += "width	"+overrideMap.getOrElse("width", 10)
 		script += "font_size	"+overrideMap.getOrElse("size", 10)
+		script += "manageButton	"+overrideMap.getOrElse("manageButton", 10)
+		script += "priorButton	"+overrideMap.getOrElse("priorButton", 10)
+
 		script+= "%%"
 		}
 				// Inputs script file and filters each line of this file
