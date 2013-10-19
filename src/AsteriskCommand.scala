@@ -51,7 +51,7 @@ import io._
 object AsteriskCommand  {
 
 						// key value pair separated by space(s)
-	val keyAndValueRegex="""\s*([a-z]+)\s+([a-zA-Z0-9_/]+).*""".r
+	val keyAndValueRegex="""\s*([a-zA-Z]+)\s+([a-zA-Z0-9_/]+).*""".r
 	val keyOnlyRegex="""\s*([a-z]+).*""".r
 //	val sizeRegex="""(\d+)""" .r // Used to validate Appearance Size value
 						// 
@@ -74,10 +74,12 @@ object AsteriskCommand  {
 							"end"-> "task",  //  to create FramerTask-- terminate session
 							"status"->"task",   // display msg in status field
 							"continue"-> "task" // to create CardSetTask--
+
 							)
 
-					// Used by 'validateAppearanceValues()' to channel a key->value							
-	val appearanceList=List("priorButton", "asteriskButton","height", "width", "name", "size", "color", "style", "length", "limit", "column")
+					// Used by 'validateAppearanceValues()' to channel a key->value
+	val appearanceList=List("priorButton", "asteriskButton","height", "width", "name", "size", 
+							"color", "style", "length", "limit", "column", "noprior", "nomanage")
 					// Used in AsteriskCollect to filter '*' appearance commands
 	val getAppearanceList= appearanceList
 

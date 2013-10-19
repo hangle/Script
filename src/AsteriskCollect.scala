@@ -21,7 +21,7 @@ package com.script
 
 object  AsteriskCollect {
 
-	val asteriskRegex="""([*])\s+([a-z]+)\s+([a-zA-Z0-9]+)\s*""" .r
+	val asteriskRegex="""([*])\s+([a-zA-Z]+)\s+([a-zA-Z0-9]+)\s*""" .r
 	var appearancePairs=collection.mutable.ArrayBuffer[(String,String)]()
 
 			// Invoked by ParserValidator. The entire <*.nc> file is read to
