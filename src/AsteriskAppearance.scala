@@ -15,7 +15,8 @@ object AsteriskAppearance  {
 
 
 			// Raise SyntaxException if 'value' is inappropriate, such
-			// as 'height' not found to be a numeric string. 
+			// as 'height' not found to be a numeric string.  
+			// Invoked by AsteriskCommand.
 	def validateAppearanceValues(overrideSetting:collection.mutable.Map[String,String],
 								 appearanceList:List[String],
 								 key:String, 

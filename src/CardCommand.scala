@@ -1,5 +1,4 @@
 /* date:   Aug 31, 2012
-May 29, 2013   *** refactor class to name 'ClearCommand' ***   
 
 	The Card command, whose tag is 'c', begins each card set group
 	of commands (Display, File, Edit, Group, Asterisk, eXecute)

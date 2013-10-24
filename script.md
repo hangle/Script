@@ -1,105 +1,110 @@
 <h1>Script Program</h1>
 
-<p>The execution of Script's main procedure  invokes  two major subsystems:  </p>
-
-<pre><code>    ParserValidator(filenmae.nc)  
-    StructureBuilder(filename.command)
-</code></pre>
-
-<p>The script file '.nc' is  an argument  to the first subsystem.  This  subsystem's <br />
-output is an '.command' file.  The '.command' file is an  input to the second <br />
-subsystem.  The 'StructureBuilder' output is a '.struct' file. The '.struct' file is <br />
+<p>The Script program validates the syntax of commands in a file whose extension
+is '<em>.nc', such as, 'nowis.nc'.  The program's output is a file whose extension
+is '</em>.struct', such as, 'nowis.struct'.  The 'nowis.struct' file is <br />
 executed by the Notecard program to create a series of card-size windows.   </p>
 
-<p>The following show these three files for the 'nowis.nc' file.  </p>
+<p>The following are the script commands of the 'nowis.nc' file. The letters beginning
+the commands (c,d,*) are command tags.</p>
 
-<pre><code>    nowis.nc (file)
-
-    c
-    d now is
-    c
-    d the time
-    * end
-</code></pre>
-
-<p>The 'ParserValidator' output is a '.command' file that is the input to the second <br />
-system.    </p>
-
-<pre><code>    nowis.command  (file)
-</code></pre>
-
-<pre>    %Notecard       row  0             %%            style   1  
-    height  550     column 0           %CardSet      size   16  
-    width   450     %%                 name          column  0  
-    font_size 16    %DisplayText       condition     name  TimesRoman  
-    %%              style   1          %%            text  the time  
-    %CardSet        size   16          %RowerNode    color black  
-    name            column 0           row  0        %%  
-    condition       name TimesRoman    column 0      %NotecardTask  
-    %%              text   now is      %%            task   end  
-    %RowerNode      color  black       %DisplayText  type  
-                                                     %%
+<pre>
+                                c
+                                d now is
+                                c
+                                d the time
+                                * end
 </pre>
 
-<p>The output of the second subsystem, 'StructureBuilder'   is  the '.struct' file <br />
-(see scriptUser.odt for an overview).     </p>
+<p>The Script output from 'nowis.nc' is the 'nowis.struct' file.</p>
 
-<pre><code>    nowis.struct   (file)
-</code></pre>
+<pre>
+                 %Notecard                        %CardSet
+                 child       2002                  child    2006
+                 height 300                        address  2005
+                 width  400                        siblinng 2008
+                 font_size  14                     name        0
+                 asteriskButton on                 condition   0
+                 priorButton    on                 %%
+                 %%
 
-<pre>    %Notecard        %DisplaText    0              0
-    2002             2004           0              %%  
-    550              0              0       
-    16               16             %DisplayText        
-    %%               0              2007            
-    %CardSet         TimesRoman     0           
-    2003             now is         0       
-    2002             black          16          
-    2005             %%             0           
-    %%               %CardSet       TimesRoman  
-    %RowerNode       2006           the time    
-    2004             2005           black       
-    2003             2008           %%          
-    0                %%             %NotecardTask       
-    0                %RowerNode     2008
-    0                2007           0
-    %%               2006           end
+                 %CardSet                         %RowerNode
+                 child      2003                  child     2007
+                 address    2002                  address   2006
+                 sibling    2005                  sibling   0
+                 name       0                     row       0
+                 condition  0                     column    0
+                 %%                               %%
+
+                 %RowerNode                       %DisplayText
+                 child      2004                  address   2007
+                 address    2003                  sibling   0
+                 sibling    0                     style   14
+                 row    0                         column  0
+                 column 0                         name TimesRoman
+                 %%                               text the time
+                                                  color black
+                 %DisplayText                     %%
+                 address    2004
+                 sibling    0                     %NotecardTask
+                 style  1                         address   2008
+                 size   14                        sibling   0
+                 column 0                         task   end
+                 name   TimesRoman                type   0
+                 text   now is                    %%
+                 color  black
+                 %%
 </pre>
 
-<p>At this point, no explanation of the '.command' and '.struct' files is offered. <br />
-Explanation begins with the  subsystem ParserEvaluator and its input file, <br />
-i.e., 'nowis.nc'.</p>
+<p>No explanation of the 'nowis.struct' files is now offered.  Explanation begins with 
+the  subsystem ParserEvaluator and its input file, i.e., 'nowis.nc'.</p>
+
+<p>The Script program has two major tasks. The first is to validate the syntax and values 
+of the script commands. The second is to build the '*.struct' file. </p>
+
+<p>The execution of Script's 'main' function  invokes  two major subsystems:  </p>
+
+<pre><code>    ParserValidator(..)  
+    BuildStructure(..)
+</code></pre>
 
 <h2>ParserValidator Subsystem  </h2>
 
-<p>The command tags of '.nowis.nc' (c, d, *),  in a match statement, selects the following <br />
-class methods:  </p>
+<p>The Notecard program is almost void of error checking syntax. It is the responsibility of 
+the Script program to catch and report potential errors.  A syntax error or an invalid script 
+value throws an exception, causing the defective '*.nc' file line to be printed along with
+a brief message explaining the error. </p>
 
-<pre><code>    case 'c' =&gt;   CardCommand . cardCommand(...)  
-    case 'd' =&gt;   DisplayCommand . displayCommand(...)  
-    case '*' =&gt;   AsteriskCommand . AsteriskCommand(...)
+<p>The Script program begins with validating the script commands.  The script command tags of 
+'.nowis.nc' (c, d, *) selects the following error checking functions :  </p>
+
+<pre><code>    scriptCommandTag match {    
+        case 'c' =&gt;   CardCommand . cardCommand(...)  
+        case 'd' =&gt;   DisplayCommand . displayCommand(...)  
+        case '*' =&gt;   AsteriskCommand . asteriskCommand(...)  
+        }
 </code></pre>
 
-<p>These three classes create  output in the '.command' file that has a  common structure:  </p>
+<p>These three classes create  output in the 'nowis.struct' file that has a  common structure:  </p>
 
 <pre><code>    %&lt;classname&gt;  
-    argument 1  
+    key1    argument 1  
     .  
     .  
     .  
-    argument n  
+    keyN    argument N  
     %%
 </code></pre>
 
 <p>CardCommand's output for the first 'c' script  is:  </p>
 
 <pre><code>    %CardSet  
-    name  
-    condition  
+    name    0
+    condition 0  
     %%
 </code></pre>
 
-<p>Had the  Clear command 'c' been:  </p>
+<p>Had the Clard command 'c' been:  </p>
 
 <pre><code>    c  ($abc)=(John)
 </code></pre>
@@ -107,33 +112,17 @@ class methods:  </p>
 <p>Then the output would have been:  </p>
 
 <pre><code>    %CardSet  
-    name  
+    name    0 
     condition   ($abc)=(John)  
     %%
 </code></pre>
-
-<p>The  arguments consist of a  pair:   key/value (e.g., “condition” -> ”($abc)=(John)” ). <br />
-The  key/value argument with the key 'name' is not operational (reserved for <br />
-ClassSet labels).  </p>
 
 <p>The AsteriskCommand's output for the '* end' script is:  </p>
 
 <pre><code>    %NotecardTask  
     task    end  
-    type      
+    type      0
     %%
-</code></pre>
-
-<p>There are two kinds of Asterisk commands  One kind  operates at the level of the CardSet, <br />
-for example:  </p>
-
-<pre><code>    * continue
-</code></pre>
-
-<p>Others operate at the Notecard level, for example:  </p>
-
-<pre><code>    * width   400  
-    * end
 </code></pre>
 
 <p>DisplayCommand  output for the first 'd' script is:  </p>
@@ -148,23 +137,8 @@ for example:  </p>
     %%
 </code></pre>
 
-<p>The script 'd now is'  did not override Appearance default values.  The following <br />
-command does so:  </p>
-
-<pre><code>    d /color red/size 10/now is  
-
-    %DisplayTextNotecardTask  
-    style   0  
-    size    10  
-    column 0  
-    name    TimesRoman  
-    text    now is  
-    color   red  
-    %%
-</code></pre>
-
 <p>The Display 'd' command is  complex with a number of features.  For each 'd' command, <br />
-the DisplayCommand class  creates :  </p>
+the DisplayCommand object creates:  </p>
 
 <pre><code>    %RowerNode  
     column    &lt;value&gt;  
@@ -184,18 +158,18 @@ The following command does so:  </p>
     %%
 </code></pre>
 
-<p>The %Notecard structure that begins the '.command' file has no corresponding tag like <br />
-'c', 'd', or '*'.  </p>
+<p>The '%Notecard...%%' group in the 'nowis.struct' begins each '*.nc' file. <br />
+The key/values (height 300, width 400) determines the size of the Notecard window and
+the key/value (font_size) establishes the letter size.</p>
 
 <pre><code>    %Notecard  
-    height      550  
-    width      450  
-    font_size 16  
+    height      300  
+    width      400  
+    font_size 14  
+    asteriskButton  on
+    priorButton     on
     %%
 </code></pre>
-
-<p>Only one %Notecard structure, containing Appearance default value,  is created for the <br />
-'.command' file.  </p>
 
 <p>The other command tags that the ParserValidator subsystem uses in the match statement <br />
 are  ('a', 'e', 'g', 'f', and 'x')  :</p>
@@ -240,16 +214,89 @@ error:   space NOT following symbol
 
 <pre><code>:line=  
     * emd  
-error:  unknown key: emdNotecardTask
+error:  unknown key: emd
 </code></pre>
 
-<p>The syntax checking of this subsystem is extensive.  The Notecard prNotecardTaskogram <br />
-does not do any error checking of the script passed to it.  It is the responsibility <br />
-of the Script program to insure that the Notecard program runs error free. NotecardTask  </p>
+<p>The syntax checking of this subsystem is extensive and its specifices are
+not covered here.  </p>
 
-<p>Build Structure Subsystem   </p>
+<h2>BuildStructure  Subsystem </h2>
 
-<p>The initial task of BuildStructure is to create class objects from %<class names>. <br />
+<p>The completion of 'ParserValidator' delivers the following List[List[String]] to
+'BuildStructure' (each '%<className>...%%' is a list element of List).</p>
+
+<pre>
+                %Notecard                       %RowerNode
+                height  300                     row      0
+                width   400                     column   0
+                font_size   14                  %%
+                asteriskButton  on
+                priorButton on                  %DisplayText
+                %%                              style  1
+                                                size   14 
+                %CardSet                        column 0
+                name        0                   name   TimesRoman
+                condition       0               text   the time
+                %%                              color  black
+                %RowerNode                      %%
+                row 0
+                column  0                       %NotecardTask
+                %%                              task   end
+                                                type   0
+                %DisplayText                    %%   
+                style   1                       
+                size    14
+                column  0
+                name    TimesRoman
+                text    now is
+                color   black
+                %%
+
+                %CardSet
+                name        0
+                condition       0
+                %%
+</pre>
+
+<p>The above List resembles the elements of the 'nowis.struct' file presented earlier.
+On closer inspections of the two, the 'child', 'address', and 'sibling' elements
+of the file are missing from the above List. </p>
+
+<p>The following shows a scaled down version of 'nowis.struct' with only the %<className>
+and the 'child', address, and 'sibling' elements</p>
+
+<pre>
+        %Notecard
+        child  2002
+                        %CardSet
+                        child  2003
+                        address 2002
+                        sibling 2005
+                                        %RowerNode
+                                        child   2004
+                                        address 2003
+                                        sibling 0
+                                                        %DisplayText
+                        %CardSet                        address  2004
+                        child   2006
+                        address 2005
+                        sibling 2008
+                                        %RowerNode
+                                        child   2007
+                                        address 2006
+                                        sibling 0
+                                                        %DisplayText
+                        %NotecardTask                   address  2007
+                        address 2008
+                        sibling 0
+</pre>
+
+<p>The scaled down version of 'nowis.struct' reveals the linked list structure.  A parent 
+class element 'child' references the 'address' of its first child whose 'sibling' elements 
+references other parent children.  For example, The parent 'Notecard' is linked to its 
+three children ('CardSet's and 'NotecardTask').</p>
+
+<p>The initial BuildStructure task is to create class instances with %<class names>. <br />
 The 'nowis.struct' file has the following class names:  </p>
 
 <pre><code>    %Notecard  
@@ -262,27 +309,35 @@ The 'nowis.struct' file has the following class names:  </p>
     %NotecardTask
 </code></pre>
 
-<p>BuildStructure invokes CommandLoader.createObject to instantiate objects.  The classes, <br />
-like, NotecardCmd, are case classes.  NotecardCmd is passed arguments (550, 450, 16) <br />
-as a string array. Each <classname>Cmd object stores its argument array as the variable <br />
-'parameters'.  </p>
+<p>BuildStructure invokes CommandLoader.createObject to instantiate objects. </p>
 
 <pre><code>“%&lt;classname&gt; “ match {  
-    case %Notecard  =&gt;  NotecardCmd( &lt;class arguments&gt;)  
+    case %Notecard  =&gt;   NotecardCmd( &lt;class arguments&gt;)  
     case %CardSet   =&gt;   CardSetCmd( &lt;class arguments)  
-    case %RowerNode=&gt;RowerNodeCmd( &lt;class arguments&gt;)  
-    case %DisplayText=&gt;DisplayTextCmd( &lt;class arguments&gt;)  
-    case %NotecardTask=&gt;NotecardCmd( &lt;class arguments&gt; )
+    case %RowerNode=&gt;    RowerNodeCmd( &lt;class arguments&gt;)  
+    case %DisplayText=&gt;  DisplayTextCmd( &lt;class arguments&gt;)  
+    case %NotecardTask=&gt; NotecardCmd( &lt;class arguments&gt; )
 </code></pre>
 
-<p>There are 15 case classes of the type '<classname>Cmd'  representing script commands <br />
-or components of these commands.  The above code is shown to just handles the simple <br />
-'nowis.nc' script.  </p>
+<p>The classes,like NotecardCmd, are case classes.  The class instances are passed 
+arguments.  NotecardCmd, for example, is passed the following arguments:</p>
+
+<pre>
+                height  300
+                width   400
+                font_size   14
+                asteriskButton  on
+                priorButton on    
+</pre>
+
+<p>There are 13 case classes of the type '<classname>Cmd'  representing script commands <br />
+as well as components of these commands.  The above code is shown to just handles the 
+simple   'nowis.nc' script.  </p>
 
 <p>The '<classname>Cmd objects are assembled into a List of Any type.   The NotecardCmd <br />
 object is at the head of this List.  Every List object is given a unique index or Id. <br />
-Starting with NotecardCmd ,  it is assigned 2001 as an Id value, and each successive <br />
-List objects is assigned an incremented value.   Values 2001 to 2001 + n serve as <br />
+Starting with NotecardCmd ,  it is assigned 2002 as an Id value, and each successive <br />
+List objects is assigned an incremented value.   Values 2002 to 2002 + n serve as <br />
 symbolic addresses of the '<classname>Cmd objects.   </p>
 
 <h2>Structure.</h2>
@@ -292,22 +347,23 @@ structure  of linked lists where the root of this structure is NotecardCmd.   Th
 Notecard 'card' program general approach is to iterate a series of linked lists. <br />
 The following, beginning with NotecardCmd,  is the linked list structure:  </p>
 
-<pre><code>&lt;clsssname&gt;Cmd  Types               Script Examples    
+<pre>
+    <clsssname>Cmd  Types               Script Examples    
 
-NotecardCmd  
-    NotecardTaskCmd                 * end    
-    NextFileCmd                 f maleScript    
-    CardSetCmd                  c (1)=(2)    
-        AssignCmd               a $count=$count+1    
-        XNodeCmd                x  
-        GroupCmd                g (1) = (1)  
-        CardSetTask             * continue  
-        RowerNodeCmd                d 3/5/  
-            DisplayTextCmd          d now is  
-            DisplayVariableCmd      d (% $count)  
-            BoxFieldCmd         d (# $name)  
-                EditCmd         e ($count) &lt; (5)
-</code></pre>
+    NotecardCmd  
+        NotecardTaskCmd                  * end    
+        NextFileCmd                      f maleScript    
+        CardSetCmd                       c (1)=(2)    
+            AssignCmd                    a $count=$count+1    
+            XNodeCmd                     x  
+            GroupCmd                     g (1) = (1)  
+            CardSetTask                  * continue  
+            RowerNodeCmd                 d 3/5/  
+                DisplayTextCmd           d now is  
+                DisplayVariableCmd       d (% $count)  
+                BoxFieldCmd              d (# $name)  
+                    EditCmd              e ($count) < (5)  
+</pre>
 
 <p>NotecardCmd has three children types (NotecardTaskCmd, NextFileCmd, and CardSetCmd). <br />
 The sibling CardSet has 6 children types.  RowerNodeCmd and BoxField are siblings as <br />
@@ -335,16 +391,16 @@ of the List and to pass all other <classname>Cmd  to NotecardCmd.  NotecardCmd <
     c=&lt;next List element&gt;  
     c  match {  
         case nf: NextFileCmd=&gt;        Link.append(parent, nf)  
-        case ft: NotecardTaskCmd=&gt; Link.append(parent,nf)  
+        case ft: NotecardTaskCmd=&gt;    Link.append(parent,nf)  
         case cs: CardSetCmd=&gt;         Link.append(parent, cs)  
-                                cardSet=cs  
+                                      cardSet=cs  
         case _=&gt;cardSet.attach(c)
 </code></pre>
 
 <p>When a parent does not “recognize” an object as its child, then  <next List element> <br />
 passed the object off  to another parent class type.  In the example, CardSet.attach(c) <br />
 is invoked.  The other parent class have similar code.  In the case of an EditCmd <br />
-object,  it  passes through three parent types before it is “recognized” by its parent, <br />
+object,  it  passes through three parent types before it is delivered to its parent, <br />
 i.e., BoxFieldCmd.   </p>
 
 <p>The translation of physical addresses to symbolic addresses is handled by the method <br />

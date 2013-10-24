@@ -8,7 +8,7 @@
 		(e.g,, Notecard, CardSet, RowerNode). The name is used
 		to instantiate the object. Note, when the object is 
 		created, 'Cmd' is added to the name, e.g., NotecardCmd, to 
-		indicate that it is a server object. 
+		indicate that it is a script object. 
 		 This list List[List[String]] is iterated and each sublist 
 		is passed to createObject().  The createObject() method 
 		instantiates the object and the sublist List[String] of

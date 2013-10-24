@@ -42,10 +42,6 @@ object CommandStructure  {
 				// 'cmdVector' is a list of all objects created by
 				// 'CommandLoader.createObject'.
 	def buildStructure( cmdVector: List[Any]) {
-								/* if(cmdVector.head.isInstanceOf[NotecardCmd])
-									println("obj is NotecardCmd")
-									else
-									println("obj is NOT NotecardCmd") */
 					// first element is root of linked list hierarchy	
 		val notecard=cmdVector.head.asInstanceOf[NotecardCmd]
 					// build a hierarchy of linked lists.  '<xxx>Cmd'
@@ -66,7 +62,6 @@ object CommandStructure  {
 				// Notecard. CardSet passes it grandchildren on to the next parent
 				// and so on. 
 	def attachChildrenToNotecard(cmdVector:List[Any], notecard:NotecardCmd) {
-			//println("here")
 			notecard.attach(cmdVector)
 		}
 					// first child of parent reports its id to the parent.
