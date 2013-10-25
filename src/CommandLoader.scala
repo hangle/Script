@@ -1,6 +1,9 @@
 /* date:   Jan 5, 2012		server.vim
 
   						COMMAND LOADER
+
+		'BuildStructure' invokes 'CommandLoader.createNotecardObjects()'
+
 		 The .command file is passed to 'percentCommandsToObjects()' 
 		in the form of List[List[String]] where each sublist 
 		List[String] is the parameters of a card object.  
@@ -31,7 +34,7 @@ object CommandLoader {
 					//objects instantiated from "%className" are put into list	
 		val coreVector=percentCommandsToObjects(allCardSets)
 					//In support of symbolic addresses, assign a unique 
-					//id to each coreVector object. Ids start at2001
+					//id to each coreVector object. Ids start at 2001
 		createIdsInNodes(coreVector) 
 		coreVector
 		}

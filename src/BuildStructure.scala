@@ -33,7 +33,7 @@ package com.server
 import java.io._
 
 object BuildStructure   {
-
+				// <filename> is name of '*.nc' file minus the '.nc' extension.
 	def buildStructure(filename:String) ={
 				try {
 			// Load server *.command into List[List[String]]
@@ -42,14 +42,15 @@ object BuildStructure   {
 				// to the %% line are put into a list and assigned to a common 
 				// list 'sets'.
 		val sets=StructScript.structListList(filename)
-				// '%<class-name>' used to instantiate the class object
-		val coreVector=CommandLoader.createNotecardObjects(sets)
+				// '%<class-name>' used to instantiate the class instances of 'xxxCmd'.
+				// Argument values are assigned to the parameters of 'xxxCmd' instances
+				// 'coreVector' is list of all 'xxxCmd' instances. 
+		val coreVector=CommandLoader.createNotecardObjects(sets) 
 				// build linked list structure starting with Notecard
 		CommandStructure.buildStructure(coreVector) 
 		CommandToFile.createStructFile(coreVector, struct)  
 				// output <filename>.struct file
 		com.server.WriteStructureFile.writeStructureFile(struct, filename)
-	//	struct.foreach(println)
 			}catch{ 
 				case e:FileNotFoundException=> 
 						println("file not found="+e) 

@@ -17,6 +17,7 @@
 		on to CardSet.attach(core).  When NotecardCmd selects 
 		CardSetCmd it save its reference.
 
+		'NotecardCmd' is created in CommandLoader when '%Notecard' is matched.
 */
 package com.server
 

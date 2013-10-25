@@ -2,19 +2,19 @@
 
  						COMMAND STRUCTURE of Linked Lists
 	The root of this structure is Notecard.  It is the parent of:
-		Card (CardSet)
 		NextFile
 		NotecardTask
+		Card (CardSet)
 	Card is also a parent of:
-		RowerNode
 		GroupNode
 		XNode
 		FrameNodeTask
+		RowerNode
 	RowerNode is also a parent of
-		BoxField
 		DisplayText
 		ImageNode
 		ListBox
+		BoxField
 	Finally, BoxField is a parent of:
 		EditNode
 
