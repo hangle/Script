@@ -13,8 +13,7 @@
 
 */
 package com.script
-//import com.script.SyntaxException._
-
+import com.script.SyntaxException._
 
 object NextFile  {
 			// Captures 'filename' and 'condition', however, 
@@ -27,24 +26,55 @@ object NextFile  {
 						line:String)={
 		var conditionComponents=List[String]()
 						// filename must be present; condition is optional
-		val (filename, condition)= extractFilenameAndLogic(line)
-		if(filename ==null)
-			throw new SyntaxException("filename missing")
-		if(condition != null) {
-						// e.g., '(abc) = nc ns (xyz)' becomes '(abc)=ncns(xyz)'
-			val reduced= LogicSupport.removeSpacesInOperand(condition)
-						// returns nothing but throws exception if syntax problem.
-			ValidLogic.validLogic(reduced)
-			NextFileScript.nextFileScript(  script, filename, reduced)
+		val (filenameOption, conditionOption)= extractFilenameAndLogic(line)
+		val filename=filenameOption match {
+			case Some(filename)=> filename
+			case _=> throw new SyntaxException("filename missing")
 			}
-		else
-			NextFileScript.nextFileScript(  script, filename, condition)
+		conditionOption match {
+			case Some(condition)=> 
+					// e.g., '(abc) = nc ns (xyz)' becomes '(abc)=ncns(xyz)'
+				val reduced= LogicSupport.removeSpacesInOperand(condition)
+				ValidLogic.validLogic(reduced)
+				nextFileScript(  script, filename, reduced)
+			case _=>
+				nextFileScript(  script, filename, "0")
+			}
 		}
-	def extractFilenameAndLogic(line: String):(String,String) ={
+	def extractFilenameAndLogic(line: String): (Option[String],Option[String])  = {
 		line match {
 			case fileNameLogicRegex(name, condition) =>
-					(name,condition)
-			case _=>  (null, null)
+					println("condition=|"+condition+"|")
+					val conditionOption=if(condition==null) None; else Some(condition)
+					(Some(name), conditionOption) 
+			case _=>  (None, None)
 			}
 		}
+	def nextFileScript(script: collection.mutable.ArrayBuffer[String],
+						filename:String,
+						condition:String)={
+		script += "%NextFile"
+		script += "filename\t"+ filename
+		script+=  "condition\t"+condition
+		script += "%%"
+		}
+/*
+def main(argv:Array[String]) {
+	var line= "f myfile    "
+	line= "f myfile"
+	line= "f"
+	line= "f   (1)=(1)  "
+	line="f myfile (1)=(2    "
+	line="f mayfile(1)=(2) "
+	line="f myfile (1)=(2    "
+	line=line.drop(2)
+	var script=collection.mutable.ArrayBuffer[String]()
+		try{
+	nextFileCommand(script, line)
+		} catch{ case e:SyntaxException=> e.syntax_message("line="+line) }
+	script.foreach(println)
+	}
+*/
+	
+
 }

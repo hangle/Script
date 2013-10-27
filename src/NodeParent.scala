@@ -12,10 +12,6 @@
 	firstChild and tail, that support the building of the
 	parents list of children.
 
-	
-
-	element of a linked list (see Link append(...)).
-
 	The root of the structure of linked lists is Notecard.  As a root,
 	Notecard only has children.  Notecard.attach(..) has a match expression
 	to identify Notecard's children (CardSetCmd, NextFileCmd, NotecardTaskCmd)

@@ -17,40 +17,49 @@ object EditScript   {
 	def editScript(script:collection.mutable.ArrayBuffer[String],
 				  condition:String, // logic controlling edit
 				  status:String, // message to user
-				  variable:String)={
+				  dollarVariableOption:Option[String])={
 		script += "%EditNode"
 		script += "condition\t"+condition.trim
 		script += "type\t0"
-		statusAndVariable(script,status,variable)
+		statusAndVariable(script,status,dollarVariableOption)
 		}
 		// Edit with 'number' or 'letter'
 	def numberLetterScript( script:collection.mutable.ArrayBuffer[String],
-						variable:String,
+						variableOption:Option[String],
 						xtype:String,
-						status:String)={
-		var xstatus=status
+						statusOption:Option[String])={
 		script += "%EditNode"
 		script += "condition\t0"
 		script += "type\t"+xtype
+		var xstatus="" 
 		xtype match {
-				case "number" => xstatus="number required"
-				case "letter" => xstatus="letter (non numeric) required"
-				case _=>
-				}
-		statusAndVariable(script,xstatus,variable)
+			case "number" => xstatus="number required"
+			case "letter" => xstatus="letter (non numeric) required"
+			case _=>
+			}
+		statusOption match {
+			case Some(status)=>
+					// override 'number' or 'letter' fixed status msg.
+				xstatus= status
+			case None =>
+				xstatus
+			}
+		statusAndVariable(script,xstatus,variableOption)
 		}
 
 	def statusAndVariable(  script:collection.mutable.ArrayBuffer[String],
 							status:String, 
-							variable:String)={
-		if(status==null || status==" ")
+							variableOption:Option[String])={
+		if(status==" ")
 			script+= "status\t0"
 		else
 			script += "status\t"+status.trim
-		if(variable==null)
-			script += "variable\t0"
-		else
-			script += "variable\t"+variable.trim
+		variableOption match {
+			case Some(variable)=>
+				script += "variable\t"+variable.trim
+			case None=>
+				script += "variable\t0"
+			}
 		script += "%%"
 		}
 }

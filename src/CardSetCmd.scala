@@ -11,7 +11,7 @@ case class CardSetCmd(parameters:List[String])  extends Node with Link with Comm
 	val parent=new NodeParent  //two var variables: firstChild and tail
 			// first child of parent reports its id to the parent.
 			// next siblings reports its id to the prior sibling.
-	def postChild {
+	def postChild { // invoked by 'postIds'.
 						// returns the id (getId) of the very
 						// first child who heads the list of
 						// siblings
@@ -49,8 +49,9 @@ case class CardSetCmd(parameters:List[String])  extends Node with Link with Comm
 			}
 	var rowerNode:RowerNodeCmd= null
 			//  A chain of children are created for the current CardSet instance.
-			//  Reference to the very first child is stored in Parent.fistChild
-			//  Grandchildren (e.g., BoxField) are passed to RowerNode.attach(..).
+			//  Reference to the very first child is stored in Parent.firstChild
+			//  Grandchildren (e.g., BoxField, child of RowerNode) are passed to 
+			//  RowerNode.attach(..).
 	def attach(c:Any) {
 		  c match {
 			case Nil=>
@@ -62,7 +63,7 @@ case class CardSetCmd(parameters:List[String])  extends Node with Link with Comm
 						// its children.
 					rowerNode=rn
 			case gn:GroupNodeCmd =>
-					append(parent, gn)
+					append(parent, gn)  // see Link trait
 			case xn:XNodeCmd=>
 					append(parent, xn)
 			case ass:AssignNodeCmd=>

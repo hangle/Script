@@ -124,7 +124,7 @@ object Assigner  {
 		var line=lineStr
 					// regex= """\s*([$][a-zA-Z0-9-_]+)\s*[=].*""" .r
 					// to extract 'target'.
-					// throws exception when target is null
+					// throws exception when target is empty
 		val target=detectTargetVariable(line)
 		println("Assigner target="+target)
 					// use 'target' size to eliminate 'target' from line

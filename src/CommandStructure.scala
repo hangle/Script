@@ -52,7 +52,7 @@ object CommandStructure  {
 					// calling 'postIds' in each 'xxxCmd' object. Each
 					// object records the id of the object it is linked to.
 		postIdOfNext(cmdVector)  //note. vector does not contain NotecardCmd
-					// diagnostic tool --remove when operational
+					// diagnostic tool --comment out when operational
 //		StructureViewer.viewStructure(notecard)
 		}
 				// All 'cmdVector' objects are passed to the structure root,

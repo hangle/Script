@@ -202,8 +202,8 @@ object NamedEditValidation  {
 				// 'key' and 'edit'.
 		val (key,editCommand)= namedEdit match{ 
 				case namedAndEditRegex(key,edit)=> (key,edit) 
-				case _=> println("namedEditValidation --something wrong here")
-				(null,null)
+				case _=> // println("namedEditValidation --something wrong here")
+					throw new SyntaxException("Edit cmd-- namedEdit syntax error")	
 				}
 				// 'key' found, just add 'editcommand' to class instance
 		if(namedEditMap.contains(key)) {

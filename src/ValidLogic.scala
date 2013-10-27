@@ -74,6 +74,7 @@ object ValidLogic  {
 		if( ! Support.isBalancedParens(logic.toList))
 			throw new SyntaxException("Unbalanced: missing ')' or '(' ")
 				//String "(abc)=($i)and(xyz)" to List((abc),=,($i),and,(xyz) )
+			//println("ValidLogic  logic="+logic)
 		val list=logicStringToListString(logic.trim)
 				//Operators (either relation or and/or) must intercede two variables
 		checkMissingOperator(list) 
@@ -83,34 +84,40 @@ object ValidLogic  {
 		outOfSequenceOperator(list) 
 		list    // (relation), op, (relation), and/or, ....
 		}
-				// Determines if relation operator expression is valid. 
-				// operator examples:  "=", ">=", "!=m" "=ns", "!=nsnc".
-				// "nc" and "ns" are optional tags to qualify the operator.
+	def extractOperatorAndTag(operatorExpression:String): (Option[String],Option[String]) = {
+		operatorExpression match {
+			case gestaltRegex(x,y)=>
+					//println("ValidLogic x="+x+"  y="+y)
+				        val tagOption=	if(y==null) None; else Some(y)
+					(Some(x) ,tagOption)
+			case relationOperatorRegex(a,b)=> 
+					println("ValidLogic a="+a+"  b="+b)
+				        val tagOption=	if(b==null) None; else Some(b)
+					(Some(a) ,tagOption)
+			case _=> (None,None)
+			}
+		
+		}
+		// Determines if relation operator expression is valid. 
+		// operator examples:  "=", ">=", "!=m" "=ns", "!=nsnc".
+		// "nc" and "ns" are optional tags to qualify the operator.
 	def validateRelationOperator(operatorExpression:String):Boolean={
-		//println("ValidLogic operatorExpression="+operatorExpression)
-		val (op,tag)=operatorExpression match {
-				case gestaltRegex(x,y)=>
-						//println("ValidLogic x="+x+"  y="+y)
-						(x,y)
-				case relationOperatorRegex(a,b)=> 
-						//println("ValidLogic a="+a+"  b="+b)
-						(a,b)
-				case _=> (null,null)
-				}
-		//println("ValidLogic op="+op)
-		if(op==null) println("ValidLogic op is null")
-		if(op==null)
-		        throw new SyntaxException(operatorExpression+" not valid operatorx")
-		if(com.script.Support==null) println("ValidLogic Support is null")
-		if( ! com.script.Support.isRelationOperator(op) && ! op.contains("%"))
-		        throw new SyntaxException(op+" not valid relation operator")
-		if(tag != null)
-				validateQualifier(tag)
+		val (opOption,tagOption)= extractOperatorAndTag(operatorExpression)
+		opOption match {
+			case Some(op)=>
+				if( ! Support.isRelationOperator(op) && ! op.contains("%"))
+					throw new SyntaxException(op+" not valid relation operator")
+			case None=> 
+				throw new SyntaxException(operatorExpression+" not valid operatorx")
+			}
+		if(tagOption != None)
+				validateQualifier(tagOption.get)
 		true
 		}
+		// validate 'nc', 'ns',  '1s'
 	def validateQualifier(tag:String)={
-		//println("ValidLogic validateQua... tag="+tag)
 				// Add letter pairs 'nc','ns',1s' to List[String]
+		println("ValidLogic: tag="+tag)
 		LogicSupport.parseQualifiers(tag)
 				// No spaces and one space is inconsistent
 		LogicSupport.inconsistentQualifier(tag)
@@ -118,9 +125,8 @@ object ValidLogic  {
 	def isRelationElement(c:Char):Boolean={
 		operators.contains(c)
 		}
-             //If two variables are detected without an
+             //Exception if two variables are detected without an
              //intervening operator (either logic or relation), 
-			 //then throw exception
     def checkMissingOperator(list: List[String]) {
         var isVariable=true  // first list element must be a variable
         list.foreach(x=>{
