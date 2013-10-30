@@ -3,29 +3,27 @@
 		The 'c' statement may have:
 				name of card
 				condition such as '(1)=($one)'
-		CardScript wa
 */
 package com.script
 
 object CardScript   {
 
-	val blank="0"
 	def cardScript(script:collection.mutable.ArrayBuffer[String], 
-				   name:String, 
-				   condition:String) ={
-		script +="%CardSet"     // was %Card but CreateClass match failed to recognize it
-		if(name == null )
-				script += "name\t	"+blank
-		  else
-				script +="name\t"+ name
-		if(condition==null) {
-				script += "condition\t	"+ blank
-				script +="%%"   //end of Card script
+				   nameOption:Option[String], 
+				   conditionOption:Option[String]) ={
+		script +="%CardSet"  
+		nameOption match {
+			case Some(name)=>
+				script += "name\t"+name
+			case None =>
+				script += "name\t0"
 				}
-		  else  {
+		conditionOption match {
+			case Some(condition) =>
 				script +="condition\t"+condition
-				script +="%%"   //end of Card script
+			case None=>
+				script += "condition\t0"
 				}
-//		println("CardScript:  |"+name+"|")
+		script +="%%"   //end of Card script
 		}
 }

@@ -12,11 +12,12 @@ case class DisplayVariableCmd(parameters:List[String])   extends Node with Link 
 		override def toString="DisplayVariableCmd"
 
 	def postNextSibling {
-			if(getNext !=null) {
-				idNextSibling=getNext.getId
+			if(getNext !=None) {
+				idNextSibling=getNext.get.getId
 				}
 		}
-				
+			// 'CommandStructure' iterates 'cmdVector' to invoked 'postIds' in
+			// all 'xxxCmd' instances. 
 	def postIds {postNextSibling }
 	def showPost { println("DisplayVariable: id="+id+" 	next="+idNextSibling)		}
 	def loadStruct( struct:scala.collection.mutable.ArrayBuffer[String]) {

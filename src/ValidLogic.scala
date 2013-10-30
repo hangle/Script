@@ -91,7 +91,7 @@ object ValidLogic  {
 				        val tagOption=	if(y==null) None; else Some(y)
 					(Some(x) ,tagOption)
 			case relationOperatorRegex(a,b)=> 
-					println("ValidLogic a="+a+"  b="+b)
+					//println("ValidLogic a="+a+"  b="+b)
 				        val tagOption=	if(b==null) None; else Some(b)
 					(Some(a) ,tagOption)
 			case _=> (None,None)

@@ -15,9 +15,9 @@ case class CardSetCmd(parameters:List[String])  extends Node with Link with Comm
 						// returns the id (getId) of the very
 						// first child who heads the list of
 						// siblings
-			if(parent.getFirstChild != null) {  // check if child hold linkage
+			if(parent.getFirstChild != None) {  // check if child hold linkage
 						// idChild is Node's symbolic address of parent's 1st child
-				idChild=parent.getFirstChild.getId  // converts Node to symbolic addr
+				idChild=parent.getFirstChild.get.getId  // converts Node to symbolic addr
 				}	
 			}
 			// CardSet is in a linked list whose parent is Notecard
@@ -30,9 +30,9 @@ case class CardSetCmd(parameters:List[String])  extends Node with Link with Comm
 						// 'getNext' references the next
 						// child in the linked list of siblings, 
 						// returning its id (getIt)
-			if(getNext !=null) {
+			if(getNext !=None) {
 						//idNextSibling is Node's symbolic addr of next sibling
-				idNextSibling=getNext.getId  
+				idNextSibling=getNext.get.getId  
 				}
 		}
 			//Card or CardSetCmd is both a parent as well as a child of

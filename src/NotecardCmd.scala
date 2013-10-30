@@ -29,8 +29,8 @@ case class NotecardCmd(parameters:List[String]) extends Node with Link with Comm
 			// 'firstChild'.  Subsequent children are assigned to 'tail' and
 	val parent=new NodeParent   // Root node of NotecardCmd children
 	def postChild {
-			if(parent.getFirstChild != null) {
-				idChild=parent.getFirstChild.getId   //see Link
+			if(parent.getFirstChild != None) {
+				idChild=parent.getFirstChild.get.getId   //see Link
 				}
 			}
 			// Since NotecardCmd is the root of the structure of linked lists, then

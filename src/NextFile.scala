@@ -44,7 +44,7 @@ object NextFile  {
 	def extractFilenameAndLogic(line: String): (Option[String],Option[String])  = {
 		line match {
 			case fileNameLogicRegex(name, condition) =>
-					println("condition=|"+condition+"|")
+					//println("condition=|"+condition+"|")
 					val conditionOption=if(condition==null) None; else Some(condition)
 					(Some(name), conditionOption) 
 			case _=>  (None, None)

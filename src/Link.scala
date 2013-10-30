@@ -27,6 +27,25 @@ package com.server
 trait Link  {
 
 	def append(parent:NodeParent, node:Node) {
+		parent.firstChild match {
+					// child, other than 1st, added to 'parent.tail'.
+			case Some(notUsed)=>
+					// save 'tail' before it is replaced with the 'new tail'.
+			//	var hold:Option[Node]=parent.tail
+				var hold=parent.tail.get
+					// 'new node' becomes end of list.
+				parent.tail=Some(node)
+					// 'next' is a node of every linked list instance (see Node trait).
+					// Thus, every instance has a reference to its "next" sibling or end of list. 
+				hold.next=Some(node)
+
+					//1st child saved.
+			case None =>
+				parent.firstChild=Some(node)
+				parent.tail=Some(node)
+			}	
+		}
+	/*
 		if(parent.firstChild==null) {
 			parent.firstChild= node;
 			parent.tail=node
@@ -46,6 +65,26 @@ trait Link  {
 						
 			}
 		}
+*/
+
+	var value:Option[Node]=None
+	def Value=value.get
+			// 'iterate' begins with the 1st child
+	def reset(parent:NodeParent) {iterator=parent.firstChild}
+	var iterator:Option[Node]=None
+	def iterate= {
+		iterator match {
+			case None =>
+				false
+			case Some(xiterator) =>
+				value=iterator
+				//iterator= iterator.next
+				iterator= xiterator.next
+				true
+			}
+		}
+
+/*
 			// code needed for StructureView a utility module
 	var iterator:Node=null
 	var value:Node=null
@@ -60,4 +99,5 @@ trait Link  {
 			true
 			}
 		}
+*/
 }

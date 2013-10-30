@@ -25,15 +25,18 @@ trait Node  {
 			// Used in Link append(..) to capture the reference of next 
 			// child. When a new child is appended to the list, it is also
 			// stored in 'next' of the prior child.
-	var next:Node=null
+	//var next:Node=null
+	var next:Option[Node]=None
 	def getId={id }
-	def getNext={next }
+	//def getNext={next }
+	def getNext:Option[Node]={next }
 			// After CommandLoader creates "xxxCmd" objects, it invokes this 
 			// function for every object having Node. The
 			// 1st Node's id is assigned 2001, the next 2002, and so one providing each
 			// node with a unique symbolic address. 
 	def storeIdInNode(idx:Int) { id=idx }
-								// abstract method
+			// abstract method in xxxCmd classes.  Invoked in
+			// CommandToFile:createStructureFile to iterate 'coreVector'.
 	def loadStruct( struct:scala.collection.mutable.ArrayBuffer[String]) : Unit
 	def loadParametersWithParent(struct:scala.collection.mutable.ArrayBuffer[String],
 								 parameters:List[String]) {
@@ -50,7 +53,7 @@ trait Node  {
 		struct+= "sibling\t"+idNextSibling.toString
 		parameters.tail.foreach( struct+= _ )
 		}
-			// Notecard is a special case in that it does not have siblings
+			// Notecard does not have siblings, only has children.
 	def loadParametersInNotecard(struct:scala.collection.mutable.ArrayBuffer[String],
 								parameters:List[String]) {
 		struct+= parameters.head 	// %<name of class>  i.e., %NotecardCmd

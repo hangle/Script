@@ -15,11 +15,11 @@ case class RowerNodeCmd(parameters:List[String])   extends Node with Link with C
 			// The very first RowerNode child is stored as a parent
 			// element. 
 	def postChild {
-			if(parent.getFirstChild != null) {
+			if(parent.getFirstChild != None) {
 						// returns the id (getId) of the very
 						// first child who heads the list of
-						// siblings
-				idChild=parent.getFirstChild.getId
+						// siblings (see NodeParent)
+				idChild=parent.getFirstChild.get.getId
 				}
 			}
 			// RowerNode is in a linked list whose parent is
@@ -29,13 +29,15 @@ case class RowerNodeCmd(parameters:List[String])   extends Node with Link with C
 			// and extracts its symbolic address (getIt) and assigns it
 			// to Node. idNextSibling.
 	def postNextSibling {
-			if(getNext !=null) {
+			if(getNext !=None) {
 						// 'getNext' references the next
 						// child in the linked list of siblings, 
 						// returning its id (getIt)
-				idNextSibling=getNext.getId
+				idNextSibling=getNext.get.getId
 				}
 		}
+			// 'CommandStructure' iterates 'cmdVector' to invoked 'postIds' in
+			// all 'xxxCmd' instances. 
 	def postIds {
 		postNextSibling
 		postChild

@@ -141,12 +141,12 @@ object EditCommand  {
 		line match {
 			case numberLetterRegex(xtype, statusTag)=> 
 						// remove 'status='
-				println("EditCommand extractNumber--  statusTag="+statusTag)
+				//println("EditCommand extractNumber--  statusTag="+statusTag)
 				if(statusTag.trim.size> 0) {
 					if( ! statusTag.contains("status=") )
 						throw new SyntaxException("message lacks 'status=' tag")
 					val statusMsg=statusTag.drop(statusTag.indexOf('=')+1)  
-					println("EditCommand statusMsg="+statusMsg)
+					//println("EditCommand statusMsg="+statusMsg)
 					(Some(xtype), Some(statusMsg) )
 					}
 				  else
@@ -170,7 +170,7 @@ object EditCommand  {
 		//		and status='status=msg'
 	def extractConditionOnly(line:String): (Option[String], Option[String]) ={
 		
-		println("line="+line)
+		//println("line="+line)
 		line match {
 			case conditionRegex(condition) => (Some(condition),None)
 			case _=>(None,None)

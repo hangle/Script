@@ -24,8 +24,8 @@ import scala.collection.mutable.Map
 
 class NodeParent {
 
-	var firstChild:Node=null;  //first firstChild. if null, then list is empty.
-	var tail:Node=null;   //each new firstChild is added to the 'tail'.
+	var firstChild:Option[Node]=None;  //first firstChild. if null, then list is empty.
+	var tail:Option[Node]=None;   //each new firstChild is added to the 'tail'.
 	
 	def getFirstChild=firstChild
 	}	

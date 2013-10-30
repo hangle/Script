@@ -12,10 +12,12 @@ case class NextFileCmd(parameters:List[String]) extends Node with Link  with Com
 			// and extracts its symbolic address (getIt) and assigns it
 			// to Node. idNextSibling.
 	def postNextSibling {
-			if(getNext !=null) {
-				idNextSibling=getNext.getId
+			if(getNext !=None) {
+				idNextSibling=getNext.get.getId
 				}
 		}
+			// 'CommandStructure' iterates 'cmdVector' to invoked 'postIds' in
+			// all 'xxxCmd' instances. 
 	def postIds { postNextSibling }
 	def showPost { println("NextFile: id="+id+"   next="+idNextSibling)}	
 			// 'parameters' were assigned when object was instantiated

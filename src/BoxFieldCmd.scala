@@ -8,8 +8,8 @@ case class BoxFieldCmd(parameters:List[String])  extends Node with Link with Com
 
 	val parent=new NodeParent  // var frirstChild and var tail
 	def postChild {
-			if(parent.getFirstChild != null) {
-				idChild=parent.getFirstChild.getId
+			if(parent.getFirstChild != None) {
+				idChild=parent.getFirstChild.get.getId
 				}
 			}
 			// BoxField is in a linked list whose parent is
@@ -19,10 +19,12 @@ case class BoxFieldCmd(parameters:List[String])  extends Node with Link with Com
 			// and extracts its symbolic address (getIt) and assigns it
 			// to Node. idNextSibling.
 	def postNextSibling {
-			if(getNext !=null) {
-				idNextSibling=getNext.getId
+			if(getNext !=None) {
+				idNextSibling=getNext.get.getId
 				}
 		}
+			// 'CommandStructure' iterates 'cmdVector' to invoked 'postIds' in
+			// all 'xxxCmd' instances. 
 	def postIds {
 		postNextSibling
 		postChild

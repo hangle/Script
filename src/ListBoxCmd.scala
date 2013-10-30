@@ -8,15 +8,17 @@ case class ListBoxCmd(parameters:List[String])  extends Node with Link with Comm
 
 	val parent=new NodeParent  // var frirstChild and var tail
 	def postChild {
-			if(parent.getFirstChild != null) {
-				idChild=parent.getFirstChild.getId
+			if(parent.getFirstChild != None) {
+				idChild=parent.getFirstChild.get.getId
 				}
 			}
 	def postNextSibling {
-			if(getNext !=null) {
-				idNextSibling=getNext.getId
+			if(getNext !=None) {
+				idNextSibling=getNext.get.getId
 				}
 		}
+			// 'CommandStructure' iterates 'cmdVector' to invoked 'postIds' in
+			// all 'xxxCmd' instances. 
 	def postIds {
 		postNextSibling
 		postChild
