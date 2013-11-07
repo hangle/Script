@@ -53,7 +53,7 @@ object IniFile  {
 								// ignore blank lines in .ini file
 					if(FilterScript.isNotBlankLine(e)) {
 						val (key,value)=extractKeyAndValue(e)
-						//println("IniFile: key="+key+"  value="+value)
+						println("IniFile: key="+key+"  value="+value)
 						validateIniKeys(key, overrideSetting)
 						validateIniValue(key,value)
 						overrideSetting +=(key->value) 

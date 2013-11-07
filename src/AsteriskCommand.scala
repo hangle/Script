@@ -97,6 +97,7 @@ object AsteriskCommand  {
 					// to overrideSetting Map. If .ini file not found, the Map is not
 					// changed. Note: 'ini' files may be in multiple locations.
 			overrideSetting=IniFile.iniFile(scriptFilename, overrideSetting)
+			overrideSetting.foreach(x=> println("AsteriskCommand  "+x._1+"   "+x._2)  )
 
 			}
 				// Invoked by ParserValidator.distributeCommandsToMaker.
