@@ -15,9 +15,9 @@ def main(argv:Array[String]) {
 			filename.drop(filename.indexOf(".nc") )
 		println("----tst input file="+filename+"------")
 					//println("----- ---ParserValidator-------")
-		com.script.ParserValidator.parserValidator(filename+".nc")
+		val script=com.script.ParserValidator.parserValidator(filename+".nc")
 					//println("-----------BuildStructure---------------")
-		com.server.BuildStructure.buildStructure(filename+".command")
+		com.server.BuildStructure.buildStructure(filename+".command", script)
 		}	
 	}
 

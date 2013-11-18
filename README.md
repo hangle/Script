@@ -7,7 +7,7 @@ set of script commands.</p>
 
 <p>The 'script' program validates the script's command-syntax whose file extension 
 is '.nc'.  The program's  output file has the extension '.struct'.   The '.struct' <br />
-file  is the input argument to the Notecard program.</p>
+file  is the input argument to the Notecard program (see Notecard repository).</p>
 
 <p>In the Script program, a command syntax error causes the command line to be <br />
 displayed along with  a brief description of the error. In the event of an error, <br />
@@ -25,11 +25,15 @@ the 'd' command variable is missing the $ symbol (i.e., $age):  </p>
 
 <h2>Run example (src directory):  </h2>
 
-<pre>
-        scala script demo/card  
+<p>Execution of 'script', scala's main program, executes the Script program. <br />
+The 'demo' directory holds script that demonstrates the capabilities of the Notecard
+commands.  The file 'card.nc' is the start file of the demonstration.</p>
 
-                             '// demo' is the directory conatining 'card.nc'
-</pre>
+<pre><code>    scala script demo/card
+</code></pre>
+
+<p>The directory 'test' contains script files that perform systematic test of the
+script command types.  </p>
 
 <h2>Compilation (src directory):</h2>
 

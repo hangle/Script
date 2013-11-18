@@ -24,7 +24,7 @@ package com.script
 import collection.mutable.Map
 
 object ParserValidator  {
-	def parserValidator(filename:String) ={
+	def parserValidator(filename:String):collection.mutable.ArrayBuffer[String] ={
 				// Used by DisplayCommand to assign column and
 				// row position to the display line. CardCommand
 				// initializes the col/row values of this object
@@ -43,8 +43,7 @@ object ParserValidator  {
 				//			drop indentation of a line
 				//			validate command symbol,e.g., d (display command)
 		val filteredList=readAndFilterScriptFile(filename)
-				// Scan entire '*.nc' file for special processing of
-				// Edit-NamedEdit command and * <appearance> commands.
+
 		val overrideMap= AsteriskCommand.getOverrideSetting  
 				// Read entire '*.nc' file to process '* Asterisk Appearance' commands as
 				// well as NamedEdit Edit commands. 
@@ -66,6 +65,7 @@ object ParserValidator  {
 			}catch{ case e:SyntaxException=> e.syntax_message("line="+lineException) }
 				// Script output to <filename>.command.
 		WriteScriptFile.writeScriptFile(script,filename)
+		script
 		//dumpScript(script)
 		}
 				// Instead of processing one line at a time, the entired '*.nc" file

@@ -34,14 +34,14 @@ import java.io._
 
 object BuildStructure   {
 				// <filename> is name of '*.nc' file minus the '.nc' extension.
-	def buildStructure(filename:String) ={
+	def buildStructure(filename:String, script:collection.mutable.ArrayBuffer[String]) ={
 				try {
 			// Load server *.command into List[List[String]]
 		val struct=scala.collection.mutable.ArrayBuffer[String]()
 				// read the '.command' file.  Lines beginning with % lines up
 				// to the %% line are put into a list and assigned to a common 
 				// list 'sets'.
-		val sets=StructScript.structListList(filename)
+		val sets=StructScript.structListList(filename, script)
 				// '%<class-name>' used to instantiate the class instances of 'xxxCmd'.
 				// Argument values are assigned to the parameters of 'xxxCmd' instances
 				// 'coreVector' is list of all 'xxxCmd' instances. 

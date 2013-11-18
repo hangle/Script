@@ -37,11 +37,12 @@ package com.server
           import scala.io._
           import java.io._
 object StructScript   {
-
-	def structListList(filename:String):List[List[String]]={
-		val list= scriptFile(filename)
+			// Invoked in BuildStructure
+	def structListList(filename:String, script:collection.mutable.ArrayBuffer[String]):
+																	List[List[String]]={
+//		val list= scriptFile(filename)
 					//correct Script to eliminate this operation
-		structsToClassSets(list).reverse	
+		structsToClassSets(script.toList).reverse	
 		}
 	def scriptFile(filename:String):List[String] ={
 		if( ! com.script.SupportFile.isFile(filename)) {

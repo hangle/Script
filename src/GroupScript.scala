@@ -10,7 +10,7 @@ object GroupScript   {
 					elseTag:String,
 					condition:String)={
 		script += "%GroupNode"
-		script += "name\t"
+		script += "name\t	0"
 		if(condition=="") {
 				script += "condition\t0"
 				}

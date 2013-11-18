@@ -34,10 +34,7 @@ object GroupCommand  {
 
 	def groupCommand(script:collection.mutable.ArrayBuffer[String],
 					 line: String)={
-		println("GroupCommand: line="+line)
 		val (elseTag,condition)=extractElseAndLogic(line)
-		println("GroupCommand: elseTag="+elseTag)
-		println("GroupCommand: condition="+condition)
 		if( !(elseTag ==null || elseTag =="e" ) )
 			throw new SyntaxException("letter following 'g' is not 'e'")
 		if(condition !=null) {

@@ -1,5 +1,7 @@
 
 /* 6/3/13				INI FILE
+	Collaborates with 'AsteriskCommand'.
+	
 	The file 'appearance.ini' has key/values that are 
 	assigned to AsteriskCommand.overrideSetting Map.
 
