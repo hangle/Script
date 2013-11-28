@@ -16,7 +16,7 @@ case class DisplayTextCmd(parameters:List[String])   extends Node with Link with
 	def postIds {postNextSibling }
 	def showPost { println("DisplayText: id="+id+" 	next="+idNextSibling)		}
 	def loadStruct( struct:scala.collection.mutable.ArrayBuffer[String]) {
-			loadParametersWithNode(struct, parameters)
+			loadParametersWithNode(struct, parameters)  // Node function.
 			}
 
 

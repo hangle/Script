@@ -1,4 +1,4 @@
-/* date:   Jan 12, 2012		server.vim
+/* date:   Jan 12, 2012		
 
 						COMMAND TO FILE
 	'parameters' were assigned when object was instantiated by'CommandLoader'.

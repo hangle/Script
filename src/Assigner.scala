@@ -59,8 +59,11 @@ object Assigner  {
 	var simpleSource=false   // Indicates text assignemnt to target--not math
 
 	def assignerCommand(script: collection.mutable.ArrayBuffer[String],
-						line: String)={
-	//					addressor:Addressor) = {
+						line: String,
+								// 'kind' equals "a" or "+" to distinguish an
+								// Assign command that belongs to either
+								// CarsSet parent or LoadDictionary parent.
+						kind: String)={
 		val (target,source,condition)=parseAssignerCommand(line)
 					// Check math syntax and missing 'if' tag
 		validateSourceExpression(source)
@@ -68,18 +71,22 @@ object Assigner  {
 		if(conditionPresent) {
 			val reduced=LogicSupport.removeSpacesInOperand(condition)
 			ValidLogic.validLogic(reduced)	
-			AssignerScript.assignerScript(script, 
+			AssignerScript.assignerScript(
+						script, 
 						target,       // includes '$' symbol via 'targetRegex'
 						simpleSource, // text assignment and not math
 						source,   // item to be assigned to target
-						reduced)
+						reduced,  // conditional expression
+						kind)    //either "a" or "+"
 			}
 		  else
-				AssignerScript.assignerScript(script, 
+				AssignerScript.assignerScript(
+						script, 
 						target,       // includes '$' symbol via 'targetRegex'
 						simpleSource, // text assignment and not math
 						source,   // item to be assigned to target
-						condition)  // condition equals ""
+						condition, // condition equals ""
+						kind)     //either "a" or "+"
 		}
 			//raise exception if 'if' tag is missing. 
 	def testForMissingIfTag(line:String) ={
@@ -126,7 +133,6 @@ object Assigner  {
 					// to extract 'target'.
 					// throws exception when target is empty
 		val target=detectTargetVariable(line)
-		println("Assigner target="+target)
 					// use 'target' size to eliminate 'target' from line
 		line=removeTargetFromLine(target, line)
 					// use '=' to shorten line and throw exeception if '=' is missing.

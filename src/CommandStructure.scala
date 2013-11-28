@@ -1,6 +1,6 @@
-/* date:   Jan 8, 2012			server.vim
-
- 						COMMAND STRUCTURE of Linked Lists
+/* date:   Jan 8, 2012			
+								COMMAND STRUCTURE  invoked by BuildStructure
+						of Linked Lists
 	The root of this structure is Notecard.  It is the parent of:
 		NextFile
 		NotecardTask
@@ -41,7 +41,8 @@ package com.server
 object CommandStructure  {
 				// 'cmdVector' is a list of all objects created by
 				// 'CommandLoader.createObject'.
-	def buildStructure( cmdVector: List[Any]) {
+	//def buildStructure( cmdVector: List[Any]) {
+	def useNotecardObjectToAttach( cmdVector: List[Any]) {
 					// first element is root of linked list hierarchy	
 		val notecard=cmdVector.head.asInstanceOf[NotecardCmd]
 					// build a hierarchy of linked lists.  '<xxx>Cmd'

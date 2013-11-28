@@ -8,7 +8,7 @@
 	NodeParent elements (firstChild, tail) consist of references.
 
 	Prior to creating the linked list structure, CommandLoader assigned a
-	unique integer value to 'id'. 
+	unique integer value to 'id' (symbolic address). 
 */
 package com.server
 import scala.collection.mutable.Map

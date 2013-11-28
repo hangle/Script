@@ -42,7 +42,6 @@ case class RowerNodeCmd(parameters:List[String])   extends Node with Link with C
 		postNextSibling
 		postChild
 		}
-//	def showPost { println("RowerNode: id="+id+"  child="+idChild+"  next="+idNextSibling) }
 			// 'parameters' were assigned when object was instantiated by 'CommandLoader'.
 			// These parameters are loaded by CommandToFile (following CommandStructure)
 	def loadStruct( struct:scala.collection.mutable.ArrayBuffer[String]) {
@@ -63,7 +62,7 @@ case class RowerNodeCmd(parameters:List[String])   extends Node with Link with C
 					append(parent, bf)
 						// BoxField is a parent of EditNode childreBn
 					holdBoxField=bf     
-				case _=> 
+			case _=> 
 							//'d' cmd must have a field expression (# $<variable>) to
 							// serve as a parent to one or more 'e' cnd children.
 					if(holdBoxField==null) {

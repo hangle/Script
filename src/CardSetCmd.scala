@@ -8,16 +8,16 @@ case class CardSetCmd(parameters:List[String])  extends Node with Link with Comm
 			// 'attach()' loads etiher 'firstChild' or 'tail' with a child object.
 			// The very first child is assigned to 'firstChild'.  The second child
 			// is assigned to 'tail'.  
-	val parent=new NodeParent  //two var variables: firstChild and tail
+	val cardSetParent=new NodeParent  //two var variables: firstChild and tail
 			// first child of parent reports its id to the parent.
 			// next siblings reports its id to the prior sibling.
 	def postChild { // invoked by 'postIds'.
 						// returns the id (getId) of the very
 						// first child who heads the list of
 						// siblings
-			if(parent.getFirstChild != None) {  // check if child hold linkage
+			if(cardSetParent.getFirstChild != None) {  // check if child hold linkage
 						// idChild is Node's symbolic address of parent's 1st child
-				idChild=parent.getFirstChild.get.getId  // converts Node to symbolic addr
+				idChild=cardSetParent.getFirstChild.get.getId  // converts Node to symbolic addr
 				}	
 			}
 			// CardSet is in a linked list whose parent is Notecard
@@ -58,18 +58,18 @@ case class CardSetCmd(parameters:List[String])  extends Node with Link with Comm
 					// Include RowerNode as a child of CardSet.
 			case rn:RowerNodeCmd =>
 						 //	println("CardSetCmd:  rowerNodeCmd")
-					append(parent, rn) //RowerNodeCmd is child of parent
+					append(cardSetParent, rn) //RowerNodeCmd is child of parent
 						// establish a path to 'rowerNode.attach(..)' for
 						// its children.
 					rowerNode=rn
 			case gn:GroupNodeCmd =>
-					append(parent, gn)  // see Link trait
+					append(cardSetParent, gn)  // see Link trait
 			case xn:XNodeCmd=>
-					append(parent, xn)
+					append(cardSetParent, xn)
 			case ass:AssignNodeCmd=>
-					append(parent,ass)
+					append(cardSetParent,ass)
 			case fnt:FrameNodeTaskCmd=>
-					append(parent, fnt)
+					append(cardSetParent, fnt)
 			case _=> 
 						// path for rowerNode children as well as grandchildren
 					rowerNode.attach(c)

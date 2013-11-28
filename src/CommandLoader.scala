@@ -4,9 +4,8 @@
 
 		'BuildStructure' invokes 'CommandLoader.createNotecardObjects()'
 
-		 The .command file is passed to 'percentCommandsToObjects()' 
-		in the form of List[List[String]] where each sublist 
-		List[String] is the parameters of a card object.  
+		List[List[String]] contains the sublist 
+		List[String] of parameters for a structure object.
 		 The 1st element of the sublist is the name of the object 
 		(e.g,, Notecard, CardSet, RowerNode). The name is used
 		to instantiate the object. Note, when the object is 
@@ -27,7 +26,7 @@
 package com.server
 
 object CommandLoader {
-
+			// Invoked by BuildStructure
 	def	createNotecardObjects(sets:List[List[String]]): (List[Any])={
 
 		val allCardSets=sets
@@ -38,11 +37,14 @@ object CommandLoader {
 		createIdsInNodes(coreVector) 
 		coreVector
 		}
-				// Example:  "%Notecard" cmd creates NotecardCmd object
+				// "%<class name>" cmd creates <className>Cmd object
+				// that are collected by 'coreVector' (List[Any]).
 	def percentCommandsToObjects( allStructSets:List[List[String]]):List[Any]={
 		var obj:Any=None
 		var  coreVector=List[Any]()
 		for(commandSet <-allStructSets) {
+		//		println("CommandLoader: -----------------------")
+	//		commandSet.foreach(x=> println("\tCommandLoader: x="+x)) 
 							//instantiates object and pass parameters List.
 			obj=createObject( commandSet) 
 							//build object list
@@ -59,13 +61,12 @@ object CommandLoader {
 					//		%%
 					// 'height', 'width', 'font_size' are %Notecard's 'commandSet'.
 	def createObject(commandSet:List[String]):Any = {
+//	println("CommandLoader:   commandSet.head="+commandSet.head)
 		commandSet.head match{   
 			case "%Notecard"=>  NotecardCmd(commandSet)
 			case "%CardSet"=>CardSetCmd(commandSet) // support Java version
 			case "%DisplayText"=>DisplayTextCmd(commandSet)
-			case "%BoxField"=> 
-							//println("CommandLoader box field =====>")
-							BoxFieldCmd(commandSet)
+			case "%BoxField"=> BoxFieldCmd(commandSet)
 			case "%NotecardTask"=>NotecardTaskCmd(commandSet)
 			case "%NextFile"=> NextFileCmd(commandSet)
 			case "%RowerNode"=>RowerNodeCmd(commandSet)
@@ -73,16 +74,15 @@ object CommandLoader {
 			case "%CardSetTask"=>FrameNodeTaskCmd(commandSet)
 			case "%AssignerNode"=>AssignNodeCmd(commandSet)
 			case "%XNode"=> XNodeCmd(commandSet)
-	//		case "%Relation"=> RelationLogic(commandSet)
-	//		case "%MatchNode"=> MatchNodeLogic( commandSet)
 			case "%DisplayVariable"=> DisplayVariableCmd(commandSet)
 			case "%EditNode"=> EditNodeCmd(commandSet)
-
+			case "%LoadDictionary"=> LoadDictionaryCmd(commandSet)
+			case "%LoadAssign" => LoadAssignCmd(commandSet)
 			case _=> println("CommandLoader: unknow obj="+commandSet.head);null
 			}
 		}
 						// All 'xxxCmd' objects are given a
-						// unique id value.  
+						// unique id value as a symbolic address.  
 	def createIdsInNodes(coreVector:List[Any]) = {
 		var id=2000	
 		for(c <- coreVector) {

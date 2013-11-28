@@ -17,7 +17,6 @@ case class AssignNodeCmd(parameters:List[String])   extends Node with Link with 
 	def postIds {postNextSibling }
 	def showPost { println("AssignNodeCmd: id="+id+" 	next="+idNextSibling)		}
 	def loadStruct( struct:scala.collection.mutable.ArrayBuffer[String]) {
-			println("AssignNodeCmd  loadStruct()")
 			loadParametersWithNode(struct, parameters) // see Node
 			}
 
