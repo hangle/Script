@@ -66,7 +66,8 @@ object Assigner  {
 						kind: String)={
 		val (target,source,condition)=parseAssignerCommand(line)
 					// Check math syntax and missing 'if' tag
-		validateSourceExpression(source)
+		simpleSource=validateSourceExpression(source)
+		println("Assigner:  simpleSource="+simpleSource)
 					// Set 'true' in parseAssignerCommand()
 		if(conditionPresent) {
 			val reduced=LogicSupport.removeSpacesInOperand(condition)
@@ -101,10 +102,12 @@ object Assigner  {
 	def validateSourceExpression(source:String)={
 		throwExceptionIfEmpty(source)
 		if(isMathExpression(source)) {
+		println("Assigner:  is math expression  --yes")
 			MathExprValidator.validate(source)
+			false
 			}
 		 else
-		 	simpleSource=true
+		 	true
 		}
 	def isMathExpression(source:String) ={
 		source match {

@@ -21,10 +21,11 @@ object AssignerScript  {
 				script += "%LoadAssign"
 		script += "target\t"+target
 		script += "source\t"+source  // value to be assigned to 'target'
+		println("AssignerScript   simpleSource="+simpleSource)
 		if(simpleSource==true)
 				script += "special\t"+"simple"
 			else
-				script += "special\t"+""
+				script += "special\t"+"math"
 	//	if(conditionComponents isEmpty) {
 		if(condition=="") {
 				script +="condition\t0"
