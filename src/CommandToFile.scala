@@ -8,9 +8,9 @@ package com.server
 
 object CommandToFile  {
 
-	def createStructFile(coreVector:List[Any],
+	def createStructFile(xxxCmdList:List[Any],
 						 struct:collection.mutable.ArrayBuffer[String]){
-			for(c <- coreVector) {
+			for(c <- xxxCmdList) {
 					val n=c.asInstanceOf[Node]
 					n.loadStruct(struct)
 					}

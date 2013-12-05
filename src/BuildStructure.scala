@@ -1,15 +1,16 @@
 /*
 							BUILD STRUCTURE   invoked by 'script'.
 
-	
-
 	The BuildStructure system creates a linked list structure. 
 	This structure of physical addresses is converted to symbolic
 	addresses that are added to the <xxx>.struct file.  In turn,
-	the Client system converts these addresses to physical ones.
-    Its output file is <xxx>.struct.
+	the Notecard program converts these addresses to physical ones.
 
-	Example of '.command file
+	The 'ParserValidator' object has created 'script' (ArrayBuffer)
+	that 'script' passes to 'BuildStructure.buildStructure(...)'
+
+			script example 
+			--------------
 
 			%Notecard		
 			height  550
@@ -23,11 +24,13 @@
 			%RowerNode
 			row     0
 			column  0
-			%%			
-	.command' lines are put into a common list 'sets', thus
-			val sets=List(List("%Notecard", "height 550", "font_size")
-						  List("%CardSet", "name", "condition"),
-						  List("%RowerNode", "row 0", "column)   )
+			%%	
+
+The script strings are convered to List[List[String]]:
+
+			List(List("%Notecard", "height 550",width=450 "font_size 16", "%%")
+				 List("%CardSet", "name  0", "condition 0", "%%"),
+				 List("%RowerNode", "row 0", "column 0, "%%")   )
 */
 package com.server
 import java.io._
@@ -43,12 +46,12 @@ object BuildStructure   {
 		val sets=StructScript.structListList( script)
 				// '%<class-name>' used to instantiate the class instances of 'xxxCmd'.
 				// Argument values are assigned to the parameters of 'xxxCmd' instances
-				// 'coreVector' is list of all 'xxxCmd' instances. 
-		val coreVector=CommandLoader.createNotecardObjects(sets) 
+				// 'xxxCmdList' is list of all 'xxxCmd' instances. 
+		val xxxCmdList=CommandLoader.createXxxCmdObjects(sets) 
 				// build linked list structure starting with Notecard
-		CommandStructure.useNotecardObjectToAttach(coreVector) 
-				// Iterate 'coreVector' and load parameters for each '<class name>Cmd' object
-		CommandToFile.createStructFile(coreVector, struct)  
+		CommandStructure.useNotecardObjectToAttach(xxxCmdList) 
+				// Iterate 'xxxCmdList' and load parameters for each '<class name>Cmd' object
+		CommandToFile.createStructFile(xxxCmdList, struct)  
 				// output <filename>.struct file
 		com.server.WriteStructureFile.writeStructureFile(struct, filename)
 			}catch{ 

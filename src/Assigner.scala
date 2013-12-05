@@ -67,7 +67,7 @@ object Assigner  {
 		val (target,source,condition)=parseAssignerCommand(line)
 					// Check math syntax and missing 'if' tag
 		simpleSource=validateSourceExpression(source)
-		println("Assigner:  simpleSource="+simpleSource)
+	//	println("Assigner:  simpleSource="+simpleSource)
 					// Set 'true' in parseAssignerCommand()
 		if(conditionPresent) {
 			val reduced=LogicSupport.removeSpacesInOperand(condition)

@@ -1,24 +1,26 @@
 /* date:   Jan 8, 2012			
 								COMMAND STRUCTURE  invoked by BuildStructure
-						of Linked Lists
-	The root of this structure is Notecard.  It is the parent of:
+										of Linked Lists
+
+	The root of this structure is Notecard.  
+	Notecard is the parent of:
 		NextFile
 		NotecardTask
-		Card (CardSet)
-	Card is also a parent of:
+		CardSet
+		Load
+	CardSet is  a parent of:
 		GroupNode
 		XNode
-		FrameNodeTask
+		CardSetTask
 		RowerNode
-	RowerNode is also a parent of
+	RowerNode is  a parent of
 		DisplayText
-		ImageNode
-		ListBox
+		ImageNode (not operational)
+		ListBox (not operational)
 		BoxField
 	Finally, BoxField is a parent of:
 		EditNode
 
-     The first object created from the '.command' file is NotecardCmd.
 	This object is the root of the object structure (structure is 
 	a hierarchy of linked lists). CommandLoader created 'core'-- a 
 	List[Any] of objects. 

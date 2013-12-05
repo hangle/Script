@@ -7,7 +7,6 @@ case class AssignNodeCmd(parameters:List[String])   extends Node with Link with 
 		override def toString="AssignNodeCmd"
 
 	def postNextSibling {
-			//if(getNext !=null) {
 			if(getNext !=None) {
 				idNextSibling=getNext.get.getId
 				}

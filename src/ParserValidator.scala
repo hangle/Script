@@ -60,7 +60,7 @@ object ParserValidator  {
 				lineException=line  
 					// Employees tags (e.g., c,d,a,*,f) to channel Commands to 
 					// associated modules.
-				distributeScriptToMaker(script,line, columnRowCard, overrideMap, filename) 
+				CommandMaker.distributeScriptToMaker(script,line, columnRowCard, overrideMap, filename) 
 				}
 				// Indicate to user a command syntax error. The script line containing
 				// the error is printed along with the description of the error.
@@ -80,48 +80,6 @@ object ParserValidator  {
 				// Read input file
 		val list=ReadScript.readScriptFile(filename)
 		FilterScript.filterScript(list)
-		}
-	def distributeScriptToMaker(script:collection.mutable.ArrayBuffer[String], 
-							 line: String, 
-							 columnRowCard:ColumnRowCard, //positions Display text and fields
-							 overrideMap: Map[String,String],
-							 filename:String) ={
-		val commandTag=line(0)  // tag = 'd','c','f','g','*', 'a', 'x', l
-		val lineMinusTag=line.drop(1) // remove tag
-		commandTag  match {
-			case '*' => 
-					// Parses the command, validates it, then updates
-					// 'overrideMap' with new key value. 
-				AsteriskCommand.asteriskCommand(script,lineMinusTag)
-			case 'a' =>
-						// "a" indicates the command is child of CardSet
-				Assigner.assignerCommand(script,lineMinusTag, "a")
-			case 'd' => 
-				val overrideMap= AsteriskCommand.getOverrideSetting
-				DisplayCommand.displayCommand(
-									  script, 
-									  lineMinusTag.drop(1), //remove space following tag 
-									  columnRowCard, 
-									  overrideMap) 
-			case 'c' => 
-						// 'c' clear command
-				CardCommand.cardCommand(script,lineMinusTag, columnRowCard)
-			case 'e' => 
-				EditCommand.editCommand(script, lineMinusTag) 
-			case 'g' => 
-				GroupCommand.groupCommand(script,lineMinusTag)
-			case 'f' =>
-				NextFile.nextFileCommand(script, lineMinusTag)
-			case 'x' =>
-				XecuteCommand.xecuteCommand(script)
-			case 'l' =>
-				LoadDictionaryCommand.loadDictionaryCommand(script, lineMinusTag, filename)
-			case '+' =>// Assign 'a' commands translated to '+' commandss
-						// argument "+" indicates the command is child of LoadDictionary
-				Assigner.assignerCommand(script,lineMinusTag, "+")
-			case _=> 
-				throw new SyntaxException(commandTag+" is an unknown command tag")
-			}
 		}
 			// utility for viewing output
 	def dumpScript(script:collection.mutable.ArrayBuffer[String]) {

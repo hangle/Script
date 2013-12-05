@@ -25,10 +25,8 @@ trait Node  {
 			// Used in Link append(..) to capture the reference of next 
 			// child. When a new child is appended to the list, it is also
 			// stored in 'next' of the prior child.
-	//var next:Node=null
 	var next:Option[Node]=None
 	def getId={id }
-	//def getNext={next }
 	def getNext:Option[Node]={next }
 			// After CommandLoader creates "xxxCmd" objects, it invokes this 
 			// function for every object having Node. The

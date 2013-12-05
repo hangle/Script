@@ -4,16 +4,16 @@
 		The object records the id of the objects it is
 		linked to.
 
-		Framer only has children and no children so postIds
+		NotecardCmd only has children and no children so postIds
 		will invoke 'postChild', while CardSetCmd, for example, 
 		has children as well as siblings so it inovkes
 		'postChild' and 'postNextSiblings'.
 
 		Files having the Common trait are:
-			AssignNodeCmd	DisplayTextCmd	CardSetCmd	FrameTaskCmd
-			ListBoxCmd		XNodeCmd		BoxFieldCmd		DisplayVariableCmd
-			FrameNodeTaskCmd GroupNodeCmd	NextFileCmd		ChildNodeCmd
-			EditNodeCmd		FramerCmd		ImageNodeCmd	RowerNodeCmd
+			AssignNodeCmd	  DisplayTextCmd	CardSetCmd	   FrameTaskCmd
+			ListBoxCmd		  XNodeCmd		    BoxFieldCmd		DisplayVariableCmd
+			FrameNodeTaskCmd  GroupNodeCmd	    NextFileCmd		ChildNodeCmd
+			EditNodeCmd		  FramerCmd		    ImageNodeCmd	RowerNodeCmd
 		The above .scala files define 'postIds' which invoke 'postNextSibling'.
 		The following files have both 'postChild' and 'postNextSiblings' invoked
 		by 'postIds'.
