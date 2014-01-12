@@ -12,7 +12,7 @@ ParserValidator
 	NamedEditValidation.mapNamedEdits(..)
 	distributeScriptToMaker   (iterates <filename>.nc file)
 		AsteriskCommand
-		Assigner
+		AssignCommand
 		DisplayCommand
 		CardCommand
 		GroupCommand

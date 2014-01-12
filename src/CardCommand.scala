@@ -19,7 +19,9 @@ object CardCommand  {
 
 	def cardCommand(script:collection.mutable.ArrayBuffer[String], 
 					line: String,
-				    columnRowCard:ColumnRowCard)=  {
+				    columnRowCard:ColumnRowCard,
+					kind:String)   // either "CardSet" or "ButtonCardSet"
+								=  {
 				// column and row position values use by the Display
 				// command are cleared at start of each card set.
 		columnRowCard.initialize
@@ -34,36 +36,17 @@ object CardCommand  {
 						// check for valid logic expression 
 						// prevent something like  'c  2)=(1)'
 				ValidLogic.validLogic(reduced)	
-				CardScript.cardScript(script, nameOption, Some(reduced)) 
+				CardScript.cardScript(script, nameOption, Some(reduced), kind) 
 			case None=>
 				if(line.indexOf( '(') != -1)
 					throw new SyntaxException(" '(' detected but not logic expression")
-				CardScript.cardScript(script, nameOption, conditionOption) 
+				CardScript.cardScript(script, nameOption, conditionOption, kind) 
 			}
 
 		}
-				
-/*
-		if(condition !=null) { 
-						// drop spaces in the operands of condition. 
-						// thus  (abc)  = nc ($x) becomes (abc)=nc($x)
-				val reduced= LogicSupport.removeSpacesInOperand(condition)
-						// check for valid logic expression 
-						// prevent something like  'c  2)=(1)'
-				ValidLogic.validLogic(reduced)	
-				CardScript.cardScript(script, name, reduced) 
-				}
-			else if(line.indexOf( '(') != -1)
-				throw new SyntaxException(" '(' detected but not logic expression")
-			else		// command lacks logic condtion
-				CardScript.cardScript(script, name, condition) 
-		}
-*/
 	def	extractNameAndCondition(line:String):(Option[String], Option[String])={
 		line match {
 			case nameLogicRegex(name, condition)=> 
-					//if(name==null) println("CardCommand: name is NULL")
-					//if(condition==null) println("CardCommand: condition is NULL")
 					val conditionOption=if(condition!=null) Some(condition); else None
 					val nameOption= if(name !=null) Some(name); else None
 					(nameOption,conditionOption)

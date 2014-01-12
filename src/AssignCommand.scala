@@ -1,20 +1,21 @@
  /*
  date:   Sep 2, 2012
+ 						ASSIGN COMMAND   (was Assigner.scala)
    
-		The Assigner command tag is 'a'.  This command assign a
+		The Assign command tag is 'a'.  This command assign a
 		text string to a $<variable> or performs a math operation
 		whose result is assigned to a $<variable>. 
 		Examples:
 				a $abc=now is the time
 				a $abc=$abc + 1
-		The Assigner command may have an optional conditional expression.
+		The AssignCommand may have an optional conditional expression.
 		Example:
 				a $abc=$abc +1  if ($xyz) > (3)
 
-		Note, the Assigner's conditional has a preceding 'if' tag. (tag
+		Note, the AssignCommand's conditional has a preceding 'if' tag. (tag
 		not present in the File, Group, Edit, or Card commands)
 
-		The Assigner command is broken down into three components:
+		The AssignCommand is broken down into three components:
 			Target    	$<variable> to which the source is assigned
 			Source	  	content of which is assigned to Target
 			Condition 	logic expression (optional). If false,
@@ -40,7 +41,7 @@
 */
 package com.script
 
-object Assigner  {
+object AssignCommand {
 
 	val targetRegex="""\s*([$][a-zA-Z0-9-_]+)\s*[=].*""" .r
 			// line must have 'if' and '(' which begins
@@ -67,7 +68,6 @@ object Assigner  {
 		val (target,source,condition)=parseAssignerCommand(line)
 					// Check math syntax and missing 'if' tag
 		simpleSource=validateSourceExpression(source)
-	//	println("Assigner:  simpleSource="+simpleSource)
 					// Set 'true' in parseAssignerCommand()
 		if(conditionPresent) {
 			val reduced=LogicSupport.removeSpacesInOperand(condition)
@@ -102,7 +102,6 @@ object Assigner  {
 	def validateSourceExpression(source:String)={
 		throwExceptionIfEmpty(source)
 		if(isMathExpression(source)) {
-		println("Assigner:  is math expression  --yes")
 			MathExprValidator.validate(source)
 			false
 			}

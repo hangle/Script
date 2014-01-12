@@ -20,7 +20,7 @@ import DisplayComponent._  // temp to use displayParenthesizedComponents
 import collection.mutable.ArrayBuffer
 
 object DisplayCommand  {
-			//Check for empty line (also used in Assigner)
+			//Check for empty line (also used in AssignCommand)
 	val emptyRegex="""(\s*)""" .r
 				// Invoked by ParserValidator
 	def displayCommand( script:ArrayBuffer[String], // output
@@ -43,7 +43,7 @@ object DisplayCommand  {
 		rowerNodeScript(script,columnRowCard, displayComponentList)
 				// Initiate Display components script. 
 		displayScript(script,overrideSetting, displayComponentList) // addressor)
-		displayComponentList=List()
+		displayComponentList=List()   // not utilized ???  info returned by 'script'.
 		}
 	def isEmptyDisplayCommand(line:String) ={
 		line match {

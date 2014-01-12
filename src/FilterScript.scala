@@ -56,7 +56,7 @@ object FilterScript  {
 	def isValidCommandSymbol(line:String) {
 		val symbol=line(0)
 		val outcome= symbol match {
-			case 'a'|'d'|'c'|'g'|'f'|'x'|'e'|'*'|'l' => true
+			case 'a'|'d'|'c'|'g'|'f'|'x'|'e'|'*'|'l'| 'b' => true
 			case _=> false
 			}
 		if(outcome==false)

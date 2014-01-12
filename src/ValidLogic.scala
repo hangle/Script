@@ -1,5 +1,5 @@
 /* date:   Jul 14, 2012
-						Invoked by:	Assigner
+						Invoked by:	AssignCommand
 									CardCommand
 									GroupCommand
 									NextFile

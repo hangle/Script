@@ -52,8 +52,10 @@ object BuildStructure   {
 		CommandStructure.useNotecardObjectToAttach(xxxCmdList) 
 				// Iterate 'xxxCmdList' and load parameters for each '<class name>Cmd' object
 		CommandToFile.createStructFile(xxxCmdList, struct)  
+				//  
+		val newStruct=ButtonCardSetRemap.buttonCardSetRemap(struct)
 				// output <filename>.struct file
-		com.server.WriteStructureFile.writeStructureFile(struct, filename)
+		com.server.WriteStructureFile.writeStructureFile(newStruct, filename)
 			}catch{ 
 				case e:FileNotFoundException=> 
 						println("file not found="+e) 

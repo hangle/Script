@@ -20,8 +20,9 @@ trait Node  {
 			 // Stored by call to 'postChild(..) invoking 
 			 // 'parent.getFirstChild.id'
 	var idChild=0 				 
-	var idNextSibling=0			// symbolic address of parent's' next' 
-								//  sibling by invoking 'getNext.getId'
+			// symbolic address of parent's' next' 
+			//  sibling by invoking 'getNext.getId'
+	var idNextSibling=0			
 			// Used in Link append(..) to capture the reference of next 
 			// child. When a new child is appended to the list, it is also
 			// stored in 'next' of the prior child.
@@ -39,9 +40,20 @@ trait Node  {
 	def loadParametersWithParent(struct:scala.collection.mutable.ArrayBuffer[String],
 								 parameters:List[String]) {
 		struct+= parameters.head   // %<name of class>  e.g.,  %RowerNodeCmd
-		struct+= "child\t"+idChild.toString
 		struct+= "address\t"+id.toString		// smybolic address of current object
+		struct+= "child\t"+idChild.toString
 		struct+= "sibling\t"+idNextSibling.toString
+		parameters.tail.foreach( struct+= _ )
+		}
+				// special case for CardSet and ButtonCardSet. Other objects lack button
+				// address. 
+	def loadParametersWithParentAndButton(struct:scala.collection.mutable.ArrayBuffer[String],
+										  parameters:List[String]) {
+		struct+= parameters.head   // %<name of class>    %CardSet
+		struct+= "address\t"+id.toString		// smybolic address of current object
+		struct+= "child\t"+idChild.toString
+		struct+= "sibling\t"+idNextSibling.toString
+		struct+= "button\t0"
 		parameters.tail.foreach( struct+= _ )
 		}
 	def loadParametersWithNode(struct:scala.collection.mutable.ArrayBuffer[String],

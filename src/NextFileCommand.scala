@@ -1,4 +1,5 @@
 /* date:   Sep 3, 2012
+						NEXT FILE COMMAND (was NextFile.scala)
    
    File command, with tag of 'f', has a script name of %NextFile
    This command is typically at the end of a script file and
@@ -15,7 +16,7 @@
 package com.script
 import com.script.SyntaxException._
 
-object NextFile  {
+object NextFileCommand  {
 			// Captures 'filename' and 'condition', however, 
 			// 'condition' need not be present
 			// filename and condition must be space separated
@@ -44,7 +45,6 @@ object NextFile  {
 	def extractFilenameAndLogic(line: String): (Option[String],Option[String])  = {
 		line match {
 			case fileNameLogicRegex(name, condition) =>
-					//println("condition=|"+condition+"|")
 					val conditionOption=if(condition==null) None; else Some(condition)
 					(Some(name), conditionOption) 
 			case _=>  (None, None)

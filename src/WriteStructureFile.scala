@@ -7,17 +7,16 @@
 package com.server
 import java.io._
 object WriteStructureFile   {
-	def writeStructureFile(struct:collection.mutable.ArrayBuffer[String],
+	def writeStructureFile(newStruct:List[Array[String]],
 			    filename:String) ={
 				// Drop .nc extension and add .command ext
 		val name=changeFilenameExtension(filename)		
 		//println("WriteStructureFile name="+name)
 		val writer=new FileWriter(name)	
-		for(s <-struct){
-//			val ss=removeTagAndTab(s)
-//			writer.write(ss+"\n")
-			writer.write(s+"\n")
-			}
+		for(struct <- newStruct)   // List
+				for(s <-struct){
+					writer.write(s+"\n")
+					}
 		writer.close
 		}
 		// Example change 'pool/one.command' to 'pool/one.struct'

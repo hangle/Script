@@ -35,8 +35,8 @@ case class CardSetCmd(parameters:List[String])  extends Node with Link with Comm
 				idNextSibling=getNext.get.getId  
 				}
 		}
-			//Card or CardSetCmd is both a parent as well as a child of
-			//NotecardCmd.  'postNextSibling' 
+			//Card or CardSetCmd is  a child of/NotecardCmd. (postNextSibling) 
+			//	It is also a parent (postChild)
 	def postIds {
 		postNextSibling
 		postChild
@@ -45,7 +45,9 @@ case class CardSetCmd(parameters:List[String])  extends Node with Link with Comm
 			// 'parameters' were assigned when object was instantiated by 'CommandLoader'.
 			// These parameters are loaded by CommandToFile (following CommandStructure)
 	def loadStruct( struct:scala.collection.mutable.ArrayBuffer[String]) {  // Node trait
-			loadParametersWithParent(struct, parameters)
+				// Similar to 'loadParametersWithParent(...), but creates a 'button' address
+				// value. 
+			loadParametersWithParentAndButton(struct, parameters)  // see Node
 			}
 	var rowerNode:RowerNodeCmd= null
 			//  A chain of children are created for the current CardSet instance.

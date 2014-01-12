@@ -27,7 +27,7 @@ object CommandMaker {
 				AsteriskCommand.asteriskCommand(script,lineMinusTag)
 			case 'a' =>
 						// "a" indicates the command is child of CardSet
-				Assigner.assignerCommand(script,lineMinusTag, "a")
+				AssignCommand.assignerCommand(script,lineMinusTag, "a")
 			case 'd' => 
 				val overrideMap= AsteriskCommand.getOverrideSetting
 				DisplayCommand.displayCommand(
@@ -36,8 +36,13 @@ object CommandMaker {
 									  columnRowCard, 
 									  overrideMap) 
 			case 'c' => 
-						// 'c' clear command
-				CardCommand.cardCommand(script,lineMinusTag, columnRowCard)
+						// 'c' clear command.
+				CardCommand.cardCommand(script,lineMinusTag, columnRowCard, "CardSet")
+			case 'b' =>
+						// treat 'b' as a CardSet command with "ButtonCardSet" to indcate the
+						// difference. 'b' is a special type of CardSet. In 'CardScript',
+						// the <%classname> becomes 'ButtonCardSet'.
+				CardCommand.cardCommand(script,lineMinusTag, columnRowCard, "ButtonCardSet")
 			case 'e' => 
 				EditCommand.editCommand(script, lineMinusTag) 
 			case 'g' => 
@@ -50,7 +55,7 @@ object CommandMaker {
 				LoadDictionaryCommand.loadDictionaryCommand(script, lineMinusTag, filename)
 			case '+' =>// Assign 'a' commands translated to '+' commandss
 						// argument "+" indicates the command is child of LoadDictionary
-				Assigner.assignerCommand(script,lineMinusTag, "+")
+				AssignCommand.assignerCommand(script,lineMinusTag, "+")
 			case _=> 
 				throw new SyntaxException(commandTag+" is an unknown command tag")
 			}

@@ -83,7 +83,6 @@ case class NotecardCmd(parameters:List[String]) extends Node with Link with Comm
 									throw new com.script.SyntaxException(" NotecardCmd: LoadDictionaryCmd is null")
 									// LoadDictionaryCmd invokes 'append(..) to
 									// 'append 'la' to itself. 
-//							loadDictionary.append(loadDictionary, la)
 							loadDictionaryCmd.attachSpecial(la)
 				case _=>    // If not a child of Notecard, then it is a grandchild 
 							// to be passed on to CardSet who will extract its
