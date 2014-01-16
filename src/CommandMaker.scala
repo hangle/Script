@@ -2,8 +2,8 @@
 
 	Invoked by ParserValidator
 	
-	Command tag ('d','c','f','g','*', 'a', 'x', l, +) creates '<classname>Command'
-	classes
+	Command tag ('d','c','f','g','*', 'a', 'x', l, b) creates '<classname>Command'
+	classes.  
 
 
 */

@@ -12,7 +12,7 @@ object CommandToFile  {
 						 struct:collection.mutable.ArrayBuffer[String]){
 			for(c <- xxxCmdList) {
 					val n=c.asInstanceOf[Node]
-					n.loadStruct(struct)
+					n.loadStruct(struct)  // abstract f of Node
 					}
 	
 		}

@@ -32,6 +32,7 @@ package com.server
 import io._
 
 object ButtonCardSetRemap  {
+			// Extract className and address
 	val regex="""([%a-zA-Z0-9]+)\s+(\d+)""" .r
 			// store all CardSets, NotecardTask, NextFile, and ButtonCardSet
 			// object whose component addresses have been modified.

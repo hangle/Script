@@ -46,7 +46,7 @@ case class CardSetCmd(parameters:List[String])  extends Node with Link with Comm
 			// These parameters are loaded by CommandToFile (following CommandStructure)
 	def loadStruct( struct:scala.collection.mutable.ArrayBuffer[String]) {  // Node trait
 				// Similar to 'loadParametersWithParent(...), but creates a 'button' address
-				// value. 
+				// value i.e.,   'struct+= "button\t0" '
 			loadParametersWithParentAndButton(struct, parameters)  // see Node
 			}
 	var rowerNode:RowerNodeCmd= null

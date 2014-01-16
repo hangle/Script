@@ -1,4 +1,5 @@
-/* date:   Aug 31, 2012
+/* date:   Aug 31, 2012		CARD COMMAND
+									invoked by CommandMaker
 
 	The Card command, whose tag is 'c', begins each card set group
 	of commands (Display, File, Edit, Group, Asterisk, eXecute)
@@ -6,6 +7,10 @@
 	A Card may have a name and a logic expression, e.g.,
 	'c mycard ($abc)=(male)'
 	Both name 'mycard' and logic expressions '($abc)=(male)' are optional
+
+	The command whose tag is 'b' (ButtonCardSet) has the same functionality 
+	as the 'c' command.   The argument 'kind' passed to 'cardCommand' 
+	maintains the 'c' and 'b' identies.
 */
 package com.script
 
@@ -16,7 +21,9 @@ object CardCommand  {
 			// From 'ValidLogic consistion of List( (relation), op,
 			// (relation), and/or, ....)
 	var conditionComponents=List[String]()
-
+			// invoked by CommandMaker.
+			// Validates condition expression and writes
+			// writes 'script' (invokes CardScript.cardScript)
 	def cardCommand(script:collection.mutable.ArrayBuffer[String], 
 					line: String,
 				    columnRowCard:ColumnRowCard,

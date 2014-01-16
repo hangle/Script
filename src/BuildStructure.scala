@@ -33,7 +33,7 @@ The script strings are convered to List[List[String]]:
 				 List("%RowerNode", "row 0", "column 0, "%%")   )
 */
 package com.server
-import java.io._
+import java.io._c
 
 object BuildStructure   {
 				// <filename> is name of '*.nc' file minus the '.nc' extension.
@@ -48,7 +48,7 @@ object BuildStructure   {
 				// Argument values are assigned to the parameters of 'xxxCmd' instances
 				// 'xxxCmdList' is list of all 'xxxCmd' instances. 
 		val xxxCmdList=CommandLoader.createXxxCmdObjects(sets) 
-				// build linked list structure starting with Notecard
+				// build linked list structure starting with Notecard.  
 		CommandStructure.useNotecardObjectToAttach(xxxCmdList) 
 				// Iterate 'xxxCmdList' and load parameters for each '<class name>Cmd' object
 		CommandToFile.createStructFile(xxxCmdList, struct)  
