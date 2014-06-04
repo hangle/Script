@@ -13,7 +13,7 @@ import com.script.SyntaxException._
 
 object FilterScript  {
 	val blankLineRegex="""(^\s*$)""" .r	
-	val leadBlankRegex="""\s+([a-z#].*)""" .r
+	val leadBlankRegex="""\s+([a-z#*].*)""" .r
 			// Removes spaces preceding command symbol,
 			// Drop blank lines and remove comment lines.
 			// Insure line begins with valid symbol
@@ -62,7 +62,7 @@ object FilterScript  {
 		if(outcome==false)
 						// script line is passed to SyntaxException because
 						// script is processing List rather than a line.
-			throw new SyntaxException(line+"\n\t"+symbol+": invalid symbol")
+			throw new SyntaxException(line+"\n\t["+symbol+"]: invalid symbol")
 				// if line length > 1, then space must follow symbol,
 				// except for 'ge'.
 		if(line.size > 2) {

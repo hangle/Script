@@ -33,7 +33,7 @@ The script strings are convered to List[List[String]]:
 				 List("%RowerNode", "row 0", "column 0, "%%")   )
 */
 package com.server
-import java.io._c
+import java.io._
 
 object BuildStructure   {
 				// <filename> is name of '*.nc' file minus the '.nc' extension.
