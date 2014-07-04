@@ -13,7 +13,6 @@
 package com.script
 import collection.mutable.ArrayBuffer
 import collection.mutable.Map
-import com.script.ColumnRowComponent._
 
 object RowerNodeScript  {
 
@@ -24,11 +23,15 @@ object RowerNodeScript  {
 						columnRowCard:ColumnRowCard,
 						displayList:List[DisplayComponent]) ={
 			//The next %Display is placed on the next display line
-		columnRowCard.incrementRow
+		var incrementedRow=columnRowCard.incrementRow
+		//println("RowerNodeScript   incrementedRow="+incrementedRow)
 		script += "%RowerNode"
 					//Row value has been incremented but 
 					//Display command may override this row value
-		script +="row\t"+rowValue(columnRowCard, displayList)
+		val rrow=rowValue(incrementedRow, columnRowCard, displayList)
+		script +="row\t"+rrow
+//		println("RowerNodeScript  row value assigned to sript="+rrow)
+
 					//Display command may overried the current column 
 					//position
 		script +="column\t"+columnValue(columnRowCard, displayList)
@@ -36,25 +39,34 @@ object RowerNodeScript  {
 		}
 				// row has been incremented, however, if Display specifies
 				// row value then it is applied 
-	def rowValue(columnRowCard:ColumnRowCard,
+	def rowValue(incrementedRow:String,
+				 columnRowCard:ColumnRowCard,
 				 displayList:List[DisplayComponent])={
 				 // uses 'collect' to extract RowColumnComponent from 'displayList',
 				 // however 'collect' returns a List
+	//	println("RowerNodeScript: columnRowCard.row="+columnRowCard.row+"  incrementedRow="+incrementedRow)
 		val crcList=getColumnRowComponent(displayList)
 				// Display comanand lacked 'column/row' expression
 		if(crcList.isEmpty) {
 				//println("empty")
-				columnRowCard.row
-				}
-		else {	// Display command has 'column/row' expression
+			Support.decrementString(incrementedRow)
+			}
+		else{	// Display command has 'column/row' expression
 			val component=crcList.head // extract ColumnRowComponent	
-			if(component.row=="")  // but expression lacked a row value
-				columnRowCard.row
+			if(component.row==""){  //has column value but lacks a row value
+				//println("RowerNode:  xxxx incrementedRow="+incrementedRow)
+				//incrementedRow	
+				Support.decrementString(incrementedRow)
+				}
+
 			else{ // expression has a row value such as:   'd /12/xxxx'
+					// Incremented row value is given a new position value, such as '12'.
 				columnRowCard.row= component.row  // update ColumnRowCard
 					// User may specify row 1 but the line actually begins
 					// on row 0. 
-				Support.decrementString(component.row)
+				val value=Support.decrementString(component.row)
+				//println("RowerNodeScript row assigned by 'd'   row="+component.row+"   decrement row="+value)
+				value
 				}
 			}
 		}
@@ -63,10 +75,11 @@ object RowerNodeScript  {
 	def columnValue(columnRowCard:ColumnRowCard,
 				 	displayList:List[DisplayComponent])={
 		val crcList=getColumnRowComponent(displayList)
-		if(crcList.isEmpty) columnRowCard.column
-		else {	
+		if(crcList.isEmpty) 
+			columnRowCard.column
+		else{	
 			val component=crcList.head	
-			if(component.column=="")  
+			if(component.column=="")  // has row value but lacks column value
 				columnRowCard.column
 			else {
 				columnRowCard.column=component.column

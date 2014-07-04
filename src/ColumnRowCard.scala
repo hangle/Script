@@ -1,5 +1,6 @@
 /* date:   Aug 26, 2012
-   
+	Utilized in RowerNodeScript
+
    The 'column' and 'row' values of ColumnRowCard is initialized
    by the Clear command.  The instance is passed to the Display
    command to established the row/column position of the command.
@@ -19,12 +20,14 @@ class ColumnRowCard() {
 					// discovered that 'd' command specifies a
 					// row value.
 	override def toString= "column="+column+"   row="+row
-	def incrementRow {
+		// Used: RowerNodeScript
+	def incrementRow:String={     
 		var int =row.toInt
 		int += 1
-		row =int.toString
+		row=int.toString
+		row
 		}
-	def initialize {
+	def initialize {  // used: CardCommand
 		column="0"
 		row="-1"
 		}

@@ -144,10 +144,10 @@ d twelth row
 d thirteen row
 * continue
 d
-d Following command is placed on 7th row:
-d d (%%/color blue//7/)seventh row
+d Following command is placed on 8th row:
+d d (%%/color blue//8/)eight row
 * continue
-d /7/seventh row
+d /8/eight row
 
 
 c
