@@ -23,7 +23,8 @@
 package com.script
 
 object Parenthesized   {
-	val variableRegex="""(\(#\s+.+\)).*""" .r     // #
+//	val variableRegex="""(\(#\s+.+\)).*""" .r     // #
+	val variableRegex="""(\(#\s*.+\)).*""" .r     // #
 	val textDisplayRegex="""(\(%%.+\)).*""" .r    // %%
 	val displayVariableRegex=""".*(\(%.+\)).*""" .r // %
 	val imageRegex ="""(\(@.+\)).*""" .r          // @

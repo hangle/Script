@@ -23,8 +23,8 @@ d c ($gender)=(male)
 d ----------------------------
 d
 d 5/When the contents of $gender is the
-d constant 'male', then the (%%/color blue/Card Set) is
-d executed. 
+d constant 'male', then the commands 
+d belonging to (%%/color blue/Card Set) are executed. 
 * continue
 d
 d If not 'male', then the Card Set is 
@@ -47,9 +47,9 @@ d 5/Logic expression (1)=(2) fails, and
 d first Card Set is never presented.
 c
 d 5/1/A logic expression has three elements:
-d 10/1. Operand,  like, 1, 2, 3, male, $age $xyz
-d 2. Operator,   like,   =, >, <, >=, <=, !=, <>
-d 3. Condition,  like,   and, or
+d 7/1. Operand,  like, 1, 2, 3, male, $age $xyz
+d 2. Operator,   like, =, >, <, >=, <=, !=, <>
+d 3. Condition,  like, and, or
 d 5/Examples:
 d 10/---------expression--------------
 d (1)=(1)
@@ -59,9 +59,9 @@ d ($age) != ($xyz)
 d ($age) > (21) and ($age) < (65)
 d ------------------------------------
 * continue
-d 5/Operands, or $<variables> and constants, are 
-d enclosed in parentheses, and two operands 
-d are separate by an operator.
+d 5/Operands, or $<variables> and constants, 
+d are enclosed in parentheses, and the two 
+d operands are separate by an operator.
 c
 d 5/2/The logic expression in the 'c' command
 d allows a user's response to control 
@@ -70,7 +70,7 @@ d presented.
 * continue
 d
 d In this example, only one
-d card can be presneted. 
+d card can be presented. 
 d 10/------------------
 d c ($input)=(1)
 d d Card one
@@ -98,11 +98,50 @@ d
 d 5/You have stored (% $input) in (%%/color blue/$input) variable.
 c ($input)=(1)
 d Card one
+d
+* continue
+d
+d 5/The script for this CardSet was:
+d
+d 10/--------script---------------
+d c ($input) = (1)
+d d Card one
+d --------------------------------
+d 5/
+d Your $input value was (% /color blue/ $input)
+d The 'c' command condition was ($input)=(1)
 c ($input)=(2)
 d Card two
+* continue
+d
+d
+d 5/The script for this CardSet was:
+d
+d 10/--------script---------------
+d c ($input) = (2)
+d d Card one
+d --------------------------------
+d 5/
+d Your $input value was (% /color blue/ $input)
+d The 'c' command condition was ($input)=(2)
 c ($input)=(3)
 d Card three
-
+* continue
+d
+d
+d 5/The script for this CardSet was:
+d
+d 10/--------script---------------
+d c ($input) = (3)
+d d Card one
+d --------------------------------
+d 5/
+d Your $input value was (% /color blue/ $input)
+d The 'c' command condition was ($input)=(3)
+c
+d 5/3/The two CardSets that did not match the
+d $input value of (%/color blue/$input) were not
+d presented and were skipped.
 f assignCommand
 * end
 

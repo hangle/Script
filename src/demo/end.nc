@@ -1,4 +1,3 @@
-
 c
 d 5/3/The highlights of the eight script 
 d commands have been covered. 

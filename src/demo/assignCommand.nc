@@ -1,18 +1,27 @@
 c 
-d 5/1/The expression \(# $xyz) allows the user to
-d input and assign a value to a $xyz.
+d 5/1/The script:
+d 10/--------script------------
+d d \(# $xyz) 
+d -----------------------------
+d 
+d 5/allows the user to input and assign a 
+d value to a $xyz.
 d
 d The script has a command that also assigns. 
-d
-d The Assign command has the tag (%%/color blue/a),
+c
+d 5/2/The Assign command has the tag (%%/color blue/a),
 d followed by a space and an $<variable>
 d
 d Examples:
 d 10/---------------script---------------
 d a $gender=male
 d a $flag=1
-d a $line=now is the   time   for
+d a $line=now is the time for
 d ---------------------------------------
+d 5/
+d The string (%%/color blue/male) is assigned to (%%/color blue/$gender)
+d (%%/color blue/1) to (%%/color blue/$flag)
+d and (%%/color blue/now is the time for) to (%%/color blue/$line).
 c
 d 5/2/The 'a' command allows the developer to
 d control whether certain Cards are 

@@ -27,14 +27,13 @@ d scope of the 'g' group.
 d
 d ---------script----------
 d 10/g (1)=(1)
-d d This line is NOT displayed
+d d This line is displayed
 d g
 d d This line is always displayed
 d 5/----------------------
 d
 g (1)=(1)
 d 10/This line is displayed
-d 20/***success**
 g
 d 10/This line is always displayed
 c
@@ -92,19 +91,18 @@ d d scope ended
 d 5/----------------------
 d 10/
 g (1)=(1)
-d 10/This line (1) is displayed
+d 10/d This line (1) is displayed
 g
 d scope ended
 g (1)=(2)
-d This line (2) is NOT displayed
+d d This line (2) is NOT displayed
 g
 d scope ended
 
 c
-d 5/3/Test of two 'ge' groups.  In the 1st
+d 5/1/Test of two 'ge' groups.  In the 1st
 d the 'if/then' succeeds, but in the second,
 d the 'else' succeeds.
-d
 d ----------script---------
 d 10/g (1)=(1)
 d d The 'if/then' is successful
@@ -117,7 +115,6 @@ d d This line NOT displayed
 d ge
 d d The 'else' is successful
 d 5/-------------------------
-d
 g (1)=(1)
 d 10/The 'if/then' is successful
 ge

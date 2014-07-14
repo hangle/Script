@@ -17,6 +17,7 @@ object AppearanceParameter   {
 			 "lightGray", "magenta", "orange", "pink", "red", "white", "yellow")
  	val ge=GraphicsEnvironment.getLocalGraphicsEnvironment();
 	val fontNames= ge.getAvailableFontFamilyNames()
+	//fontNames.foreach(println)
 	val styleNames=Array("0","1", "2", "3", "1+2", "2+1","PLAIN", "BOLD", "ITAlIC", 
 			 "ITALIC+BOLD", "plain", "bold", "italic", "bold+italic", "italic+bold",
 			 "BOLD+ITALIC")

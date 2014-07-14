@@ -24,13 +24,11 @@ object RowerNodeScript  {
 						displayList:List[DisplayComponent]) ={
 			//The next %Display is placed on the next display line
 		var incrementedRow=columnRowCard.incrementRow
-		//println("RowerNodeScript   incrementedRow="+incrementedRow)
 		script += "%RowerNode"
 					//Row value has been incremented but 
 					//Display command may override this row value
 		val rrow=rowValue(incrementedRow, columnRowCard, displayList)
 		script +="row\t"+rrow
-//		println("RowerNodeScript  row value assigned to sript="+rrow)
 
 					//Display command may overried the current column 
 					//position
@@ -44,28 +42,26 @@ object RowerNodeScript  {
 				 displayList:List[DisplayComponent])={
 				 // uses 'collect' to extract RowColumnComponent from 'displayList',
 				 // however 'collect' returns a List
-	//	println("RowerNodeScript: columnRowCard.row="+columnRowCard.row+"  incrementedRow="+incrementedRow)
 		val crcList=getColumnRowComponent(displayList)
 				// Display comanand lacked 'column/row' expression
 		if(crcList.isEmpty) {
-				//println("empty")
-			Support.decrementString(incrementedRow)
+//			Support.decrementString(incrementedRow)
+			incrementedRow
 			}
 		else{	// Display command has 'column/row' expression
 			val component=crcList.head // extract ColumnRowComponent	
 			if(component.row==""){  //has column value but lacks a row value
-				//println("RowerNode:  xxxx incrementedRow="+incrementedRow)
 				//incrementedRow	
-				Support.decrementString(incrementedRow)
+				//Support.decrementString(incrementedRow)
+				incrementedRow
 				}
 
 			else{ // expression has a row value such as:   'd /12/xxxx'
 					// Incremented row value is given a new position value, such as '12'.
-				columnRowCard.row= component.row  // update ColumnRowCard
+				columnRowCard.row= Support.decrementString(component.row)   // update ColumnRowCard
 					// User may specify row 1 but the line actually begins
 					// on row 0. 
 				val value=Support.decrementString(component.row)
-				//println("RowerNodeScript row assigned by 'd'   row="+component.row+"   decrement row="+value)
 				value
 				}
 			}
@@ -83,7 +79,6 @@ object RowerNodeScript  {
 				columnRowCard.column
 			else {
 				columnRowCard.column=component.column
-			//	println("RowerNodeScript component.column="+component.column)
 				component.column
 				}
 			}
