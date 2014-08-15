@@ -44,7 +44,11 @@ object ParserValidator  {
 				//			drop indentation of a line
 				//			validate command symbol,e.g., d (display command)
 		var filteredList=readAndFilterScriptFile(filename)
-
+				// Map of default values, such as: "height"-> "300",	//window size argument
+				//									"width"->  "400",	//window size argument
+				// 									"name"-> "TimesRoman",// name of Font
+				//									"size"-> "14",		// pixel size of lettering
+				//									"color"-> "black",	// color of lettering
 		val overrideMap= AsteriskCommand.getOverrideSetting  
 				// Read entire '*.nc' file to process '* Asterisk Appearance' commands, 
 				// NamedEdit Edit commands, and LoadScriptCommands. The latter returns

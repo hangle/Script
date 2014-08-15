@@ -64,6 +64,7 @@ object DisplayScript  {
 								xtype:String,
 								keyValueLength:Int, // if 1, then no apparance parameters
 								parenthesizedMap:collection.mutable.Map[String,String])={
+		//println("DisplayScript: xtype="+xtype)
 		xtype match {
 				case "variable" =>  // (#...)
 					variableScript(script,overrideSetting, component, parenthesizedMap)
@@ -95,20 +96,22 @@ object DisplayScript  {
                             parenthesizedMap:collection.mutable.Map[String,String])={
 		val map=copyMapToMap(overrideSetting, parenthesizedMap)
 		var text=""
-		if(keyValueLength==1) // no appearance parameters
-				text=extractTextFromTextComponent(component)
+		if(keyValueLength==1){ // no appearance parameters
+			text=extractTextFromTextComponent(component)
+			}
 		else
-						// Remove Tag,e.g., '(%%' and appearance parameters,
-						// e.g., '/color red/size 10/' from component. 
-				text= component.drop(keyValueLength)
-				// scan text for '\(' and '\)' and delete '\' 
+					// Remove Tag,e.g., '(%%' and appearance parameters,
+					// e.g., '/color red/size 10/' from component. 
+					// 'init' removes ')'
+			text= component.drop(keyValueLength). init
+			// scan text for '\(' and '\)' and delete '\' 
 		text=AppearanceParameter.removeEscapeSlashes(text)
-		text=text.init  // remove trailing ')'
-				// "" changed to " ".  text"\t" in list link object. e.g., CardSet.scala' 
-				// with 'receive_objects(..)' with 'split(["[\t]")' cannot handle "".
+			// "" changed to " ".  text"\t" in list link object. e.g., CardSet.scala' 
+			// with 'receive_objects(..)' with 'split(["[\t]")' cannot handle "".
 		if(text=="") {
 				text=" "
 				}
+
 		script+= "%DisplayText"
 		script+= "style	"+map.getOrElse("style","error")
 		script+= "size	"+map.getOrElse("size","error")
@@ -118,10 +121,10 @@ object DisplayScript  {
 		script+= "color	"+map.getOrElse("color","error")
 		script+= "%%"
 		}
-				// From, for example, '(%% /color red/size 22/ now is time )'
+				// From, for example, '(%% now is the time )'
 				// return the text 'now is the time '
  	def extractTextFromTextComponent(s:String)={ 
-		val r=s.drop(s.lastIndexOf("/")+1); 
+		val r=s.drop(s.indexOf("%%") +2 )
 		r.take(r.indexOf(")")) 
 		}
 				// The contents of a $ variables are displayed via, for example,

@@ -56,27 +56,29 @@ abstract class DisplayComponent
 					// Appearance parameters apply only to the variable or text 
 					// referenced in the component, e.g, ...(%%/color red/ now is time) ...
 					// is applied to 'now is time' and not to other line components.
-		case class ParenthesizedComponent(val component: String,
+		case class ParenthesizedComponent(var component: String,
 											val xtype:String) extends DisplayComponent {
-				//println("DisplayComponent:  ParenthesizedComponent:  component="+component)
-				var parenthesizedMap= collection.mutable.Map[String,String]()
-				var keyValueLength=0
-//				def storeParenthesizedMap(map: collection.mutable.Map[String,String]) 
-				def store( mapAndKeyValue:(collection.mutable.Map[String,String], Int)) {
-					 parenthesizedMap=mapAndKeyValue._1
-					 keyValueLength=mapAndKeyValue._2
-					 }
-				def hasParenthesizedMap= parenthesizedMap.size > 0
-				def getParenthesizedMap= { parenthesizedMap }
-				def getKeyValueLength={ 
-					if(keyValueLength ==1)  // no appearance parameters
-							keyValueLength
-					else{
-						val toFirstSlash= component.indexOf('/')
-						keyValueLength + toFirstSlash
-						}
-					}
+
+		var parenthesizedMap= collection.mutable.Map[String,String]()
+		var keyValueLength=0
+		def updateComponent(text:String)={
+				component=text
 				}
+		def store( mapAndKeyValue:(collection.mutable.Map[String,String], Int)) {
+			 parenthesizedMap=mapAndKeyValue._1
+			 keyValueLength=mapAndKeyValue._2
+			 }
+		def hasParenthesizedMap= parenthesizedMap.size > 0
+		def getParenthesizedMap= { parenthesizedMap }
+		def getKeyValueLength={ 
+			if(keyValueLength ==1)  // no appearance parameters
+				keyValueLength
+			else{
+				val toFirstSlash= component.indexOf('/')
+				keyValueLength + toFirstSlash
+				}
+			}
+		}
 object DisplayComponent   {
 
 	def displayParenthesizedComponents(components:List[DisplayComponent]) = {

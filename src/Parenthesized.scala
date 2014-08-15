@@ -27,6 +27,7 @@ object Parenthesized   {
 	val variableRegex="""(\(#\s*.+\)).*""" .r     // #
 	val textDisplayRegex="""(\(%%.+\)).*""" .r    // %%
 	val displayVariableRegex=""".*(\(%.+\)).*""" .r // %
+	//val textOnlyRegex= """(\(%%)(.*)(\))""" .r  // extract text having no parenthesized
 	val imageRegex ="""(\(@.+\)).*""" .r          // @
 	val yesNoRegex="""(\(#yn.+\)).*""" .r         // #yn
 	val choiceRegex="""(\(#\d+.+\)).*""" .r       // #\d
@@ -122,41 +123,43 @@ object Parenthesized   {
 	//println("Parenthesized  extractParenthesizedTag   line="+line)
 		line match {
 			case variableRegex(variable)=>	//  .*(\(#.+\)).* 
-//				(variable, "variable")  // detected #  has $ variable
 				"variable"
-			case textDisplayRegex(text) => // .*(\(#\s+.+\)).
-				//(text, "text")			// detected %%  ouput text
+			case textDisplayRegex(text) => // """(\(%%.+\)).*""" .r   
+				//println("Parenthesized textDisplayRegex   text")
 				"text"
 			case displayVariableRegex(display)=>  //".*(\(%.+\)).
-				//(display, "display")	// detected % content of variable
 				"display"
 			case  imageRegex(image)=>
-				//(image, "image")		// detected @ for image
 				"image"
 			case  yesNoRegex(yesNo)=>
-				//(yesNo, "yesNo")		// detected #yn
 				"yesNo"
 			case  choiceRegex(multiple)=>
-				//(multiple, "multiple")	// detected #<number of choices>
 				"multiple"
 			case  audioRegex(audio)=>
-				//(audio, "audio")	    // detected &  audio file
 				"audio"
 			case  listRegex(list)=>
-				//(list, "list")			// detected #list for list box
 				"list"
 			case _=> 
-		//		("", "unknown") // line lacking a component
 				"unknown"
 				throw new SyntaxException("unknown parenthesized type")
 			}
 		}
+/*
+	def extractText(component:String) = {
+		component match {
+				case textOnlyRegex(tag, text, parenthesis)=> text
+				case _=> 
+						""
+					//throw new SyntaxException("(%%...) problem in Parameterized.scala "+component)
+				}
+		}
+*/
 			// Determine if Display command contains a component.
 			// Invoked by DisplayParser. 
 	def isParenthesizedComponent(line: String): Boolean ={
 		//val (target, xtype)= extractParenthesizedTag(line)
 		val xtype= extractParenthesizedTag(line)
-		println("Parenthesized  component type="+xtype)
+		//println("Parenthesized  component type="+xtype)
 		xtype != "unknown"
 		}
 	def extractLeadingTextAndShortenLine(line:String, component:String) :(String,String)= {

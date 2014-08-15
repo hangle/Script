@@ -107,6 +107,7 @@ object DisplayParser   {
 						// distinguish between '(# $one)' and '(# /color red/ $one)'	
 						// the latter return 'true' having  Appearance values
 			if(isEmbeddedAppearanceComponent(component)) { //AppearenceParameter
+				//println("DisplayParser: isEmbeddedApp... true")
 						// 'mapAndLength' is tuple of 'appearanceMap' and 'keyValueLength'.
 						// Extract Appearence component from parenthesized component and
 						// break it down into key/value tuples to be stored in a Map within
@@ -117,12 +118,21 @@ object DisplayParser   {
 						// Store tuple(Map,Int) in ParaenthesizeComponent object
 				parenthesizedComponent.store(mapAndLength) //DisplayComponent
 				}
+					// (%% ...) has no appearence parameters, e.g., '(%% now is the time)'
+			  else{
+			  	if(xtype=="text") {   // (%% component) 
+					throw new SyntaxException("(%% component missing parameter, e.g., /color blue/ ")
+					}
+				//println("DisplayParser: component="+component)
+			//  	val text= Parenthesized.extractText(component)
+			//	parenthesizedComponent.updateComponent(text)
+				}
 			displayComponentList=parenthesizedComponent :: displayComponentList //store '(#$a)'
 			lineStr=shortenLine   // set 'LineStr' to do next component
 			}    //---end of for loop
 		if(lineStr.length > 0) // indicates text beyond last Parenthesized component
 				// Store trailing text component in component list
-			displayComponentList= TextComponent(lineStr, commonAppearanceMap) :: displayComponentList //store text in List
+			displayComponentList= TextComponent(lineStr, commonAppearanceMap) :: displayComponentList 
 		displayComponentList
 		}
 					// Extracts column/row position of line text as well as text 

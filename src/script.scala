@@ -5,6 +5,8 @@
 	is created and written to an .struct file.  This file is input
 	to the Notecard (card) program.
 */
+import java.io._
+
 
 object script  {
 		def main(argv:Array[String]) {
@@ -15,9 +17,11 @@ object script  {
 				var filename=argv(0)
 				filename=addNcExtensionIfMissing(filename)
 					// validate script syntax.
-				val script=com.script.ParserValidator.parserValidator(filename)
-					// create a linked list structure as an input to 'notecard'
-				com.server.BuildStructure.buildStructure(filename, script)
+				if(verifyFileExistence(filename)) {
+					val script=com.script.ParserValidator.parserValidator(filename)
+						// create a linked list structure as an input to 'notecard'
+					com.server.BuildStructure.buildStructure(filename, script)
+					}
 				}	
 			}
 			// script file extension is '.nc'. 
@@ -26,6 +30,14 @@ object script  {
 				filename
 			else
 				filename+".nc"
+			}
+		def verifyFileExistence(filename:String)= {
+			var flag=true
+			if( ! new File(filename).exists() ){
+				println("Usage: file="+filename+"   not found")
+				flag=false
+				}
+			flag
 			}
 		}
 

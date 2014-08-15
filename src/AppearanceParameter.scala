@@ -257,8 +257,10 @@ object AppearanceParameter   {
 				// (color|style|size|name|length|limit)[ ]+([+a-zA-Z0-9 ]+)
 		 appearanceFirstIn findFirstIn component match {
 		 	case Some(s)=> 
+						//println("AppearanceParameter:  Some s="+Some(s))
 						true
 			case None  =>  
+						//println("AppearanceParameter:  None ")
 						false
 			}
 		}
@@ -270,7 +272,7 @@ object AppearanceParameter   {
 			false
 		else
 			
-		//[ ]*(color|style|size|name)[ ]+([+a-zA-Z0-9 ]+)[/].*""" .r
+				//[ ]*(color|style|size|name)[ ]+([+a-zA-Z0-9 ]+)[/].*""" .r
 			if(isAppearanceParameter(line,appearanceRegex))
 				true
 			  else
