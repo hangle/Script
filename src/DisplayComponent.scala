@@ -85,7 +85,7 @@ object DisplayComponent   {
 			for(e <- components)
 			  e match {
 			  	case ColumnRowComponent(c,r)=>
-						println("\tColRowComponent: col="+c+"   row="+r)
+						//println("\tColRowComponent: col="+c+"   row="+r)
 				case GeneralAppearance(map)=>
 						map.foreach{ case (a,b)=>  }
 				case TextComponent(text, map) => 
@@ -93,7 +93,7 @@ object DisplayComponent   {
 						//println("\t\tcommonMap size="+map.size)
 				case pc:ParenthesizedComponent =>
 						//println("\tParenthe..Component:  component="+pc.component+"   xtype="+pc.xtype)
-						println("\t\tparenthesizedMap: size="+pc.parenthesizedMap.size)
+						//println("\t\tparenthesizedMap: size="+pc.parenthesizedMap.size)
 				}
 		}
 }
