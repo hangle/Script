@@ -16,7 +16,7 @@ package com.script
 import DisplayParser._
 import DisplayScript._
 import RowerNodeScript._
-import DisplayComponent._  // temp to use displayParenthesizedComponents
+//import DisplayComponent._  // temp to use displayParenthesizedComponents
 import collection.mutable.ArrayBuffer
 
 object DisplayCommand  {

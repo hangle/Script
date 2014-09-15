@@ -63,7 +63,7 @@ object AsteriskCommand  {
 							"name"-> "TimesRoman",// name of Font
 							"size"-> "14",		// pixel size of lettering
 							"color"-> "black",	// color of lettering
-							"style"-> "1",		// 1=normal, 2=bold, 3=italics
+							"style"-> "0",		// 0=normal, 1=bold, 2=italics
 							"length"-> "10",    // used in Display cmd for BoxField
 							"limit"-> "99",	   // used in Display cmd for BoxField
 							"column"-> "0",		// not operational

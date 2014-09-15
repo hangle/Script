@@ -5,7 +5,8 @@ the Script program and with the Notecard program. It puts <br />
 each command to an exhaustive review.  The files (.struct) of <br />
 the Test directory are executed by the Notecard program 'card'. <br />
 The 'card' program will reveal problems either with itself or <br />
-with the Script program failure to detect a syntax error.  </p>
+with the Script program failure to detect a syntax error, thus <br />
+causing the 'card' program to fail.  </p>
 
 <p>The development of script Test files is a work in progress. <br />
 To date, the following Test files are available:  </p>

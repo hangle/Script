@@ -26,16 +26,23 @@ package com.script
 import scala.util.matching.Regex
 
 object ColumnRowParser   {
-					//
+					// detect,e.g., 22/now  22/22/now or /22/ now.
+					// The 'slash' is proof that it is a row value.
 	val columnRowRegex="""^(\d?\d?)/(\d?\d?)(/?).*""" .r
 					// 'line' had space following tag removed in ParserValidator
-	def isColumnRowValue(line:String)= {  
+	def isColumnRowAndOrAppearance(line:String)= {  
 		val (column,row,slash)=columnRowParser(line, columnRowRegex)
-		if(column==null) 
-			false
-		 else
-		 	true
+		//println("ColumnRowParser: line="+line+"  column="+column+"  row="+row+"  slash="+slash)
+				//  line(0) determines Appearance parameters.
+		if(column != null )  
+				true
+			else 
+				if(line.size > 0 && line(0) == '/')
+					true
+				else
+					false
 		}
+				// invoked DisplayParser to return column/row values
 	def columnRowValue(line:String): (String,String)={
 		val (column,row,slash)=columnRowParser(line, columnRowRegex)
 		(column,row)
@@ -49,12 +56,12 @@ object ColumnRowParser   {
 					xrow=row
 				else
 					xrow=""
-					if( column=="" && xrow=="")
-						(null,null,null)
+				if( column=="" && xrow=="")
+						(null,null, null)
 					else
 						(column,xrow, slash)
 
-			case _=> (null,null,null)
+			case _=> (null,null, null)
 					}
 	}
 	def isPositionValues(column:String) = column!=null
@@ -62,7 +69,8 @@ object ColumnRowParser   {
 
 	def removeColumnRowComponent(line:String, tuple:(String,String)):String={
 		val length= columnRowLength(tuple._1, tuple._2)
-		line.drop(length)
+		//line.drop(length-1)  // retain '/' at end of Col/Row expression.
+		line.drop(length)  // retain '/' at end of Col/Row expression.
 		}
 				// Size of column and row parameters. Used to removed the 
 				// column-row parameters from trailing text and variables. 

@@ -13,6 +13,7 @@
 package com.script
 import collection.mutable.ArrayBuffer
 import collection.mutable.Map
+//import DisplayComponent._
 
 object RowerNodeScript  {
 
@@ -51,8 +52,8 @@ object RowerNodeScript  {
 		else{	// Display command has 'column/row' expression
 			val component=crcList.head // extract ColumnRowComponent	
 			if(component.row==""){  //has column value but lacks a row value
-				//incrementedRow	
-				//Support.decrementString(incrementedRow)
+					//incrementedRow	
+					//Support.decrementString(incrementedRow)
 				incrementedRow
 				}
 

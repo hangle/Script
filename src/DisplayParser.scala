@@ -34,40 +34,50 @@
 				'd 5/3/color blue/Enter age (# $years)' has
 	The ColumnRowComponent '5/3/' and General Appearance component '/color blue/' 
 	are processed and then removed from the line by:
-				parseColumnRowAndLineAppearanceParameters(line, commonAppearanceMap)
+				parseColumnRowAndLineAppearanceParameters(line, appearanceMap)
 */
 package com.script
 import ColumnRowParser._
 import AppearanceParameter._
 import Parenthesized._
-import DisplayComponent._
 
 object DisplayParser   {
 	var displayComponentList=List[DisplayComponent]() // list TextComponents & Parenthesized Components
 	var colRowTuple:(String,String)=("","") //column and row position values
-					// Display line parsed into parenthesized components. The components are 
-					// returned in 'displayComponentList' which is passed to DisplayScript.
-					// Invoked in DisplayCommand by displayCommand/
+				// Display line parsed into parenthesized components. The components are 
+				// returned in 'displayComponentList' which is passed to DisplayScript.
+				// Invoked in DisplayCommand by display Command.
 	def displayParser(xline: String): List[DisplayComponent]= {
+				// Appearance key->value collected at beginning of 'd' command. These values must
+				// be applied to embedded Appearance values that are unchanged. For example,
+				// (%%/size 22/now is) does not change color so commonAppearanceMap with changed color 
+				// must be applied. 
+		val commonAppearanceMap=collection.mutable.Map[String,String]()
+				// key->value of Appearance Parameter in both Column/Row/Appearance 'd' command
+				// and in Parameterized Components, such as (#/length  2/$abc). 
+		val appearanceMap=collection.mutable.Map[String,String]()
+		
 		displayComponentList=List[DisplayComponent]() // initialize for each display command
-					//collects apperance components,eg 'd /color->red/now is'
-		var commonAppearanceMap=collection.mutable.Map[String,String]()
+				//collects apperance components,eg 'd /color->red/now is'
 		var line=xline
-					// capture col/row and appearance components and remove
-					// these components from line. components stored in
-					// 'colRowTuple' and 'commonAppearanceMap'.
-		line=parseColumnRowAndLineAppearanceParameters(
-								line,
-								commonAppearanceMap)//Note, routine drops beginning '/'
+				// line begins with row column, 'd 5/3/' and/or appearance parameter, 'd /color blue/'
+				// if not column/row, then determine is line begins with '/'
+		if(ColumnRowParser.isColumnRowAndOrAppearance(line) ) {
+					// capture col/row and appearance parameters and remove
+					// these elements from line. components stored in
+					// 'colRowTuple' and 'commonAppearanceMap' replacing 'OverrideSetting'
+				    // Note, routine drops beginning '/'
+			line=parseColumnRowAndLineAppearanceParameters( line, commonAppearanceMap)
+			}
+			//println("DisplayParser:  isColumnRow false")
 					// Determine if line contains a component. Tag= '(# or (%
 		if(Parenthesized.isParenthesisTag(line)) { 
 					// Iterate to extract multiple ParenthesizedComponent(s) storing these
 					// components in 'displayComponentList' as well as any preceding text
-			displayComponentList=parseParenthesizedComponents(line, commonAppearanceMap)
+			displayComponentList=parseParenthesizedComponents(line, commonAppearanceMap, appearanceMap)
 			}
 		else{
 		 			// No parenthesized components so just store text in list
-					// 'line' contains text, 'commonAppearanceMap' is empty
 			displayComponentList=TextComponent(line,commonAppearanceMap)::displayComponentList
 			}
 		displayComponentList  // components of line
@@ -76,8 +86,10 @@ object DisplayParser   {
 					// as the text component that may precede it. The text and components
 					// are collected in 'displayComponentList'. 
 	def parseParenthesizedComponents(line:String, 
-									 commonAppearanceMap:collection.mutable.Map[String,String] )= {
-		var appearanceMap=collection.mutable.Map[String,String]()
+									 commonAppearanceMap:collection.mutable.Map[String,String] ,
+									 appearanceMap:collection.mutable.Map[String,String] )= {
+		//println("DisplayParser: parseParen...: line="+line)
+		var parenthesizedComponent:ParenthesizedComponent= null
 		var lineStr=line
 						//Parenthesized components found and put in an iterated list
 						// User """(\(\s*[#%@][%]?.+[)])""" .r
@@ -89,25 +101,35 @@ object DisplayParser   {
 							// Example:  'd now (# $s) is (# $b) the (%% text) time'
 							// has the parenthesized components '(# $a), (# $b), (%% text)
 							// Only the first component is extracted and returned.
-			component=extractFirstParenthesizedComponent(componentTag, lineStr)
+			component=extractFirstParenthesizedComponent(componentTag, lineStr) // Parenthesized
+			//println("DisplayParser extractFirstPar....:  component="+component)
 						 // 'leading' is text preceding component. this text along 
 						 // with the component is dropped resulting in a shorter 'lineStr'.
 			val (leading, shortenLine)=extractLeadingTextAndShortenLine(lineStr, 
 																	    component) //Parenthesized.scala
-			if(leading != "")   // Has preceding text, so create text component
-						// Store text component is component list
+
+			//println("DisplayParser: leading="+leading+"   shortenLine="+shortenLine)
+			if(leading != "")   //if false, then there is preceding text, so create text component
+						// Store text component in component list
 				displayComponentList= TextComponent(leading, commonAppearanceMap) :: displayComponentList
 						// applies mulyiplr regex to line to fine components (#...), (%...), (%%...) 
 						// or (@...).  Returns component along with xtype equal to "variable", 
 						// "text', "display", "yesNo", "multiple", "audio", or "image".
 			val xtype=extractParenthesizedTag(component) //Parenthesized.scala
-						// Store component along with 'xtype' (used in DisplayScript)
-						// 'parenthesizeComponent' is added to 'displayComponentList'.
-			var parenthesizedComponent=ParenthesizedComponent(component,xtype)//DisplayComponent
-						// distinguish between '(# $one)' and '(# /color red/ $one)'	
-						// the latter return 'true' having  Appearance values
-			if(isEmbeddedAppearanceComponent(component)) { //AppearenceParameter
-				//println("DisplayParser: isEmbeddedApp... true")
+						// Determine embedded component has appearance parameters,e.g., (#/length 3/$abc)
+			if( ! isEmbeddedAppearanceComponent(component)) { // No AppearenceParameters
+					if(xtype=="text") {   // (%% component) without appearance parameters--not allowed 
+							throw new SyntaxException("(%% component missing parameter, e.g., /color blue/ ")
+							}
+						// Parenthesized component without appearance parameters.
+					parenthesizedComponent= ParenthesizedComponent( 
+							component, //e.g., (# $abc) without appear...
+							xtype,//e.g., (#, (%, (%%
+							commonAppearanceMap,  // appear.. at start of 'd' cmd
+							null, // no appeararance parameters
+							0) // no appearance parameter length
+					}
+			  else {
 						// 'mapAndLength' is tuple of 'appearanceMap' and 'keyValueLength'.
 						// Extract Appearence component from parenthesized component and
 						// break it down into key/value tuples to be stored in a Map within
@@ -115,17 +137,12 @@ object DisplayParser   {
 						// which is used to drop appearance parameter string.
 						// 'ParenthesizeComponent via 'storeParenthesizeMap' (AppearanceParameter).
 				val mapAndLength=collectEmbeddedApppearanceParameters(component)
-						// Store tuple(Map,Int) in ParaenthesizeComponent object
-				parenthesizedComponent.store(mapAndLength) //DisplayComponent
-				}
-					// (%% ...) has no appearence parameters, e.g., '(%% now is the time)'
-			  else{
-			  	if(xtype=="text") {   // (%% component) 
-					throw new SyntaxException("(%% component missing parameter, e.g., /color blue/ ")
-					}
-				//println("DisplayParser: component="+component)
-			//  	val text= Parenthesized.extractText(component)
-			//	parenthesizedComponent.updateComponent(text)
+				parenthesizedComponent= ParenthesizedComponent( 
+						component, // e.g., (%%/size 22/now is time)
+						xtype,     // e.g., '(#', '(%', '(%%'
+						commonAppearanceMap, // appearance parameters at start of 'd' cmd
+						mapAndLength._1, //AppearanceMap
+						mapAndLength._2) // keyLengthValue
 				}
 			displayComponentList=parenthesizedComponent :: displayComponentList //store '(#$a)'
 			lineStr=shortenLine   // set 'LineStr' to do next component
@@ -144,34 +161,28 @@ object DisplayParser   {
 	def parseColumnRowAndLineAppearanceParameters(
 					lineString:String,
 				  	commonAppearanceMap:collection.mutable.Map[String,String]):String ={
+		//println("DisplayParser  parseColumnRow...  line="+lineString)
 		var line=lineString
-						// determine if Display command starts with column/row position values.
-						// uses regex ="""^(\d?\d?)/(\d?\d?)(/?).*""" .r
-		if(ColumnRowParser.isColumnRowValue(line) ) {
-						// uses """^(\d?\d?)(\d?\d?)(/?).*""" to extract column/row values
-						// 'tuple' holds column/row values	
-			colRowTuple=columnRowValue(line) // ColumnRowParser
+					// uses """^(\d?\d?)(\d?\d?)(/?).*""" to extract column/row values
+					// 'tuple' holds column/row values	
+		colRowTuple=columnRowValue(line) // ColumnRowParser
+					// skip if not column and/or row value
+		if(colRowTuple._1 !=null && colRowTuple != null) {
 			displayComponentList=ColumnRowComponent(colRowTuple._1, colRowTuple._2) :: displayComponentList
-						// column/row values along with slashes removed from line
+					// column/row values. however, trailing '/' retained in the event that
+					// the line has a trailing Appearance component, e.g., /color blue/
 			line=removeColumnRowComponent(line,colRowTuple) //use 'tuple' to extract col/row expression
-						// determine if Appearance parameters follow  column/row expression
-						// Invoked in AppearanceParameter. Also validates key/value elements.
-			if(isAppearanceComponent(line)) {//determine if line begins with appearance params
-						// capture appearance key/value components in 'commonAppearanceMap' and 
-						// removes these components from 'line'. Note, routine drops beginning '/'
-					line=filterAppearanceParametersToMap(line, 
-														 commonAppearanceMap)//AppearanceParameter
-					}
 			}
-	      else{  		//Display cmd has no position values but it may begin with
-		  				// a set of appearance parameters, such as, '/color red/' 
-						// Note, routine drops beginning '/'  Invoked in AppearanceParameter
-			if(isAppearanceComponent(line)) {//determine if line begins with appearance parameter.
-						// capture appearance key/value components in 'commonAppearanceMap' and 
-						// removes these components from 'line'.
-				line=filterAppearanceParametersToMap(line, commonAppearanceMap)//AppearanceParam..
+		//println("DisplayParser:  removeColumnRowComponent  /?    line="+line)
+					// determine if Appearance parameters follow  column/row expression
+					// Invoked in AppearanceParameter. Also validates key/value elements.
+		if(isAppearanceComponent(line)) {//determine if line begins with appearance params
+					// capture appearance key/value components in 'commonAppearanceMap' and 
+					// removes these components from 'line'. Note, routine drops beginning '/'
+					// 'filterApp..' in AppearanceParameter
+				line=filterAppearanceParametersToMap(line, 
+													 commonAppearanceMap)//AppearanceParameter
 				}
-			}
 		line
 		}
 }

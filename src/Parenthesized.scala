@@ -27,7 +27,6 @@ object Parenthesized   {
 	val variableRegex="""(\(#\s*.+\)).*""" .r     // #
 	val textDisplayRegex="""(\(%%.+\)).*""" .r    // %%
 	val displayVariableRegex=""".*(\(%.+\)).*""" .r // %
-	//val textOnlyRegex= """(\(%%)(.*)(\))""" .r  // extract text having no parenthesized
 	val imageRegex ="""(\(@.+\)).*""" .r          // @
 	val yesNoRegex="""(\(#yn.+\)).*""" .r         // #yn
 	val choiceRegex="""(\(#\d+.+\)).*""" .r       // #\d
@@ -42,9 +41,11 @@ object Parenthesized   {
  			// Search line for beginning parenthesized tags
 			// '(#', '(%'.  Add tags to list provided a
 			// tag does not begin with '\', such as '\(%%...'
+			// Text of (%% tag, containing '(%%', must begin with '\'.
  	def listParenthesizedTags(line: String)={
 		var list=List[String]()
 		val size=line.size
+		//println("Parenthesized: line="+line+"   line.size="+size)
 		var flag=false
 		for(i <- 0 until line.size) {
 			flag=false
@@ -74,12 +75,12 @@ object Parenthesized   {
 			// has the parenthesized components '(# $a), (# $b), (%% text)
 			// Only the first component is extracted and returned.
 			// Note: 'componentKey' found by 'listParenthesizedTags'/
-	def extractFirstParenthesizedComponent(componentKey:String,
-									  line:String) ={
+	def extractFirstParenthesizedComponent( componentKey:String,line:String) ={
+		//println("Parenthesized:componentKey="+componentKey+"   line="+line)
 		val beginIndex= line.indexOf(componentKey)
-		val endIndex= indexOfClosedParenthesis( componentKey,
+		val endIndex= indexOfClosingParenthesis( componentKey,
 												line)
-		//println("Parenthesized:  beginIndex="+beginIndex+"   endIndex="+endIndex+"   line="+componentKey)
+//		println("Parenthesized:  beginIndex="+beginIndex+"   endIndex="+endIndex+"   line="+componentKey)
 		val l=line.drop(beginIndex)
 		l.take(endIndex + 1)  //returned parenthesized component
 		}
@@ -88,7 +89,7 @@ object Parenthesized   {
 			// '(#' or '(%'
 	def isClosedParenthesize(componentKey:String, 
 							 line:String) ={
-		if(indexOfClosedParenthesis(componentKey,
+		if(indexOfClosingParenthesis(componentKey,
 									line) != -1)
 			true
 		  else
@@ -97,7 +98,7 @@ object Parenthesized   {
 			// Line begins with '(#' or '(%'.  Find
 			// index of closing parenthesis ')'. 
 			// Ignore ')' that is preceded by '\'.
-	def indexOfClosedParenthesis(componentKey:String,
+	def indexOfClosingParenthesis(componentKey:String,
 								 line:String) :Int={
 		val beginIndex= line.indexOf(componentKey)
 				// remove line preceding key 
@@ -141,19 +142,9 @@ object Parenthesized   {
 				"list"
 			case _=> 
 				"unknown"
-				throw new SyntaxException("unknown parenthesized type")
+				throw new SyntaxException("unknown parenthesized tag ")
 			}
 		}
-/*
-	def extractText(component:String) = {
-		component match {
-				case textOnlyRegex(tag, text, parenthesis)=> text
-				case _=> 
-						""
-					//throw new SyntaxException("(%%...) problem in Parameterized.scala "+component)
-				}
-		}
-*/
 			// Determine if Display command contains a component.
 			// Invoked by DisplayParser. 
 	def isParenthesizedComponent(line: String): Boolean ={

@@ -39,20 +39,26 @@ object DisplayScript  {
 				// zero or more Parenthesized components and zero or one
 				// Text component.
 				// Invoked by DisplayCommand
-	def displayScript(  script:ArrayBuffer[String],
-						overrideSetting:Map[String,String],
-						displayList:List[DisplayComponent] )={ //,
+	def displayScript(  script:ArrayBuffer[String],			   // output script
+						overrideSetting:Map[String,String],    // Override default appear..values
+						displayList:List[DisplayComponent] )={ //display components.
 		for(component <- displayList) {
 			component match {
 				case TextComponent(text, commonAppearanceMap)=>
-						textScript(script, text, overrideSetting, commonAppearanceMap)
-				case pc:ParenthesizedComponent=> // could be (#.., (%.., (%%.., or (@..
+					textScript(script, text, overrideSetting, commonAppearanceMap)
+
+				case ParenthesizedComponent(	component, 
+												xtype, 
+												commonAppearanceMap,
+												appearanceMap, // could be (#.., (%.., (%%.., or (@..
+												keyLengthValue) =>
+									//		println("DisplayScript keyLengthValue="+keyLengthValue)
 					matchParenthesizedType( script,
 											overrideSetting, // default or * <parameter> values
-											pc.component,// e.g., (# /color blue/ $abc)
-											pc.xtype,//"yesNo", "variable", "multiple", etc
-											pc.getKeyValueLength,
-											pc.getParenthesizedMap) //empty Map
+											component,// e.g., (# /color blue/ $abc)
+											xtype,//"yesNo", "variable", "multiple", etc
+											keyLengthValue,
+											appearanceMap)
 				case _=>
 				}
 			}
@@ -62,24 +68,24 @@ object DisplayScript  {
 								overrideSetting:Map[String,String],
 								component:String,
 								xtype:String,
-								keyValueLength:Int, // if 1, then no apparance parameters
-								parenthesizedMap:collection.mutable.Map[String,String])={
+								keyLengthValue:Int,
+								appearanceMap:collection.mutable.Map[String,String]) {
 		//println("DisplayScript: xtype="+xtype)
 		xtype match {
 				case "variable" =>  // (#...)
-					variableScript(script,overrideSetting, component, parenthesizedMap)
+					variableScript(script,overrideSetting, component, appearanceMap)
 				case "text" =>		// (%%...)
 					textComponentScript(script, 
 										overrideSetting, 
 										component, 
-										keyValueLength,
-										parenthesizedMap)
+										keyLengthValue,
+										appearanceMap)
 				case "display" =>	// (%...)
-					displayVariableScript(script,overrideSetting,component, parenthesizedMap)
+					displayVariableScript(script,overrideSetting,component, appearanceMap)
 				case "yesNo"=>		// (#yn...)
-					yesNoVariableScript(script, overrideSetting, component, parenthesizedMap)
+					yesNoVariableScript(script, overrideSetting, component, appearanceMap)
 				case "multiple"=>	// (# <number of choices> ...)
-					multipleChoiceScript(script,overrideSetting, component, parenthesizedMap)
+					multipleChoiceScript(script,overrideSetting, component, appearanceMap)
 				case "image" =>		// (@...)
 
 				case _=> 
@@ -93,19 +99,25 @@ object DisplayScript  {
 							overrideSetting:Map[String,String],
                             component:String,
 							keyValueLength:Int,
-                            parenthesizedMap:collection.mutable.Map[String,String])={
-		val map=copyMapToMap(overrideSetting, parenthesizedMap)
+                            appearanceMap:collection.mutable.Map[String,String])={
+					// copy of 1st arg elements is updated by 2nd argument elements
+		val map=copyMapToMap(overrideSetting, appearanceMap)
 		var text=""
 		if(keyValueLength==1){ // no appearance parameters
 			text=extractTextFromTextComponent(component)
 			}
-		else
+		else{
 					// Remove Tag,e.g., '(%%' and appearance parameters,
+			text= component.drop(3)
 					// e.g., '/color red/size 10/' from component. 
 					// 'init' removes ')'
-			text= component.drop(keyValueLength). init
+			text= text.trim.drop(keyValueLength). init 
+			println("DisplayScript  component="+component+"    keyValueLength="+keyValueLength+"   text="+text)
+
+			}
 			// scan text for '\(' and '\)' and delete '\' 
 		text=AppearanceParameter.removeEscapeSlashes(text)
+	//	println("DisplayScript: text="+text)
 			// "" changed to " ".  text"\t" in list link object. e.g., CardSet.scala' 
 			// with 'receive_objects(..)' with 'split(["[\t]")' cannot handle "".
 		if(text=="") {
@@ -132,8 +144,8 @@ object DisplayScript  {
 	def displayVariableScript(  script:ArrayBuffer[String],
 								overrideSetting:Map[String,String],
 								component:String, 
-								parenthesizedMap:collection.mutable.Map[String,String])={
-		val map=copyMapToMap(overrideSetting, parenthesizedMap)
+								appearanceMap:collection.mutable.Map[String,String])={
+		val map=copyMapToMap(overrideSetting, appearanceMap)
  		var field=extractVariableFromComponent(component)
 				// "" changed to " ".  text"\t" in list link object. e.g., CardSet.scala' 
 				// with 'receive_objects(..)' with 'split(["[\t]")' cannot handle "".
@@ -153,10 +165,10 @@ object DisplayScript  {
 	def variableScript(	script:ArrayBuffer[String],
 						overrideSetting:Map[String,String],
 						component:String, 
-					    parenthesizedMap:collection.mutable.Map[String,String])={
+					    appearanceMap:collection.mutable.Map[String,String])={
 				// 'map' is first made a copy of 'overrideSetting', then it is
-				// updated by the (key->value)s of 'parenthesizedMap'. 
-		val map=copyMapToMap(overrideSetting, parenthesizedMap)
+				// updated by the (key->value)s of 'appearanceMap'. 
+		val map=copyMapToMap(overrideSetting, appearanceMap)
  		var field=extractVariableFromComponent(component)
 		script+="%BoxField"
 				// "" changed to " ".  field"\t" in list link object. e.g., CardSet.scala' 
@@ -179,9 +191,9 @@ object DisplayScript  {
 		}
 	def yesNoVariableScript(script:ArrayBuffer[String],
 						overrideSetting:Map[String,String],
-						component:String,  //parenthesized component
-					    parenthesizedMap:collection.mutable.Map[String,String])={
-		val map=copyMapToMap(overrideSetting, parenthesizedMap)
+						component:String,  //appearanceMap component
+					    appearanceMap:collection.mutable.Map[String,String])={
+		val map=copyMapToMap(overrideSetting, appearanceMap)
  		val field=extractVariableFromComponent(component)
 
 		script+="%BoxField"
@@ -205,9 +217,9 @@ object DisplayScript  {
 		
 	def multipleChoiceScript(script:ArrayBuffer[String],
 						overrideSetting:Map[String,String],
-						component:String,  //parenthesized component
-					    parenthesizedMap:collection.mutable.Map[String,String])={
-		val map=copyMapToMap(overrideSetting, parenthesizedMap)
+						component:String,  //appearanceMap component
+					    appearanceMap:collection.mutable.Map[String,String])={
+		val map=copyMapToMap(overrideSetting, appearanceMap)
  		val field=extractVariableFromComponent(component)
 		val options= extractNumberOfOptions(component)
 		val length= adjustFieldLength(options, map)  // size of field reduced to 1 or 2
@@ -281,6 +293,7 @@ object DisplayScript  {
 		val map=copyMapToMap(overrideSetting, commonAppearanceMap)
 		var filteredText=text
 			// scan text for '\(' and '\)' and delete '\'
+			// allows e.g., 'd  d \(# $abc)' to display '(# $abc)' and not input field.
 		filteredText=AppearanceParameter.removeEscapeSlashes(text)
 		if(filteredText=="") filteredText=" "
 
@@ -297,14 +310,13 @@ object DisplayScript  {
             // updated by the (key->value)s of 'two'. 
 	def copyMapToMap(one:collection.mutable.Map[String,String],
 					 two:collection.mutable.Map[String,String]) ={
-		val copy=collection.mutable.Map[String,String]()
 		val map= one.map{case (x,y)=> x->y}
 		for( (key,value)<- two){
 			map += (key->value)
 			}
 		map
 		}
-			// From parenthesized component, like, (# /color blue/ $abc  )
+			// From appearanceMap component, like, (# /color blue/ $abc  )
 			// extracte the variable 'abc'.
 	def extractVariableFromComponent(component:String)={
 				// extracts variable name, along with the $ symbol.
