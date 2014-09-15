@@ -112,7 +112,7 @@ object DisplayScript  {
 					// e.g., '/color red/size 10/' from component. 
 					// 'init' removes ')'
 			text= text.trim.drop(keyValueLength). init 
-			println("DisplayScript  component="+component+"    keyValueLength="+keyValueLength+"   text="+text)
+			//println("DisplayScript  component="+component+"    keyValueLength="+keyValueLength+"   text="+text)
 
 			}
 			// scan text for '\(' and '\)' and delete '\' 

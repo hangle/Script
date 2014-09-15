@@ -8,20 +8,21 @@ object AppearanceParameter   {
 						// Used to detect Appearance values within text strings. \
 						// In a loop, it extracts one key/value at a time.
 						// (see: collectEmbeddedApppearanceParameters )/
-	val appearanceRegex="""[ ]*(color|style|size|name|length|limit)[ ]+([+a-zA-Z0-9 ]+)[/].*""" .r
-	val keyValueRegex="""(color|size|style|name|length|limit)[ ]([a-zA-Z0-9]+/)""" .r
+	val appearanceRegex="""[ ]*(color|style|size|name|length|limit)[ ]+([+a-zA-Z0-9]+)[ ]*[/].*""" .r
+	//val keyValueRegex="""(color|size|style|name|length|limit)[ ]([a-zA-Z0-9]+/)""" .r
 						// extract '/<text> <text>/' may or may not be valid keys
 	val appearancePlaceRegex= """(/\s*[a-z]+\s+[a-z0-9]+\s*/)""" .r
 	val validAppearanceKeys=List("color","style", "size", "name", "length", "limit")
 						// Used to detect and extract embedded from ParethesizedComponent
-	val appearanceFirstIn="""(color|style|size|name|length|limit)[ ]+([+a-zA-Z0-9 ]+)""" .r
+	//val appearanceFirstIn="""(color|style|size|name|length|limit)[ ]+([+a-zA-Z0-9 ]+)""" .r
                        // used in 'findFirstIn' to extract '/<text> <text>/' Appearance component
                        // which may or may not have a valid key. 
-    val tagRegex="""(/\s*[a-z]+[ ]+[a-z0-9]+\s*/)""" .r
+    //val tagRegex="""(/\s*[a-z]+[ ]+[a-z0-9]+\s*/)""" .r
 	
 	val colorNames=Array("black", "blue", "cyan", "darkGray", "gray", "green",
 			 "lightGray", "magenta", "orange", "pink", "red", "white", "yellow")
  	val ge=GraphicsEnvironment.getLocalGraphicsEnvironment();
+			// such as TimesRoman, Loma, Monospaced, Serif
 	val fontNames= ge.getAvailableFontFamilyNames()
 	val styleNames=Array("0","1", "2", "3", "1+2", "2+1","PLAIN", "BOLD", "ITAlIC", 
 			 "ITALIC+BOLD", "plain", "bold", "italic", "bold+italic", "italic+bold",
@@ -35,7 +36,6 @@ object AppearanceParameter   {
 		var appearanceMap=collection.mutable.Map[String,String]()
 				// Shortern line, removing tag, e.g., (#.. or (%...
 		val ss=removeTagFromLine(component)
-		//println("AppearanceParameter:  removedTagFromLine="+ss)
 				// recurively extract 'key value/' appearance values, return each
 				// in a list.  note: the starting appearance '/' is removed
 		val list=buildKeyValueList(ss.drop(1))
@@ -44,7 +44,8 @@ object AppearanceParameter   {
 		//println("AppearanceParameters:  keyValueLength="+keyValueLength+"  ss="+ss)
 				// Separate key and value. Validate value, Store elements in Map
 		for(keyValue <- list){
-			var array=keyValue.init.split("[ ]+") //remove '/' at end
+					//extract elements with leading and trailing spaces to element spaces
+			var array=extractKeyAndValue(keyValue)
 			validateValueOfKey(array(0), array(1))
 			appearanceMap += (array(0) -> array(1)) //add key and value
 			//println("\t\tAppearanceParameter: collectEmbed..()  keyValue="+keyValue+"  key="+array(0)+"  value="+array(1))
@@ -81,7 +82,7 @@ object AppearanceParameter   {
 			if(key=="") flag=false // no more values so terminate loop
 			 else {
 			 	commonAppearanceMap +=(key -> value)
-				//println("AppearanceParameter: key="+key+"  value="+value)
+				//println("AppearanceParameter: key="+key+"  value="+value+"|")
 				xline=removeLineUpToIncludeSlash(xline)
 			 	}
 			}
@@ -113,6 +114,16 @@ object AppearanceParameter   {
 		val n=numberLettersInTag(line)
 		line.drop(n).trim
 		}
+		// key value  string may contain leading and trailing spaces
+	def extractKeyAndValue(keyValue:String) ={
+		val (k,v)=keyValue match {
+				case appearanceRegex(key,value)=>
+					(key,value)
+				case _=> ("", "")
+				}
+		Array(k,v)
+		}
+		
 			// 'line' has tag removed (see 'removeTagFromLine')
 			// extract substring to '/'. If no slash, then return.
 			// if valid substing(e.g, 'color red/', then add it
@@ -121,12 +132,7 @@ object AppearanceParameter   {
 	def buildKeyValueList(line:String): List[String]={
 			// extracts substring up to & including slash
 		val keyValue=getLineToSlash(line)
-	//	println("AppearanceParameter: buildKeyValueList: keyValue="+keyValue)
-		val (k,v)=keyValue match {
-				case keyValueRegex(key,value)=>(key,value)
-				case _=> ("", "")
-				}
-		if(k=="") Nil
+		if(keyValue=="") Nil
 		else {
 			val shortLine=line.drop(keyValue.size)
 			keyValue :: buildKeyValueList(shortLine)
@@ -229,7 +235,7 @@ object AppearanceParameter   {
 	  	appearance match {
 					// [ ]*(color|style|size|name)[ ]+([+a-zA-Z0-9 ]+)[/].
 			case appearanceRegex(key, value)=> 
-					//println("AppearanceParameter:  key="+key+"  value"+value)
+					//println("AppearanceParameter:  parseKeyValue...  key="+key+"  value="+value+"|")
 					validateValueOfKey(key, value) //{
 			case _=> 
 				("","")
@@ -365,11 +371,12 @@ object AppearanceParameter   {
 		// validated. Note, false positive may occur if '/' embedded in text material. 
 		// Invoked by 'DisplayParser'.
 	def validateKeysOfCol_Row_AppearancePars(component:String, //  line begins wth '/' (see isApp..Par..)
-											regex:Regex, //  '/<text> <text>/'
+											regex:Regex, //  '/<text> <text>/'  appearancePlaceRegex,
 											validAppKeys:List[String]) // "lenght", "color",...
 											={
 		var xcomponent=component
 				// index of line to be dropped, look for '(#' or '(%'.
+				// howerver, if more than 2 or more exists, then the nearest to the start of the cmd
 		val r=findSmallestIndex(xcomponent)
 		if( r != 0)
 				// found '(#' or '(%' so remove these components
@@ -381,7 +388,7 @@ object AppearanceParameter   {
 
 		}
 			//Successively extract the two elements within the '/' and '/' delimiters
-			// where regex is """(/\s*[a-z]+\s+[a-z0-9]+\s*/)"""
+			// where regex is """(/\s*[a-z]+\s+[a-z0-9]+\s*/)"""     appearancePlaceRegex,
 	def validateAppearanceKeys(str:String, regex:Regex, validAppKeys:List[String]) ={ 
 		var component= str
 		var flag=true  
