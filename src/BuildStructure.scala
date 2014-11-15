@@ -57,13 +57,16 @@ object BuildStructure   {
 				// output <filename>.struct file
 		com.server.WriteStructureFile.writeStructureFile(newStruct, filename)
 			}catch{ 
+				//case e:com.script.SyntaxException=>
+				//		println("BuildException: catch")
 				case e:FileNotFoundException=> 
 						println("file not found="+e) 
 				case e:IOException=> 
 						println("io exception="+e)
+						// see NotecardCmd.scala
 				case e:ServerException=>
-						println(e.serverMessage("server excption: "))
-			//	case e:Exception=> println("BuildStructure: xxx exception")
+						println("BuildStructure  SeverException")
+						e.serverMessage()
 				}
 				
 

@@ -17,7 +17,8 @@ package com.server
 
 class ServerException(describe:String)  extends Exception {
 	
-	def serverMessage(line:String) { 
+//	def serverMessage(line:String) { 
+	def serverMessage() { 
 		System.err.println(":unknown location of problem cmd");
 		System.err.println("\t"+describe); 
 		}

@@ -53,8 +53,8 @@ case class NotecardCmd(parameters:List[String]) extends Node with Link with Comm
 			}				
 		
 			
-	var cardSet:CardSetCmd=null
-	var loadDictionaryCmd:LoadDictionaryCmd=null
+	var cardSet:Option[CardSetCmd]=None
+	var loadDictionaryCmd:Option[LoadDictionaryCmd]=None
 
 						// NotecardCmd parent links its children, CardSetCmd,
 						// NextFileCmd, and NotecardTaskCmd.  Grandchildren objects
@@ -64,33 +64,37 @@ case class NotecardCmd(parameters:List[String]) extends Node with Link with Comm
 		for(c <-core) 
 		   c match {
 				case cs:CardSetCmd =>
-							append(notecardParent, cs) // add cs to parent's list
-									//save parent reference so that its children can be
-									//passed to it in 'case_=>'.
-							cardSet=cs  
+						append(notecardParent, cs) // add cs to parent's list
+								//save parent reference so that its children can be
+								//passed to it in 'case_=>'.
+						cardSet=Some(cs)  
 				case nf:NextFileCmd =>
-							append(notecardParent, nf) 
+						append(notecardParent, nf) 
 				case ft:NotecardTaskCmd=>
-							append(notecardParent, ft) 
-						// Parent of LoadAssign   
+						append(notecardParent, ft) 
+					// Parent of LoadAssign   
 				case ld:LoadDictionaryCmd=>
-							append(notecardParent, ld)
-									// keep 'ld' alive for 'LoadAssignCmd'.
-							loadDictionaryCmd=ld
-						// Child of LoadDictionary
+						append(notecardParent, ld)
+								// keep 'ld' alive for 'LoadAssignCmd'.
+						loadDictionaryCmd=Some(ld)
+					// Child of LoadDictionary
 				case la:LoadAssignCmd =>
-							if(loadDictionaryCmd==null)
-									throw new com.script.SyntaxException(" NotecardCmd: LoadDictionaryCmd is null")
-									// LoadDictionaryCmd invokes 'append(..) to
-									// 'append 'la' to itself. 
-							loadDictionaryCmd.attachSpecial(la)
+						loadDictionaryCmd match {
+							case Some(ldc)=>
+								ldc.attachSpecial(la)
+							case None =>
+								throw new com.server.ServerException(" missing 'l' comand")
+									}
 				case _=>    // If not a child of Notecard, then it is a grandchild 
 							// to be passed on to CardSet who will extract its
 							// children and pass on its grandchildren to the next
 							// parent. 
-							//println("NotecardCmd:   case_=> ??? ")
-					if(cardSet==null) throw new com.script.SyntaxException(" NotecardCmd: cardSet is null")
-							cardSet.attach(c) // c is a List of grandchild
+					cardSet match {
+						case Some(cs)=> 
+							cs.attach(c)
+						case None=>
+							throw new com.server.ServerException("1st CardSet lacks 'c' or 'l' commnad ")
+						}
 				}
 			
 		}

@@ -49,7 +49,7 @@ case class CardSetCmd(parameters:List[String])  extends Node with Link with Comm
 				// value i.e.,   'struct+= "button\t0" '
 			loadParametersWithParentAndButton(struct, parameters)  // see Node
 			}
-	var rowerNode:RowerNodeCmd= null
+	var rowerNode:Option[RowerNodeCmd]= None
 			//  A chain of children are created for the current CardSet instance.
 			//  Reference to the very first child is stored in Parent.firstChild
 			//  Grandchildren (e.g., BoxField, child of RowerNode) are passed to 
@@ -63,7 +63,8 @@ case class CardSetCmd(parameters:List[String])  extends Node with Link with Comm
 					append(cardSetParent, rn) //RowerNodeCmd is child of parent
 						// establish a path to 'rowerNode.attach(..)' for
 						// its children.
-					rowerNode=rn
+					//rowerNode=rn
+					rowerNode=Some(rn)
 			case gn:GroupNodeCmd =>
 					append(cardSetParent, gn)  // see Link trait
 			case xn:XNodeCmd=>
@@ -73,8 +74,16 @@ case class CardSetCmd(parameters:List[String])  extends Node with Link with Comm
 			case fnt:FrameNodeTaskCmd=>
 					append(cardSetParent, fnt)
 			case _=> 
-						// path for rowerNode children as well as grandchildren
-					rowerNode.attach(c)
+				rowerNode match {
+								// path for rowerNode children as well as grandchildren
+					case Some(x)=> 
+						x.attach(c)
+					case None=>
+						throw new Exception("CardSetCmd failed to assign 'rowerNode'")
+						
+					}
+						
+			//		rowerNode.attach(c)
 			}
 		}
 }

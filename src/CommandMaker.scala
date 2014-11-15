@@ -26,7 +26,7 @@ object CommandMaker {
 					// 'overrideMap' with new key value. 
 				AsteriskCommand.asteriskCommand(script,lineMinusTag)
 			case 'a' =>
-						// "a" indicates the command is child of CardSet
+				// "a" indicates the command is child of CardSet
 				AssignCommand.assignerCommand(script,lineMinusTag, "a")
 			case 'd' => 
 				val overrideMap= AsteriskCommand.getOverrideSetting
@@ -48,7 +48,7 @@ object CommandMaker {
 			case 'g' => 
 				GroupCommand.groupCommand(script,lineMinusTag)
 			case 'f' =>
-				NextFile.nextFileCommand(script, lineMinusTag)
+				NextFileCommand.nextFileCommand(script, lineMinusTag)
 			case 'x' =>
 				XecuteCommand.xecuteCommand(script)
 			case 'l' =>

@@ -78,26 +78,9 @@ trait Link  {
 				false
 			case Some(xiterator) =>
 				value=iterator
-				//iterator= iterator.next
 				iterator= xiterator.next
 				true
 			}
 		}
 
-/*
-			// code needed for StructureView a utility module
-	var iterator:Node=null
-	var value:Node=null
-	def Value=value
-	def reset(parent:NodeParent) {iterator=parent.firstChild}
-	def iterate= {
-		if(iterator==null)
-			false
-		else {
-			value=iterator
-			iterator=iterator.next
-			true
-			}
-		}
-*/
 }

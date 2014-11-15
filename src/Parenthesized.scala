@@ -141,7 +141,6 @@ object Parenthesized   {
 			case  listRegex(list)=>
 				"list"
 			case _=> 
-				"unknown"
 				throw new SyntaxException("unknown parenthesized tag ")
 			}
 		}
