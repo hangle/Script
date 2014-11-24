@@ -1,23 +1,26 @@
 Script Program
 =============
 
-The Script program validates the syntax of commands in a file whose extension  
-is '*.nc', such as, 'nowis.nc'.  The program's output is a file whose   
-extension  is '*.struct', such as, 'nowis.struct'.  The 'nowis.struct' file is    
-executed by the Notecard program to create a series of card-size windows.     
+The Script program validates the syntax of commands in a file   
+whose extension is '*.nc', such as, 'nowis.nc'.  The program's   
+output is a file whose extension  is '*.struct', such as,   
+'nowis.struct'.  The 'nowis.struct' file is executed by the   
+Notecard program to create a series of card-size windows.     
 
-The following are the script commands of the 'nowis.nc' file. The letters   
-beginning  the commands (c,d,*) are command tags.
+The following are the script commands of the 'nowis.nc'  
+file. The letters beginning  the commands (c,d,*) are  
+command tags.
 
 <pre>
-								c
-		                        d now is
-		                        c
-		                        d the time
-		                        * end
+		c
+		d now is
+		c
+		d the time
+		* end
 </pre>
 
-The Script output from 'nowis.nc' is the 'nowis.struct' file.  
+The Script output from 'nowis.nc' is the 'nowis.struct'  
+file.  
 
 <pre>
                  %Notecard                        %CardSet
@@ -57,14 +60,14 @@ The Script output from 'nowis.nc' is the 'nowis.struct' file.
                  %%
 </pre>
 
-No explanation of the 'nowis.struct' files is now offered.  Explanation   
-begins   with the  subsystem ParserEvaluator and its input file, i.e.,   
-'nowis.nc'.    
+No explanation of the 'nowis.struct' files is now offered.  
+Explanation   begins   with the  subsystem ParserEvaluator   
+and its input file, i.e.,  'nowis.nc'.    
 
-The Script program has two major tasks. The first is to validate the syntax   
-and values of the script commands. The second is to build the '*.struct' file.   
-
-The execution of Script's 'main' function  invokes  two major subsystems:  
+The Script program has two major tasks. The first is to validate   
+the syntax   and values of the script commands. The second is to   
+build the '*.struct' file. The execution of Script's 'main'  
+function  invokes  two major subsystems:  
 
 		ParserValidator(..)  
 		BuildStructure(..)  
@@ -72,15 +75,16 @@ The execution of Script's 'main' function  invokes  two major subsystems:
 ParserValidator Subsystem  
 ------------------------
 
-The Notecard program is almost void of error checking syntax. It is the   
-responsibility of the Script program to catch and report potential errors.    
-A syntax error or an invalid script value throws an exception, causing the   
-defective '*.nc' file line to be printed along with a brief message   
-explaining   the error. 
+The Notecard program is almost void of error checking syntax.  
+It is the   responsibility of the Script program to catch  
+and report potential errors. A syntax error or an invalid  
+script value throws an exception, causing the defective   
+'*.nc' file line to be printed along with a brief message    
+explaining the error. 
 
-The Script program begins with validating the script commands.  The script   
-command tags of '.nowis.nc' (c, d, *) selects the following error checking   
-functions :  
+The Script program begins with validating the script   
+commands.  The script   command tags of '.nowis.nc' (c, d, *)   
+selects the following error checking functions :  
 
 		scriptCommandTag match {	
 			case 'c' =>   CardCommand . cardCommand(...)  
@@ -88,8 +92,8 @@ functions :
 			case '*' =>   AsteriskCommand . asteriskCommand(...)  
 			}
                                                                                                                                                                                                          
-These three classes create  output in the 'nowis.struct' file that has a    
-common structure:  
+These three classes create  output in the 'nowis.struct'  
+file that has a common structure:  
 
 		%<classname>  
 		key1	argument 1  
@@ -135,17 +139,18 @@ DisplayCommand  output for the first 'd' script is:
 		color 	black   
 		%%   
 
-The Display 'd' command is  complex with a number of features.  For each   
-'d' command,  the DisplayCommand object creates:  
+The Display 'd' command is  complex with a number of features.  
+For each 'd' command,  the DisplayCommand object creates:  
 
 		%RowerNode  
 		column    <value>  
 		row         <value>  
 		%%  
 
-A  'd' command   occupies a particular  window row and begins in a specific   
-column.  When the 'd' command does not specify a row or starting column, the   
-values are 0.  The following command does so:  
+A  'd' command   occupies a particular  window row and  
+begins in a specific   column.  When the 'd' command does  
+not specify a row or starting column, the values are 0.  
+The following command does so:  
 
 		d 5/13/now is  
 
@@ -154,9 +159,10 @@ values are 0.  The following command does so:
 		row	13  
 		%%  
 
-The '%Notecard...%%' group in the 'nowis.struct' begins each '*.nc' file.   
-The key/values (height 300, width 400) determines the size of the Notecard   
-window and the key/value (font_size) establishes the letter size.
+The '%Notecard...%%' group in the 'nowis.struct' begins   
+each '*.nc' file.  The key/values (height 300, width 400)   
+determines the size of the Notecard window and the key/value   
+(font_size) establishes the letter size.  
 
 		%Notecard  
 		height      300  
@@ -166,8 +172,8 @@ window and the key/value (font_size) establishes the letter size.
 		priorButton     on
 		%%  
 
-The other command tags that the ParserValidator subsystem uses in the match   
-statement are  ('a', 'e', 'g', 'f', and 'x')  :
+The other command tags that the ParserValidator subsystem uses  
+in the match  statement are  ('a', 'e', 'g', 'f', and 'x')  :
 
 		case 'a'  =>  Assigner . assignerCommand(...)  
 		case 'e'  =>  EditCommand  .  editCommand(...)  
@@ -175,11 +181,13 @@ statement are  ('a', 'e', 'g', 'f', and 'x')  :
 		case 'f'   =>  NextFile  .  nextFile(...)  
 		case 'x'  =>  Xecute  .  xecuteCommand(...)  
 
-The other important role that  the ParserValidator subsystem performs is to     
-evaluate each command and to raise an exception  when the command syntax is   
-invalid.   SyntaxException class displays the line containing the invalid   
-syntax   and a description   of the error.   The 'nowis.nc' file is shown   
-with a syntax   error.  The 'd' command lacks a space following the 'd' tag:  
+The other important role that  the ParserValidator subsystem  
+performs is to evaluate each command and to raise an exception   
+when the command syntax is invalid.   SyntaxException class    
+displays the line containing the invalid syntax and a   
+description of the error. The 'nowis.nc' file is shown      
+with a syntax   error.  The 'd' command lacks a space    
+following the 'd' tag:  
 		
 		c  
 		dnow is  
@@ -207,13 +215,14 @@ The   '*  end' command is misspelled:
 			* emd  
 		error:  unknown key: emd
 
-The syntax checking of this subsystem is extensive and its specifices are  
-not covered here.  
+The syntax checking of this subsystem is extensive and its  
+specifices are  not covered here.  
 
 BuildStructure  Subsystem 
 --------------------
-The completion of 'ParserValidator' delivers the following List[List[String]]   
-to  'BuildStructure' (each '%<className>...%%' is a list element of List).  
+The completion of 'ParserValidator' delivers the following  
+List[List[String]] to 'BuildStructure' (each   
+'%<className>...%%' is a list element of List).    
 
 <pre>
 				%Notecard                       %RowerNode
@@ -248,12 +257,14 @@ to  'BuildStructure' (each '%<className>...%%' is a list element of List).
 				%%
 </pre>
 
-The above List resembles the elements of the 'nowis.struct' file presented   
-earlier.  On closer inspections of the two, the 'child', 'address', and   
-'sibling' elements  of the file are missing from the above List.   
+The above List resembles the elements of the 'nowis.struct'  
+file presented  earlier.  On closer inspections of the two, the   
+'child', 'address', and 'sibling' elements  of the file are  
+missing from the above List.   
 
-The following shows a scaled down version of 'nowis.struct' with only the   
-%<className>  and the 'child', address, and 'sibling' elements  
+The following shows a scaled down version of 'nowis.struct'  
+with only the   %<className>  and the 'child', address, and  
+'sibling' elements  
 
 <pre>
 		%Notecard
@@ -281,14 +292,16 @@ The following shows a scaled down version of 'nowis.struct' with only the
 						sibling 0
 </pre>
 
-The scaled down version of 'nowis.struct' reveals the linked list structure.  
-A parent   class element 'child' references the 'address' of its first child   
-whose 'sibling' elements   references other parent children.  For example, The   
-parent 'Notecard' is linked to its   three children ('CardSet's and   
+The scaled down version of 'nowis.struct' reveals the linked  
+list structure.  A parent class element 'child' references  
+the 'address' of its first child  whose 'sibling' elements   
+references other parent children.  For example, The parent  
+'Notecard' is linked to its   three children ('CardSet's and   
 'NotecardTask').  
 
-The initial BuildStructure task is to create class instances with %<class names>.    
-The 'nowis.struct' file has the following class names:  
+The initial BuildStructure task is to create class instances  
+with %<class names>.  The 'nowis.struct' file has the following  
+class names:  
 
 <pre>
 		%Notecard  
@@ -301,7 +314,8 @@ The 'nowis.struct' file has the following class names:
 		%NotecardTask  
 </pre>
 
-BuildStructure invokes CommandLoader.createObject to instantiate objects.  
+BuildStructure invokes CommandLoader.createObject to instantiate  
+objects.  
 
 		“ %<classname> “ match {  
 			case %Notecard  =>   NotecardCmd( <class arguments>)  
@@ -310,8 +324,9 @@ BuildStructure invokes CommandLoader.createObject to instantiate objects.
 			case %DisplayText=>  DisplayTextCmd( <class arguments>)  
 			case %NotecardTask=> NotecardCmd( <class arguments> )  
 
-The classes,like NotecardCmd, are case classes.  The class instances are passed   
-arguments.  NotecardCmd, for example, is passed the following arguments:  
+The classes,like NotecardCmd, are case classes.  The class  
+instances are passed arguments. NotecardCmd, for example,  
+is passed the following arguments:  
 
 <pre>
 			height	300
@@ -322,28 +337,34 @@ arguments.  NotecardCmd, for example, is passed the following arguments:
 </pre>
 
 
-There are 13 case classes of the type '<classname>Cmd'  representing script  
-commands as well as components of these commands.  The above code is shown   
-to just handles the simple   'nowis.nc' script.  
+There are 13 case classes of the type '<classname>Cmd'  
+representing script commands as well as components of these  
+commands.  The above code is shown to just handles the  
+simple  'nowis.nc' script.  
 
-The '<classname>Cmd objects are assembled into a List of Any type.   The   
-NotecardCmd object is at the head of this List.  Every List object is   
-given a unique index or Id.   Starting with NotecardCmd ,  it is assigned   
-2002 as an Id value, and each successive   List objects is assigned an   
-incremented value.   Values 2002 to 2002 + n serve as  symbolic addresses of   
-the '<classname>Cmd objects.   
+The '<classname>Cmd objects are assembled into a List of  
+Any type.   The NotecardCmd object is at the head of this  
+List.  Every List object is given a unique index or Id.   
+Starting with NotecardCmd ,  it is assigned   2002 as an  
+Id value, and each successive   List objects is assigned  
+an incremented value.  Values 2002 to 2002 + n serve as   
+symbolic addresses of the '<classname>Cmd objects.   
 
 Structure.
 ----------
 
-The final step of the Script program is to organize the '<classname>Cmd'    
-into a   structure  of linked lists where the root of this structure is    
-NotecardCmd. The Notecard 'card' program general approach is to iterate     
-a series of linked lists.  The documentation of 'notecard.md' in the   
-Notecard repository details the specifics of this linked list iteration.     
-The Notecard program's linked list structure has the same structure as 
-that of the Script program structure shown below. A '<classname>Cmd'
-classes create the linked list structure.
+The final step of the Script program is to organize the  
+'<classname>Cmd' into a structure of linked lists where  
+the root of this structure is  NotecardCmd. The Notecard  
+'card' program general approach is to iterate a series of  
+linked lists.  The documentation of 'notecard.md' in the   
+Notecard repository details the specifics of this linked   
+list iteration.  
+
+The Notecard program's linked list structure has the  
+same structure as that of the Script program structure  
+shown below. A '<classname>Cmd' classes create the linked  
+list structure.
 
 <pre>
 	<clsssname>Cmd  Types						Script Examples    
@@ -365,26 +386,30 @@ classes create the linked list structure.
 					EditCmd              e ($count) < (5)  
 </pre>
 
-NotecardCmd has 4 children types (LoadDictionaryCmd, NotecardTaskCmd,   
-NextFileCmd, and CardSetCmd).  The sibling CardSet has 5 children types.  
-RowerNodeCmd and   BoxField are siblings as well as parent types.   
+NotecardCmd has 4 children types (LoadDictionaryCmd,  
+NotecardTaskCmd,   NextFileCmd, and CardSetCmd).  The  
+sibling CardSet has 5 children types.  RowerNodeCmd and   
+BoxField are siblings as well as parent types.   
 
-Our List objects of <classname>Cmd type have been assigned symbolic addresses   
-but each object lacks  the symbolic address of the object to which it is linked.   
-In the case of a parent type,  the object lacks a link to its next sibling   
-object and to its first child object.  It is the role of the parent classes   
-(NotecardCmd, CardSetCmd, RowerNodeCmd, and   BoxFieldCmd) to  establish the   
-linkage of symbolic addresses.   
+Our List objects of <classname>Cmd type have been assigned   
+symbolic addresses but each object lacks  the symbolic address  
+of the object to which it is linked.   In the case of a parent  
+type, the object lacks a link to its next sibling  object and  
+to its first child object.  It is the role of the parent classes   
+(NotecardCmd, CardSetCmd, RowerNodeCmd, and   BoxFieldCmd) to   
+establish the linkage of symbolic addresses.   
 
-Each parent class instantiates 'NodeParent' that has two fields ('firstChild'   
-and 'tail').  'firstChild' references the initial child and 'tail' references the   
-last child   added to   the list.   The function that builds the linked list    
-is Link.append(...) a trait of the parent class.  It is important to note   
-that objects will be linked by their physical addresses.   
+Each parent class instantiates 'NodeParent' that has two fields   
+('firstChild'  and 'tail').  'firstChild' references the initial  
+child and 'tail' references the  last child  added to the list.   
+The function that builds the linked list is Link.append(...) a  
+trait of the parent class.  It is important to note that objects   
+will be linked by their physical addresses.   
 
-The means by which the physical addresses are linked is to take NotecardCmd   
-off the top of the List and to pass all other <classname>Cmd  to NotecardCmd.    
-NotecardCmd  “recognizes” it children by the following match statement:  
+The means by which the physical addresses are linked is to take  
+NotecardCmd off the top of the List and to pass all other   
+<classname>Cmd  to NotecardCmd. NotecardCmd  “recognizes” it  
+children by the following match statement:  
 
 			val parent = new NodeParent  
 			var cardSet=null  
@@ -399,35 +424,40 @@ NotecardCmd  “recognizes” it children by the following match statement:
 				case _=>cardSet.attach(c)  
 
 When a parent does not recognize an object as its child, then  
-<next List element>   passes the object off  to another parent class type.  In   
-the example, CardSet.attach(c) is invoked.  The other parent class have similar   
-code.  In the case of an EditCmd   object,  it  passes through three parent types   
-before it is delivered to its parent,  i.e., BoxFieldCmd.   
+<next List element>   passes the object off  to another parent  
+class type.  In the example, CardSet.attach(c) is invoked.  The  
+other parent class have similar code.  In the case of an EditCmd   
+object,  it  passes through three parent types before it is  
+delivered to its parent,  i.e., BoxFieldCmd.   
 
-The translation of physical addresses to symbolic addresses is handled by the   
-method 'postIds' which is common to all <classname>Cmd classes.  The following   
-example uses 'postIds' in CardSetCmd.  
+The translation of physical addresses to symbolic addresses is  
+handled by the method 'postIds' which is common to all  
+<classname>Cmd classes.  The following example uses 'postIds'  
+in CardSetCmd.  
 
 		def  postIds {  
 			postChild  
 			postNextSibling  
 			}  
 
-CardSetCmd is a parent of other <classname>Cmd objects as well as a child of   
-NotecardCmd.  It must find two symbolic addresses.  It holds the reference to   
-its first child enabling it to return child's symbolic address.  It also holds   
-the reference to its next sibling to return the siblings symbolic address  .
+CardSetCmd is a parent of other <classname>Cmd objects as well  
+as a child of   NotecardCmd.  It must find two symbolic  
+addresses.  It holds the reference to  its first child enabling  
+it to return child's symbolic address.  It also holds  the   
+reference to its next sibling to return the siblings symbolic  
+address  .
 
-<classname>Cmd classes that are not parents need only reference the sibling   
-that it is linked to, thus:  
+<classname>Cmd classes that are not parents need only reference  
+the sibling that it is linked to, thus:  
 
 		def postIds {  
 			postNextSibling  
 			}  
 
-Finally with each <classname>Cmd object in List having a symbol address, the   
-symbolic addresses of other objects, and the argument list passes to it when   
-created, then the List is iterated to have  each object print this information   
-to  the '.struct' file.   
+Finally with each <classname>Cmd object in List having a symbol  
+address, the symbolic addresses of other objects, and the  
+argument list passes to it when created, then the List is  
+iterated to have  each object print this information to  the  
+'.struct' file.   
 
 
