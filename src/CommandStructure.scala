@@ -43,7 +43,6 @@ package com.server
 object CommandStructure  {
 				// 'cmdVector' is a list of all objects created by
 				// 'CommandLoader.createObject'.
-	//def buildStructure( cmdVector: List[Any]) {
 	def useNotecardObjectToAttach( cmdVector: List[Any]) {
 					// first element is root of linked list hierarchy	
 		val notecard=cmdVector.head.asInstanceOf[NotecardCmd]

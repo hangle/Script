@@ -10,7 +10,7 @@
 	
 	To prevent the Assign command that is child of Load command from becoming 
 	a child of the CardSet command, the functions of LoadScriptCommand scans
-	the script file to detect a 'l' tag and changes the 'a' tags to '+' tags
+	the script file to detect a 'l' tag and changes the 'a' tags to '&' tags
 	of Assign commands that are within the scope of the Load command.
 
 	For example:
@@ -18,13 +18,13 @@
 		before		after
 		------          -----
 		l 			l
-		a $one=1	+ $one=1
+		a $one=1	& $one=1
 		c			c
 		d hello		d hello
 		a $two=2	a $two=2
 		* end		* end
 
-	The line 'a $one=1' becomes '+ $one=1'.
+	The line 'a $one=1' becomes '& $one=1'.
 */
 package com.script
 
@@ -35,7 +35,7 @@ object LoadScriptCommand  {
 
 		// Iterates '*.nc' script file to detect 'l' command.  The
 		// Assign commands belonging to the 'l' command have their tag 'a'
-		// changed to '+'.
+		// changed to '&'.
 	def findLoadTagToChangeAssignTags(script:List[String]):List[String]={
 		script match {
 			case Nil => Nil
@@ -44,7 +44,7 @@ object LoadScriptCommand  {
 			}
 		}
 		// detect 'a' tag within scope of 'l' command and transform 'a'
-		// to '+'. The variable 'endOfLoad' determines scope range. 
+		// to '&'. The variable 'endOfLoad' determines scope range. 
 	def changeAssignTagToPlusSymbol(line:String): String={
 		
 		line.charAt(0) match {
@@ -53,9 +53,9 @@ object LoadScriptCommand  {
 				isLoadTag=true
 				endOfLoad=false
 				line
-				// Change 'a' tag to '+' tag
+				// Change 'a' tag to '&' tag
 			case tag:Char if(tag=='a' && isLoadTag &&  ! endOfLoad)=>
-				"+" + line.drop(1)
+				"&" + line.drop(1)
 				// Load command scope ends when a non 'a' tag is encountered
 			case tag:Char if(tag != 'a' && isLoadTag) =>
 				endOfLoad=true	

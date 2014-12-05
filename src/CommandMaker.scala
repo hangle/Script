@@ -38,8 +38,9 @@ object CommandMaker {
 			case 'c' => 
 						// 'c' clear command.
 				CardCommand.cardCommand(script,lineMinusTag, columnRowCard, "CardSet")
-			case 'b' =>
-						// treat 'b' as a CardSet command with "ButtonCardSet" to indcate the
+			case 'b' | '+' =>
+			//case 'b'  =>
+						// treat 'b' or '+' as a CardSet command with "ButtonCardSet" to indcate the
 						// difference. 'b' is a special type of CardSet. In 'CardScript',
 						// the <%classname> becomes 'ButtonCardSet'.
 				CardCommand.cardCommand(script,lineMinusTag, columnRowCard, "ButtonCardSet")
@@ -53,9 +54,10 @@ object CommandMaker {
 				XecuteCommand.xecuteCommand(script)
 			case 'l' =>
 				LoadDictionaryCommand.loadDictionaryCommand(script, lineMinusTag, filename)
-			case '+' =>// Assign 'a' commands translated to '+' commandss
+			case '&' =>// Assign 'a' commands translated to '&' commands by LoadScriptCommand.
 						// argument "+" indicates the command is child of LoadDictionary
-				AssignCommand.assignerCommand(script,lineMinusTag, "+")
+				println("CommandMaker:  case &=>    line="+line)
+				AssignCommand.assignerCommand(script,lineMinusTag, "&")
 			case _=> 
 				throw new SyntaxException(commandTag+" is an unknown command tag")
 			}

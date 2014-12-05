@@ -10,7 +10,7 @@
 
 	The command whose tag is 'b' (ButtonCardSet) has the same functionality 
 	as the 'c' command.   The argument 'kind' passed to 'cardCommand' 
-	maintains the 'c' and 'b' identies.
+	maintains the 'c' and 'b' identities.
 */
 package com.script
 

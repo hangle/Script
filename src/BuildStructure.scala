@@ -48,7 +48,7 @@ object BuildStructure   {
 				// Argument values are assigned to the parameters of 'xxxCmd' instances
 				// 'xxxCmdList' is list of all 'xxxCmd' instances. 
 		val xxxCmdList=CommandLoader.createXxxCmdObjects(sets) 
-				// build linked list structure starting with Notecard.  
+				// build linked list structure starting with Notecard as the 'root'.  
 		CommandStructure.useNotecardObjectToAttach(xxxCmdList) 
 				// Iterate 'xxxCmdList' and load parameters for each '<class name>Cmd' object
 		CommandToFile.createStructFile(xxxCmdList, struct)  

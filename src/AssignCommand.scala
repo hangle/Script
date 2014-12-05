@@ -61,7 +61,7 @@ object AssignCommand {
 
 	def assignerCommand(script: collection.mutable.ArrayBuffer[String],
 						line: String,
-								// 'kind' equals "a" or "+" to distinguish an
+								// 'kind' equals "a" or "&" to distinguish an
 								// Assign command that belongs to either
 								// CarsSet parent or LoadDictionary parent.
 						kind: String)={

@@ -61,6 +61,7 @@ object ButtonCardSetRemap  {
 		}
 	def switchAddress(targetName:String, csline:String)={
 			val (line, address)=fetchAddress(csline)
+	//		println("ButtonCardSet: swithchAddress() line="+line+"  addr="+address+"  targetName="+targetName)
 			targetName+"\t"+address
 			}
 	def modifyAddressesOfButtonCardSetGroup(percentList:List[List[String]]) = {
@@ -78,7 +79,7 @@ object ButtonCardSetRemap  {
 		for( set <- percentList) {
 			val ss=set.toArray
 			ss(0) match {	// ss(0) is <%classname>
-				case "%CardSet"  if (bcs.isEmpty)=>
+				case "%CardSet"  if (bcs.isEmpty)=>  // 
 						cs=ss
 				case "%ButtonCardSet" if ( !cs.isEmpty)=> // prior loop was <%CardSet>
 						bcs=ss
@@ -86,9 +87,10 @@ object ButtonCardSetRemap  {
 							// One or more %ButtonCardSet may be childen of %CardSet
 						multiButtonList = bcs :: multiButtonList
 							
-							// prior loop was one or more <%ButtonCardSet>. current
-							// <%classname> terminates the scope of <%ButtonCardSet> so
-							// impliment address changes.
+						// prior loop(s) was one or more <%ButtonCardSet>. current
+						// <%classname> terminates the scope of <%ButtonCardSet> so
+						// impliment address changes.
+						// (Note, potential problem because %LoadDictionary not represented)
 				case "%CardSet" | "%NotecardTask" | "%NextFile"   if ( ! bcs.isEmpty)=>
 						nextCs=ss
 							// Sibling's address added to '%ButtonCardSet' button 
@@ -96,13 +98,13 @@ object ButtonCardSetRemap  {
 						cs(buttonIndex)=switchAddress("button", cs(siblingIndex) )
 							// 1st Notecard child following '%ButtonCardSet' object 
 							// is added to childs sibling address.  
-								//println("Button..Remap: cs(siblingIndex)="+cs(siblingIndex)+"  cs-addr="+cs(1) )
+								//println("Button..Remap: cs(siblingIndex)="+cs(siblingIndex)+"  cs-addr="+cs(1))
 						cs(siblingIndex)=switchAddress("sibling",nextCs(addressIndex))
 							// 'oneButton' are individual ButtonCardSet instances
 						for( oneButton <- multiButtonList) {
 									// ButtonCardSet has address of CardSet parent to 
 									// allow return.
-									//println("ButtonCardSetRemap: oneButton addr="+oneButton(1)+"  cs(1)="+cs(1) )
+									//println("ButtonCardSetRemap: oneButton addr="+oneButton(1)+" cs(1)="+cs(1))
 								oneButton(buttonIndex)=switchAddress("button", cs(addressIndex) )
 								}
 							// last buttonCardSet object has "null" sibling
