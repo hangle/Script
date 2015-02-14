@@ -5,7 +5,7 @@
 package com.script
 
 object NextFileScript   {
-
+			// Invoked by NextFileCommand
 	def nextFileScript(script: collection.mutable.ArrayBuffer[String],
 						filename:String,
 						condition:String)={

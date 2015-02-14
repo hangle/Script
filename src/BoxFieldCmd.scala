@@ -35,7 +35,6 @@ case class BoxFieldCmd(parameters:List[String])  extends Node with Link with Com
 	def loadStruct( struct:scala.collection.mutable.ArrayBuffer[String]) {
 			loadParametersWithParent(struct, parameters)
 			}
-	var rowerNode:RowerNodeCmd= null
 	def attach(c:Any) {
 		  c match {
 		  	case ed:EditNodeCmd=>

@@ -23,7 +23,8 @@ object GroupScript   {
 
 	def elseScript( script:collection.mutable.ArrayBuffer[String],
 					elseTag:String)={
-		if(elseTag==null) 
+//		if(elseTag==null) 
+		if(elseTag !="e") 
 				script += "post\t0" // else without condition
 			else
 				script += "post\telse" //else with condition

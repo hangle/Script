@@ -118,7 +118,7 @@ object DisplayParser   {
 			val xtype=extractParenthesizedTag(component) //Parenthesized.scala
 						// Determine embedded component has appearance parameters,e.g., (#/length 3/$abc)
 			if( ! isEmbeddedAppearanceComponent(component)) { // No AppearenceParameters
-					if(xtype=="text") {   // (%% component) without appearance parameters--not allowed 
+					if(xtype=="text") {   // (%% component)  appearance parameters must be present
 							throw new SyntaxException("(%% component missing parameter, e.g., /color blue/ ")
 							}
 						// Parenthesized component without appearance parameters.

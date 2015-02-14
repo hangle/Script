@@ -54,6 +54,7 @@ object CardCommand  {
 	def	extractNameAndCondition(line:String):(Option[String], Option[String])={
 		line match {
 			case nameLogicRegex(name, condition)=> 
+							// condition is null when condition string is absentg
 					val conditionOption=if(condition!=null) Some(condition); else None
 					val nameOption= if(name !=null) Some(name); else None
 					(nameOption,conditionOption)

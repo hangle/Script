@@ -157,7 +157,6 @@ object EditCommand  {
 			}
 		}
 
-		//For '(2)=(2)'  condition=None  statuc=null
 		//For '(2)=(2)  status=msg' conditon='(2)=(2)' status='status=msg'
 	def extractConditionAndStatus(line:String): (Option[String], Option[String])={
 		line match {

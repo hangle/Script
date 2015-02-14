@@ -47,7 +47,7 @@ case class RowerNodeCmd(parameters:List[String])   extends Node with Link with C
 	def loadStruct( struct:scala.collection.mutable.ArrayBuffer[String]) {
 			loadParametersWithParent(struct, parameters)
 			}
-	var holdBoxField:BoxFieldCmd=null
+	var holdBoxField:Option[BoxFieldCmd]=None
 			// Link children (e.g., Display, BoxField) to RowerNode
 			// parent. 
 	def attach(c:Any) {
@@ -58,19 +58,20 @@ case class RowerNodeCmd(parameters:List[String])   extends Node with Link with C
 			case dv:DisplayVariableCmd=>
 					append(parent, dv)
 			case bf:BoxFieldCmd=>
-					//println("RowerNodeCmd  BoxFieldCmd--------->")
 					append(parent, bf)
 						// BoxField is a parent of EditNode childreBn
-					holdBoxField=bf     
+					holdBoxField=Some(bf)     
 			case _=> 
 							//'d' cmd must have a field expression (# $<variable>) to
 							// serve as a parent to one or more 'e' cnd children.
-					if(holdBoxField==null) {
-						throw new ServerException("missing 'd' cmd input field to 'e' cmd")
+					holdBoxField match {
+						case None=>
+							throw new ServerException("missing 'd' cmd input field to 'e' cmd")
+						case Some(hBF) =>
+							  	// grandchild passed thru to BoxField parent
+							hBF.attach(c)
 						}
 							
-						// grandchild passed thru to BoxField parent
-					holdBoxField.attach(c)
 				}
 		}
 

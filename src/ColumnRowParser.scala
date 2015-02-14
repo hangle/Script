@@ -7,18 +7,18 @@
 	'columnRowParser' function returns three tuple values:
 		column position
 		row position
-		slash that terminated the row position value
+		slash that terminated the column/row position value
 	In the event column value is present, but not a row value, than the
 	row value equals "", and similarly for row value, but no
 	column value. Note, in the event of a row value and a slash value 
-	of "", than the row value is not a position value but is displayed
+	of "", than the value is not a column/row position value but is displayed
 	as text.
 	Examples:	  Tuple
 		d 2/3/	(2,3,/)
-		d 2/	(2,"","")
+		d 2/	(2,"",/)
 		d /3/	("",3,/)
-		d 2/3	(2,3,"")    // 3 is text and not a row position
-		d /3    ("",3,"")   //    "  "  "
+		d 2/3	(2,3,"")    // 3 is text and not a row position, however 2/ is column value
+		d /3    ("",3,"")   // the / and 3 are displayable  text
 	A Display command without column or row positions returns
 	(null,null,null)
 	*/
