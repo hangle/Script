@@ -44,7 +44,11 @@ object BuildStructure   {
 				// are collected into a list and assigned to a common 
 				// list 'sets' (List[List[String]])
 		val sets=StructScript.structListList( script)
-				// '%<class-name>' used to instantiate the class instances of 'xxxCmd'.
+				// 'x' tag halts system to allow input from BoxField.
+				// throw exception when BoxField is absent. 
+		verifyXNodeHasBoxField(sets)
+		
+					// '%<class-name>' used to instantiate the class instances of 'xxxCmd'.
 				// Argument values are assigned to the parameters of 'xxxCmd' instances
 				// 'xxxCmdList' is list of all 'xxxCmd' instances. 
 		val xxxCmdList=CommandLoader.createXxxCmdObjects(sets) 
@@ -68,8 +72,29 @@ object BuildStructure   {
 						println("BuildStructure  SeverException")
 						e.serverMessage()
 				}
-				
-
+		}
+			// %XNode must have preceding %BoxField since the function of XNode is to
+			// halt script execution to allow user input. 
+	def verifyXNodeHasBoxField(sets:List[List[String]]) {
+				// Extract from sets:List[List[String]] those lines that have '%<tags>,
+				// like '%BoxField', '%CardSet', %File, %Asterisk, ...
+		val classNames=for(s <-sets; e <-s if (! e.startsWith("%%") && e.startsWith("%")) )  yield e 
+		var hasXnode=false
+		var hasBoxField=false
+		
+		for(e <-classNames) {
+			if(e=="%BoxField")
+				hasBoxField=true
+					//Make sure there is a preceding %BoxField tag
+			if(e=="%XNode") 
+				if( ! hasBoxField)
+						throw new ServerException("x tag without preceding d tag having an input field")	
+					else    // CardSet may have more than one %XNode 
+						hasBoxField=false
+				//New CardSet so begin again.
+			if(e=="%CardSet") { hasXnode=false; hasBoxField=false}
+			}
+		println("---------------------------------")
 		}
 
 }
