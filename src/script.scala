@@ -1,9 +1,11 @@
 /* date:   Aug 15, 2012
 
-	Executes Script program to validate script commands (*.nc file).  
+	Executes Script program to validate script commands (*.nc file):  
+		ParseValidator
 	If no command syntax error is found, then a linked list struture
-	is created and written to an .struct file.  This file is input
-	to the Notecard (card) program.
+	is created and written to an .struct file:  
+		BuildStructure
+	This file is input to the Notecard (card) program.
 */
 import java.io._
 

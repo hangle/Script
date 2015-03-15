@@ -8,11 +8,13 @@ package com.server
 import java.io._
 object WriteStructureFile   {
 	def writeStructureFile(newStruct:List[Array[String]],
+//	def writeStructureFile(struct:collection.mutable.ArrayBuffer[String],
 			    filename:String) ={
 				// Drop .nc extension and add .command ext
 		val name=changeFilenameExtension(filename)		
 		//println("WriteStructureFile name="+name)
 		val writer=new FileWriter(name)	
+//		for(struct <- newStruct)   // List
 		for(struct <- newStruct)   // List
 				for(s <-struct){
 					writer.write(s+"\n")

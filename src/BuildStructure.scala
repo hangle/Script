@@ -48,7 +48,7 @@ object BuildStructure   {
 				// throw exception when BoxField is absent. 
 		verifyXNodeHasBoxField(sets)
 		
-					// '%<class-name>' used to instantiate the class instances of 'xxxCmd'.
+				// '%<class-name>' used to instantiate the class instances of 'xxxCmd'.
 				// Argument values are assigned to the parameters of 'xxxCmd' instances
 				// 'xxxCmdList' is list of all 'xxxCmd' instances. 
 		val xxxCmdList=CommandLoader.createXxxCmdObjects(sets) 
@@ -60,6 +60,7 @@ object BuildStructure   {
 		val newStruct=ButtonCardSetRemap.buttonCardSetRemap(struct)
 				// output <filename>.struct file
 		com.server.WriteStructureFile.writeStructureFile(newStruct, filename)
+//		com.server.WriteStructureFile.writeStructureFile(struct, filename)
 			}catch{ 
 				//case e:com.script.SyntaxException=>
 				//		println("BuildException: catch")
@@ -77,16 +78,16 @@ object BuildStructure   {
 			// halt script execution to allow user input. 
 	def verifyXNodeHasBoxField(sets:List[List[String]]) {
 				// Extract from sets:List[List[String]] those lines that have '%<tags>,
-				// like '%BoxField', '%CardSet', %File, %Asterisk, ...
-		val classNames=for(s <-sets; e <-s if (! e.startsWith("%%") && e.startsWith("%")) )  yield e 
+				// like '%BoxField', '%CardSet', %File, %Asterisk, ... . Ignore "%%" terminating tag.
+		val classNames=sets.map{x=> x.map{e=> if( ! e.startsWith("%%") && e.startsWith("%")) e } }
 		var hasXnode=false
 		var hasBoxField=false
-		
+
 		for(e <-classNames) {
 			if(e=="%BoxField")
 				hasBoxField=true
-					//Make sure there is a preceding %BoxField tag
 			if(e=="%XNode") 
+					//Make sure there is a preceding %BoxField tag
 				if( ! hasBoxField)
 						throw new ServerException("x tag without preceding d tag having an input field")	
 					else    // CardSet may have more than one %XNode 
