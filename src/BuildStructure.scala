@@ -29,8 +29,8 @@
 The script strings are convered to List[List[String]]:
 
 			List(List("%Notecard", "height 550",width=450 "font_size 16", "%%")
-				 List("%CardSet", "name  0", "condition 0", "%%"),
-				 List("%RowerNode", "row 0", "column 0, "%%")   )
+				 List("%CardSet", "button  0", "name  0", "condition 0", "%%"),
+				 List("%RowerNode", "row 0", "column 0, "%%")   , ... )
 */
 package com.server
 import java.io._
@@ -56,11 +56,11 @@ object BuildStructure   {
 		CommandStructure.useNotecardObjectToAttach(xxxCmdList) 
 				// Iterate 'xxxCmdList' and load parameters for each '<class name>Cmd' object
 		CommandToFile.createStructFile(xxxCmdList, struct)  
-				//  
-		val newStruct=ButtonCardSetRemap.buttonCardSetRemap(struct)
+				// Alter 'button' parameter in CardSet and in ButtonCardSet. In CardSet 'button'
+				// with "1" indicates associated ButtonCardSet(s). otherwise 'button' is "0".
+		val newStruct= ModifyButtonCardSet.smodifyButtonCardSet( struct)
 				// output <filename>.struct file
 		com.server.WriteStructureFile.writeStructureFile(newStruct, filename)
-//		com.server.WriteStructureFile.writeStructureFile(struct, filename)
 			}catch{ 
 				//case e:com.script.SyntaxException=>
 				//		println("BuildException: catch")
