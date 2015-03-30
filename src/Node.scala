@@ -45,7 +45,7 @@ trait Node  {
 		struct+= "sibling\t"+idNextSibling.toString
 		parameters.tail.foreach( struct+= _ )
 		}
-				// special case for CardSet and ButtonCardSet. Other objects lack button
+				// special case for CardSet and AddCardSet. Other objects lack button
 				// address. 
 	def loadParametersWithParentAndButton(struct:scala.collection.mutable.ArrayBuffer[String],
 										  parameters:List[String]) {

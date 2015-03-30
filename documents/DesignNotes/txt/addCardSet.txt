@@ -1,0 +1,76 @@
+
+AddCardSet
+-------------
+
+The following script creates a CardSet and a AddCardSet.      
+
+		c
+		d What is the capital of Ohio (# $columbus)
+
+		+
+		d Discover of the New World.
+
+		* end
+
+The CardSet, beginning with the command 'c', asks a question requiring a user   
+response. The AddCardSet, beginning with the command '+', provides a probe or     
+prompt, that is, a hint, for the user     
+
+The question-CardSet arms the '+Add' button. Activation of the +Add button presents   
+the AddCardSet along with its hint. Following the 'Next' button activation,   
+the user is returned to the question-CardSet to complete the response.       
+
+On the otherhand, the user can enter a response and activate the 'Next' button to   
+skip the AddCardSet.     
+
+The AddCardSet is always associated with the immediately preceding CardSet.  A   
+CardSet may have more than one AddCardSet as the following script illustrates.   
+
+		c
+		d What is the capital of Ohio (# $columbus)
+
+		+
+		d Discover of the New World.
+
+		+
+		d Begins with 'C' and has 8 letters
+
+		* end
+
+Termination of the last AddCardSet initiates the return or re-display of the   
+question-CardSet. A single AddCardSet is also the last in the series.  The series   
+may be terminated before the last AddCardSet by activation of the '+Add' button.     
+This button acts as a toggle switch to start and to terminate the series. The '+Add'     
+button remains   highlighted until the last AddCardSet is    
+
+Script Program:   
+
+The CardSet and AddCardSet are identical in almost all respects. The differ by the    
+'button' parameter that each has.    
+
+		CardSet        button=0     No associated AddCardSet
+		CardSet        button=1     Associated AddCardSet
+		AddCardSet     button=2     Not last
+		AddCardSet     button=99    Last AddCardSet
+
+The top-level program 'script.scala' has two major program divisions:        
+	
+		ParserValidator   detects script errors    
+		BuildStructure    creates linked list hiearchy    
+
+		ParserValidator    
+			CommandMaker 
+				Tags 'c', 'b', or '+' invoke CardCommand
+			CardCommand (CardSetCommand)
+				Validates logic expression; invokes CardScript
+			CardScript  (CardSetScript)
+				Create "CardSet" and "AddCardSet"
+		BuildStructure
+			CommandLoader	
+				Principle task to create objects, like CardSet,
+				and pass these objects there parameters.
+			CommandStructure
+				Build linked list structure where Notecard
+				is the ancestor of all classes.
+			ModifyAddCardSet
+				Set 'button' parameter.

@@ -8,7 +8,7 @@
 	'c mycard ($abc)=(male)'
 	Both name 'mycard' and logic expressions '($abc)=(male)' are optional
 
-	The command whose tag is 'b' (ButtonCardSet) has the same functionality 
+	The command whose tag is 'b' (AddCardSet) has the same functionality 
 	as the 'c' command.   The argument 'kind' passed to 'cardCommand' 
 	maintains the 'c' and 'b' identities.
 */
@@ -27,7 +27,7 @@ object CardCommand  {
 	def cardCommand(script:collection.mutable.ArrayBuffer[String], 
 					line: String,
 				    columnRowCard:ColumnRowCard,
-					kind:String)   // either "CardSet" or "ButtonCardSet"
+					kind:String)   // either "CardSet" or "AddCardSet"
 								=  {
 				// column and row position values use by the Display
 				// command are cleared at start of each card set.

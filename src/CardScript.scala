@@ -5,7 +5,7 @@
 				condition such as '(1)=($one)'
 		CommandMaker treats 'b' command symbol as a CardSet, however
 		it creats 'kind' symbol to indicate whether to assign '%<name>'
-		of 'CardSet' or 'ButtonCardSet' to script. 
+		of 'CardSet' or 'AddCardSet' to script. 
 */
 package com.script
 
@@ -20,7 +20,7 @@ object CardScript   {
 		if(kind=="CardSet")
 				script +="%CardSet"  
 		  else
-		  		script +="%ButtonCardSet"
+		  		script +="%AddCardSet"
 		nameOption match {
 			case Some(name)=>
 				script += "name\t"+name

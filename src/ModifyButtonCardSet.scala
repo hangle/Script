@@ -1,7 +1,7 @@
 
 /*
 
-	Determine if a ButtonCardSet (BCS) follows a CardSet (CS). 
+	Determine if a AddCardSet (BCS) follows a CardSet (CS). 
 	If so, then assign '1' to button parameter of CS.
 	The initial parameter value is '0'.
 
@@ -13,11 +13,11 @@
 */
 package com.server
 	
-object ModifyButtonCardSet{
+object ModifyAddCardSet{
 			// Invoked by BuildStructure.  
 			// First, convert 'struct' to List[List[String]] containing
 			//	%<classname>parameter-pairs<%%>
-	def modifyButtonCardSet(struct:collection.mutable.ArrayBuffer[String]):
+	def modifyAddCardSet(struct:collection.mutable.ArrayBuffer[String]):
 													List[Array[String]]={
 					// collapse  '%<classname> to %%', inclusive of parameters
 					// to List[Array[String]].
@@ -26,7 +26,7 @@ object ModifyButtonCardSet{
 		}
 		// Button parameter is output file is labled 'button'.
 		// It is the 4th parameter. In CardSet it indicates, via value of '1',
-		// that there is an associated ButtonCardSet(s).
+		// that there is an associated AddCardSet(s).
 	def modifyButtonParameter(listArray: List[Array[String]]):List[Array[String]]={
 		val list= modifyLastToFirst(listArray)
 		modifyFirstToLast(list)
@@ -38,7 +38,7 @@ object ModifyButtonCardSet{
 		// the flag is set, then its button parameter is assigned '1'. The
 		// flag is turned off. 
 	def modifyLastToFirst(listArray:List[Array[String]]):List[Array[String]]= {
-		val reverse=listArray.reverse // ButtonCardSet encountered before CS
+		val reverse=listArray.reverse // AddCardSet encountered before CS
 		var flag=false
 				// 'set' is (<%classname>parameter-pairs<%%>)
 		for( set <- reverse) {
@@ -47,7 +47,7 @@ object ModifyButtonCardSet{
 				case "%CardSet" if( flag)=>
 					flag=false
 					set(4)="button	1"
-				case "%ButtonCardSet" if( ! flag )=> 
+				case "%AddCardSet" if( ! flag )=> 
 					flag=true	// sets up associated CardSet
 					set(4)="button	99"
 				case _=>
@@ -65,7 +65,7 @@ object ModifyButtonCardSet{
 			val ss=set.toArray
 		//			println("ModifyButt... ss(0)="+ss(0)+"  ss(4)="+ss(4) )
 			ss(0) match {  //ss(0) is <%classname>
-				case "%ButtonCardSet" if(ss(4)=="button	0")=>
+				case "%AddCardSet" if(ss(4)=="button	0")=>
 					ss(4)="button	2" 
 						//	println("ModifyBu...  \t\tss(4)="+ss(4)  )
 				case _=>

@@ -56,9 +56,9 @@ object BuildStructure   {
 		CommandStructure.useNotecardObjectToAttach(xxxCmdList) 
 				// Iterate 'xxxCmdList' and load parameters for each '<class name>Cmd' object
 		CommandToFile.createStructFile(xxxCmdList, struct)  
-				// Alter 'button' parameter in CardSet and in ButtonCardSet. In CardSet 'button'
-				// with "1" indicates associated ButtonCardSet(s). otherwise 'button' is "0".
-		val newStruct= ModifyButtonCardSet.smodifyButtonCardSet( struct)
+				// Alter 'button' parameter in CardSet and in AddCardSet. In CardSet 'button'
+				// with "1" indicates associated AddCardSet(s). otherwise 'button' is "0".
+		val newStruct= ModifyAddCardSet.modifyAddCardSet( struct)
 				// output <filename>.struct file
 		com.server.WriteStructureFile.writeStructureFile(newStruct, filename)
 			}catch{ 

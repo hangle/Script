@@ -62,7 +62,7 @@ object CommandLoader {
 //	println("CommandLoader:   parameterSet.head="+parameterSet.head)
 		parameterSet.head match{   
 			case "%Notecard"=>  NotecardCmd(parameterSet)
-			case "%CardSet" | "%ButtonCardSet" =>CardSetCmd(parameterSet) 
+			case "%CardSet" | "%AddCardSet" =>CardSetCmd(parameterSet) 
 			case "%DisplayText"=>DisplayTextCmd(parameterSet)
 			case "%BoxField"=> BoxFieldCmd(parameterSet)
 			case "%NotecardTask"=>NotecardTaskCmd(parameterSet)

@@ -39,10 +39,10 @@ object CommandMaker {
 						// 'c' clear command.
 				CardCommand.cardCommand(script,lineMinusTag, columnRowCard, "CardSet")
 			case 'b' | '+' =>
-						// treat 'b' or '+' as a CardSet command with "ButtonCardSet" to indcate the
+						// treat 'b' or '+' as a CardSet command with "AddCardSet" to indcate the
 						// difference. 'b' is a special type of CardSet. In 'CardScript',
-						// the <%classname> becomes 'ButtonCardSet'.
-				CardCommand.cardCommand(script,lineMinusTag, columnRowCard, "ButtonCardSet")
+						// the <%classname> becomes 'AddCardSet'.
+				CardCommand.cardCommand(script,lineMinusTag, columnRowCard, "AddCardSet")
 			case 'e' => 
 				EditCommand.editCommand(script, lineMinusTag) 
 			case 'g' => 

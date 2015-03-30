@@ -1,9 +1,9 @@
 /* date:   Dec 7, 2013
  						BUTTON CARD SET REMAP  
 
-	'%ButtonCardSet' code group is identical to the '%CardSet' code set. 
+	'%AddCardSet' code group is identical to the '%CardSet' code set. 
 	Both are children of Notecard and are linked by the sibling address. 
-	'ButtonCardSetRemap' removes the '%ButtonCardSet' group from this
+	'AddCardSetRemap' removes the '%AddCardSet' group from this
 	sibling link, and attaches it to '%CardSet''s buttonAddress 
 	argument. For example:
 
@@ -14,7 +14,7 @@
 				sibling 2005		sibling 2008	// changed address
 				button  0			button  2005	//   "       "
 			
-				%ButtonCardSet		%ButtonCardSet
+				%AddCardSet		%AddCardSet
 				address 2005		address 2005
 				child   2006		child   2006
 				sibling 2008		sibling 0		// changed address
@@ -24,32 +24,34 @@
 				address 2008		address 2008
 				...					...
 
-	'%ButtonCardSet' has been removed as a child of '%Notecard'.
+	'%AddCardSet' has been removed as a child of '%Notecard'.
 	The 1st '%CardSet' is now the parent (via button 2005) of
-	'%ButtonCardSet'. 
+	'%AddCardSet'. 
 */
 package com.server
 import io._
 
-object ButtonCardSetRemap  {
+object AddCardSetRemap  {
 			// Extract className and address
 	val regex="""([%a-zA-Z0-9]+)\s+(\d+)""" .r
-			// store all CardSets, NotecardTask, NextFile, and ButtonCardSet
+			// store all CardSets, NotecardTask, NextFile, and AddCardSet
 			// object whose component addresses have been modified.
 	var buttonMap = Map[(String),(Array[String])]()
 
+/*
 			// Invoked by BuildStructure.  
 			// First, convert 'struct' to List[List[String]] containing
 			//	%<classname>parameter-pairs<%%>
-	def buttonCardSetRemap(struct:collection.mutable.ArrayBuffer[String])
+	def addCardSetRemap(struct:collection.mutable.ArrayBuffer[String])
 											: List[Array[String]]={
 					// collapse  '%<classname> to %%', inclusive of parameters
 					// to List[Array[String]].
 			val listList=collectPercentToDoublePercent(struct)
-			modifyAddressesOfButtonCardSetGroup(listList)
+			modifyAddressesOfAddCardSetGroup(listList)
 			val l=insertAddressChangeObjectIntoList(listList).reverse
 			l
 			}
+	*/
 
 	def fetchAddress(line:String):(String,String)={
 		line match {
@@ -61,14 +63,14 @@ object ButtonCardSetRemap  {
 		}
 	def switchAddress(targetName:String, csline:String)={
 			val (line, address)=fetchAddress(csline)
-	//		println("ButtonCardSet: swithchAddress() line="+line+"  addr="+address+"  targetName="+targetName)
+	//		println("AddCardSet: swithchAddress() line="+line+"  addr="+address+"  targetName="+targetName)
 			targetName+"\t"+address
 			}
-	def modifyAddressesOfButtonCardSetGroup(percentList:List[List[String]]) = {
+	def modifyAddressesOfAddCardSetGroup(percentList:List[List[String]]) = {
 		var cs=Array[String]()
 		var bcs= Array[String]()
 		var nextCs=Array[String]()
-				// store one or more successive ButtonCardSet objects
+				// store one or more successive AddCardSet objects
 		var multiButtonList=List[Array[String]]()
 
 		val className=0
@@ -81,47 +83,47 @@ object ButtonCardSetRemap  {
 			ss(0) match {	// ss(0) is <%classname>
 				case "%CardSet"  if (bcs.isEmpty)=>  // 
 						cs=ss
-				case "%ButtonCardSet" if ( !cs.isEmpty)=> // prior loop was <%CardSet>
+				case "%AddCardSet" if ( !cs.isEmpty)=> // prior loop was <%CardSet>
 						bcs=ss
 						//println("Button..Remap: case:BSC=>  cs(1)="+cs(1)+"   bcs(0)="+bcs(1) ) 
-							// One or more %ButtonCardSet may be childen of %CardSet
+							// One or more %AddCardSet may be childen of %CardSet
 						multiButtonList = bcs :: multiButtonList
 							
-						// prior loop(s) was one or more <%ButtonCardSet>. current
-						// <%classname> terminates the scope of <%ButtonCardSet> so
+						// prior loop(s) was one or more <%AddCardSet>. current
+						// <%classname> terminates the scope of <%AddCardSet> so
 						// impliment address changes.
 						// (Note, potential problem because %LoadDictionary not represented)
 				case "%CardSet" | "%NotecardTask" | "%NextFile"   if ( ! bcs.isEmpty)=>
 						nextCs=ss
-							// Sibling's address added to '%ButtonCardSet' button 
+							// Sibling's address added to '%AddCardSet' button 
 							// address.
 						cs(buttonIndex)=switchAddress("button", cs(siblingIndex) )
-							// 1st Notecard child following '%ButtonCardSet' object 
+							// 1st Notecard child following '%AddCardSet' object 
 							// is added to childs sibling address.  
 								//println("Button..Remap: cs(siblingIndex)="+cs(siblingIndex)+"  cs-addr="+cs(1))
 						cs(siblingIndex)=switchAddress("sibling",nextCs(addressIndex))
-							// 'oneButton' are individual ButtonCardSet instances
+							// 'oneButton' are individual AddCardSet instances
 						for( oneButton <- multiButtonList) {
-									// ButtonCardSet has address of CardSet parent to 
+									// AddCardSet has address of CardSet parent to 
 									// allow return.
-									//println("ButtonCardSetRemap: oneButton addr="+oneButton(1)+" cs(1)="+cs(1))
+									//println("AddCardSetRemap: oneButton addr="+oneButton(1)+" cs(1)="+cs(1))
 								oneButton(buttonIndex)=switchAddress("button", cs(addressIndex) )
 								}
-							// last buttonCardSet object has "null" sibling
+							// last addCardSet object has "null" sibling
 							// address to indicated end of list. (note: List
 							// is reversed). 
 						multiButtonList.head(siblingIndex)="sibling\t0"
 							// Map all objects whose addressses are changed.
 						mapObjectsWhoseAddressesAreModified(cs, multiButtonList,nextCs)
-						//displayCardSetAndButtonCardSet(cs, multiButtonList, nextCs)
+						//displayCardSetAndAddCardSet(cs, multiButtonList, nextCs)
 							// reset to begin next loop	
 					//	cs=Array[String]()
 						bcs=Array[String]()
 						nextCs=Array[String]()
-							// this CardSet may be a parent of ButtonCardSet
+							// this CardSet may be a parent of AddCardSet
 					//	if(ss(0)=="%CardSet" )
 					//			cs=ss   
-				case _=>     // all <%classnames> not %CardSet,%NotecardTask,%NextFile,%ButtonCardSet
+				case _=>     // all <%classnames> not %CardSet,%NotecardTask,%NextFile,%AddCardSet
 				}
 			}
 			// 'percentList' ended without a '%CardSet', '%NotecardTask', and '%NextFile'
@@ -131,11 +133,11 @@ object ButtonCardSetRemap  {
 					cs(siblingIndex)="sibling\t0"
 			//		bcs(siblingIndex)="sibling\t0"
 					mapObjectsWhoseAddressesAreModified(cs, multiButtonList,nextCs)
-					//displayCardSetAndButtonCardSet(cs, multiButtonList, nextCs)
+					//displayCardSetAndAddCardSet(cs, multiButtonList, nextCs)
 					}
 		}
 
-		// Store all CardSets, NotecardTask, NextFile, and ButtonCardSet whoses 
+		// Store all CardSets, NotecardTask, NextFile, and AddCardSet whoses 
 		// component addresses have been changed as values in 'buttonMap'. The
 		// map key is the unique symbolic address of the object. 
 	def mapObjectsWhoseAddressesAreModified(cs:Array[String],
@@ -161,7 +163,7 @@ object ButtonCardSetRemap  {
 			}
 		listArray
 		}
-	def displayCardSetAndButtonCardSet(cs:Array[String],
+	def displayCardSetAndAddCardSet(cs:Array[String],
 										multiButtonList:List[Array[String]],
 										nextCs:Array[String]) {
 
