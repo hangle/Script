@@ -41,14 +41,13 @@ object AppearanceParameter   {
 		val list=buildKeyValueList(ss.drop(1))
 				// length is used to eventually remove key/value string
 		val keyValueLength= findLengthOfKeyValues(list) +1  // 1 added for dropped '/'.
-		//println("AppearanceParameters:  keyValueLength="+keyValueLength+"  ss="+ss)
 				// Separate key and value. Validate value, Store elements in Map
-		for(keyValue <- list){
+//		for(keyValue <- list){
+		for(keyValue <- list if( ! keyValue.contains("\\")) ){
 					//extract elements with leading and trailing spaces to element spaces
 			var array=extractKeyAndValue(keyValue)
 			validateValueOfKey(array(0), array(1))
 			appearanceMap += (array(0) -> array(1)) //add key and value
-			//println("\t\tAppearanceParameter: collectEmbed..()  keyValue="+keyValue+"  key="+array(0)+"  value="+array(1))
 			}
 				// Transform style text, such as 'bold+italic' to a numeric text value
 				// "0","1", "2", "1+2", "2+1","PLAIN", "BOLD", "ITAlIC", "BOLD+IALIC", 
@@ -82,7 +81,6 @@ object AppearanceParameter   {
 			if(key=="") flag=false // no more values so terminate loop
 			 else {
 			 	commonAppearanceMap +=(key -> value)
-				//println("AppearanceParameter: key="+key+"  value="+value+"|")
 				xline=removeLineUpToIncludeSlash(xline)
 			 	}
 			}
@@ -112,6 +110,7 @@ object AppearanceParameter   {
 			// line following tag.  Also 'trim' returning line
 	def removeTagFromLine(line:String)={
 		val n=numberLettersInTag(line)
+				// remove '(%%' or '(#', etc
 		line.drop(n).trim
 		}
 		// key value  string may contain leading and trailing spaces
@@ -132,8 +131,11 @@ object AppearanceParameter   {
 	def buildKeyValueList(line:String): List[String]={
 			// extracts substring up to & including slash
 		val keyValue=getLineToSlash(line)
-		if(keyValue=="") Nil
-		else {
+			// contains("\\") allows '/' delimitors in text portion of the
+			// '(%%/color blue/<text>)'
+		if(keyValue=="" || keyValue.contains("\\")) 
+			Nil
+		  else{
 			val shortLine=line.drop(keyValue.size)
 			keyValue :: buildKeyValueList(shortLine)
 			}
@@ -196,7 +198,6 @@ object AppearanceParameter   {
 	def filterAppearanceParametersToMap( 
 					line:String, 
 					commonAppearanceMap:collection.mutable.Map[String,String]):String={
-		////println("AppearanceParameter:  filterApp...   line="+line)
 				// Adds appeaance Key/Value to a Map.  Returns
 				// shorten line with appearance parameter removed.
 		val xline= collectAppearanceKeyValues(line, commonAppearanceMap)
@@ -212,7 +213,6 @@ object AppearanceParameter   {
 			val styleValue=map.getOrElse("style", "uk")
 					// translate,e.g., 'bold+italic' to 3
 			val value= styleValueToNumeric(styleValue)
-			//println("AppearanceParameter  styleValue="+styleValue+"   value="+value)
 			map +=("style" -> value)
 			}
 		}
@@ -231,18 +231,15 @@ object AppearanceParameter   {
 				// validate value, eg., color has specific color values.
 	def parseKeyValueAndValidateValue(appearance: String, 
 									  appearanceRegex:Regex): (String,String)={
-						//println("AppearanceParameter parseKeyValue...  appearanct-str="+appearance)
 	  	appearance match {
 					// [ ]*(color|style|size|name)[ ]+([+a-zA-Z0-9 ]+)[/].
 			case appearanceRegex(key, value)=> 
-					//println("AppearanceParameter:  parseKeyValue...  key="+key+"  value="+value+"|")
 					validateValueOfKey(key, value) //{
 			case _=> 
 				("","")
 			}
  		}
 	def validateValueOfKey(key:String, value:String)= {
-					//println("AppearanceParameter  validate..  key="+key)
 		key match {
 			case "color"=> 
 				validateColorValue(value)
@@ -269,9 +266,26 @@ object AppearanceParameter   {
 				validateWidthValue(value)
 				(key,value)
 			case _=>
-							//println("key "+key+"  unknown")
 				("","")
 			}
+		}
+				// Detect key (e.g., color),then space, then letters/numerals.
+				// terminates if '/' is found.
+				// Invoked in DisplayParser/parseParenthesisedComponents(). 
+				// collectEmeddedAppearanceParameters() called when TRUE
+	def isEmbeddedAppearanceComponent(component:String) ={
+		if(component.indexOf('/') != -1)  	{
+				// list consist of valid and invalid Appearance tags, e.g., color.
+			val list=appearanceKeysFromParenthesizedComponent(component)
+				// verify that tags are valid
+
+	//		for(e <-list if( ! e.contains("\\") ) ) {
+			for(e <-list) {
+				if( ! validAppearanceKeys.contains(e)	)
+					throw new SyntaxException(e +" is an invalid Appearance tag")
+				}
+			}
+		true
 		}
 			// Extract appearance elements (.e.g., /color blue/) from
 			// parenthesized component (e.g., '(# ... $abc)' ). A 'split'
@@ -283,35 +297,24 @@ object AppearanceParameter   {
 		val list= component.split("/").toList
 			// drop '(#' and '$abc)' & remove leading/trailing spaces
 		val newList= list.tail.init.map(x=> x.trim)
-		for(e <- newList){
-				// separated  'length 5' and 'color blue'
-			val a=e.split("[ ]+")
-				// extract tag or key, ignore value
-			result= a(0) :: result
+		//for(e <-list if( ! e.contains("\\") ) ) {
+		for(e <- newList ){
+					// contains("\\") allows '/' delimitors in text portion of the
+					// '(%%/color blue/<text>)' otherwise, an exception is thrown.
+			if( ! e.contains("\\") ) {
+						// separated  'length 5' and 'color blue'
+					val a=e.split("[ ]+")
+						// extract tag or key, ignore value
+					result= a(0) :: result
+					}
 			} 
 		result  // List of Apprearance tags or keys, such as 'color', 'length'.
 		}
 
-				// Detect key (e.g., color),then space, then letters/numerals.
-				// terminates if '/' is found.
-				// Invoked in DisplayParser/parseParenthesisedComponents(). 
-				// collectEmeddedAppearanceParameters() called when TRUE
-	def isEmbeddedAppearanceComponent(component:String) ={
-		if(component.indexOf('/') != -1)  	{
-				// list consist of valid and invalid Appearance tags, e.g., color.
-			val list=appearanceKeysFromParenthesizedComponent(component)
-				// verify that tags are valid
-			for(e <-list)
-				if( ! validAppearanceKeys.contains(e)	)
-					throw new SyntaxException(e +" is an invalid Appearance tag")
-			}
-		true
-		}
 				// Invoked by DisplayParser
 				// Used to detect AppearanceComponent that begins a Display
 				// command or follows the Display's column/row values.
 	def isAppearanceComponent(line:String)={
-		////println("AppearanceParameter:  isAppearaneComponent  line="+line)
 		if(line.size==0)
 			false
 		else{
@@ -332,7 +335,6 @@ object AppearanceParameter   {
 	def isAppearanceParameter(line:String, appearanceRegex:Regex)= {
 		var xline=line // appearance params following row/col value lack starting '/'.
 		if(xline(0)=='/') xline=xline.drop(1)
-		//println("AppearanceParameter:  xline="+xline)
 				// Parse key (color/style/size/name/length/limit)  and its value and
 				// validate value, eg., color has specific color values,e.g., 'blue'.
 		val (key,value)=parseKeyValueAndValidateValue(xline,appearanceRegex)
@@ -365,7 +367,6 @@ object AppearanceParameter   {
 			case a :: tail => a :: removeSlashBeforeCloseParen(tail)
 			}
 		}
-
 		// 'd' command containing Row/Column/Appearance elements.  If Appearance elements, these
 		// elements are removed, and their keys (e.g., lenght, color, style, limit, ...) are
 		// validated. Note, false positive may occur if '/' embedded in text material. 
@@ -381,7 +382,6 @@ object AppearanceParameter   {
 		if( r != 0)
 				// found '(#' or '(%' so remove these components
 			xcomponent= xcomponent.take(r)
-			//println("component="+component.take(r))	
 				// extract '/tag value/' and validate 'tag'.
 		validateAppearanceKeys(xcomponent, regex, validAppKeys)
 
@@ -397,7 +397,6 @@ object AppearanceParameter   {
 			app match {
 				case Some(s)=>   // found '/<text> <text>/'
 					if( !	validator(s, validAppKeys)){
-						//println(s+" mot a valid tag")
 						throw new SyntaxException(s+": not valid appearance key")
 						}
 
@@ -436,11 +435,9 @@ object AppearanceParameter   {
 			// returns false if Appearance key not valid
 	def validator(component:String, validAppearanceKeys:List[String]):Boolean= {
 			
-		//println("AppearanceParameter:  validator component="+component)
 		val tokens=component.tail.init.trim.split("[ ]+")
 		var flag=false
 		for(e <- validAppearanceKeys) {
-		//	println("validator:  e="+e+"   tokens(0)="+tokens(0) )
 			if (e==tokens(0) )
 				flag=true
 			}

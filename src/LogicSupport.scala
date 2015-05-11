@@ -20,7 +20,6 @@ object LogicSupport {
 				buffer= buffer + e
 				}
 			if ( flag)	{
-				//	println("e="+e)
 				if( ! (e==' '|| e=='\t'))
 					buffer = buffer + e
 				}
@@ -42,7 +41,7 @@ object LogicSupport {
 				flag=false
 				throw new SyntaxException("qualifier unknown ="+ qualifier)
 				}
-			println(qualifier)
+			//println(qualifier)
 			tagString=tagString.drop(2)
 			}
 		flag

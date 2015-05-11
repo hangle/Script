@@ -1,4 +1,8 @@
 c
+d 5/3/Recall that the Clear 'c' command cleared
+d the screen of previous text and is the
+d initial command of a (%%/color blue/CardSet).
+c
 d 5/2/The following script has two Card Sets.
 d
 d 10/-----------script------------------
@@ -21,14 +25,16 @@ d
 d 10/----------script----------
 d c ($gender)=(male)
 d ----------------------------
+d 5/
+d causing the CardSet to be skipped or
+d to be executed.
 d
+* continue
 d 5/When the contents of $gender is the
 d constant 'male', then the commands 
-d belonging to (%%/color blue/Card Set) are executed. 
-* continue
+d belonging to the CardSet are (%%/color blue/executed). 
 d
-d If not 'male', then the Card Set is 
-d skipped. 
+d If not 'male', then the CardSet is (%%/color blue/skipped). 
 c
 d 5/1/The following script has two Card Sets.
 d
@@ -119,7 +125,8 @@ d 5/The script for this CardSet was:
 d
 d 10/--------script---------------
 d c ($input) = (2)
-d d Card one
+d d Card two
+
 d --------------------------------
 d 5/
 d Your $input value was (% /color blue/ $input)
@@ -142,6 +149,14 @@ c
 d 5/3/The two CardSets that did not match the
 d $input value of (%/color blue/$input) were not
 d presented and were skipped.
+
+c
+d 5/3/This completes the survey of the
+d Clear 'c' command.
+d
+d The next file covers the Assign 'a'
+d command.
+
 f assignCommand
 * end
 

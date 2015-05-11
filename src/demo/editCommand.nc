@@ -26,7 +26,7 @@ d
 * continue
 d When rejected, The response field is cleared. 
 d The user must  enter (%%/color blue/cat) to proceed 
-d to the next card
+d to the next CardSet.
 
 c
 d 5/1/The (%%/color blue/e) command:
@@ -137,6 +137,13 @@ d
 d Enter age (# $age)
 e number  status=numbers only
 e ($age)>(0)and($age)<=(100) status=1 to 100 
+
+c
+d 5/3/This completes the survey of the
+d Edit 'e' command.
+d
+d The next file covers the eXecution 'x'
+d command.
 f xCommand
 * end
 

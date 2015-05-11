@@ -1,8 +1,10 @@
 c
-d 5/2/The following Card Set series highlights 
-d features of the Display '(%%/color blue/d)' command.
-d 
+d 5/3/The Display command survey begins with the
+d placement a text line within the card
+d window. The line occupies a window row,
+d begining in a specified window column.
 * continue
+d
 d The window location (row and column) of
 d the 'd' command text is described.
 c
@@ -74,33 +76,34 @@ d 5/1/The starting column remains in
 d effect for subsequent 'd' commands 
 d or until it is change again:
 d -------------script------------------
-d  d (%%/color blue/5/)Now is
-d  d the time 
-d  d for all
-d  d (%%/color blue/10/)good men
-d  d to come
-d  d to the 
-d  d (%%/color blue/3/)aid of
-d  d their country.
+d (%%/color blue/10\/)Now is
+d the time 
+d for all
+d (%%/color blue/20\/)good men
+d to come
+d to the 
+d (%%/color blue/3\/)aid of
+d their country.
 d -------------------------------------
 * continue
 d 
 d The above script will be executed by
 d the next card.
 c
-d  d (%%/color blue/5/)Now is
-d  d the time 
-d  d for all
-d  d (%%/color blue/10/)good men
-d  d to come
-d  d to the 
-d  d (%%/color blue/3/)aid of
-d  d their country.
-d -------------------------------------
-d 5/Now is
+d ----------script-----------------------
+d (%%/color blue/10\/)Now is
 d the time 
 d for all
-d 10/good men
+d (%%/color blue/20\/)good men
+d to come
+d to the 
+d (%%/color blue/3\/)aid of
+d their country.
+d ---------execution----------------------
+d 10/Now is
+d the time 
+d for all
+d 20/good men
 d to come
 d to the 
 d 3/aid of
@@ -124,7 +127,7 @@ d 5/2/The following 'd' command is placed on
 d the 10th row while subsequent commands 
 d rows are incremented.
 d
-d       d (%%/color blue//10/)tenth row
+d       d (%%/color blue/\/10\/)tenth row
 d       d eleventh row
 d       d twelth row
 d       d thirteen row
@@ -133,7 +136,7 @@ d
 d Next card displays above commands
 c
 d 5/1/------------script-------------      
-d       d (%%/color blue//10/)tenth row
+d       d (%%/color blue/\/10\/)tenth row
 d       d eleventh row
 d       d twelth row
 d       d thirteen row
@@ -145,7 +148,7 @@ d thirteen row
 * continue
 d
 d Following command is placed on 8th row:
-d d (%%/color blue//8/)eight row
+d d (%%/color blue/\/8\/)eight row
 * continue
 d /8/eight row
 
@@ -156,25 +159,25 @@ d starting column as well at a specific
 d row, the column component precedes the
 d row component. For example,
 d 10/----------------script-----------------
-d (%%/color blue/d 10/15/)text starts column 10, row at 15
-d (%%/color blue/d 20/9/)column 20, row 9 
+d (%%/color blue/d 10\/15\/)text starts column 10, row at 15
+d (%%/color blue/d 20\/9\/)column 20, row 9 
 d ---------------------------------------
 * continue
 d 10/15/text starts column 10, row at 15
 d 20/9/column 20, row 9 
 c
-d 20/1/(%%/color blue/d 20/5/column 20, row 5)
+d 20/1/(%%/color blue/d 20\/5\/column 20, row 5)
 d
 d 5/When column component and row component 
 d are combined, the parser recognizes the 
 d column component because it does not 
-d have a leading (%%/color blue//) but has a trailing (%%/color blue//).
-d 20/(%%/color blue/20/)
+d have a leading (%%/color blue/\/) but has a trailing (%%/color blue/\/).
+d 20/(%%/color blue/20\/)
 d 5/
 d
 * continue
 d The parser detects the row component 
-d 20/(%%/color blue//5/) 
+d 20/(%%/color blue/\/5\/) 
 d 5/because it has leading and trailing slashes.
 
 f displayInput

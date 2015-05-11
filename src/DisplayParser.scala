@@ -27,7 +27,6 @@
 	is defined  List[DiplayComponent] with case classes:
 		TextComponent			e.g., Enter age
 		ColumnRowComponent		e.g., 5/3/
-		GeneralAppearance		e.g., color blue/
 		ParenthesizedComponnent	e.g., (# $years)
 
 	For the script:
@@ -42,6 +41,8 @@ import AppearanceParameter._
 import Parenthesized._
 
 object DisplayParser   {
+/*
+*/
 	var displayComponentList=List[DisplayComponent]() // list TextComponents & Parenthesized Components
 	var colRowTuple:(String,String)=("","") //column and row position values
 				// Display line parsed into parenthesized components. The components are 
@@ -69,7 +70,6 @@ object DisplayParser   {
 				    // Note, routine drops beginning '/'
 			line=parseColumnRowAndLineAppearanceParameters( line, commonAppearanceMap)
 			}
-			//println("DisplayParser:  isColumnRow false")
 					// Determine if line contains a component. Tag= '(# or (%
 		if(Parenthesized.isParenthesisTag(line)) { 
 					// Iterate to extract multiple ParenthesizedComponent(s) storing these
@@ -88,27 +88,25 @@ object DisplayParser   {
 	def parseParenthesizedComponents(line:String, 
 									 commonAppearanceMap:collection.mutable.Map[String,String] ,
 									 appearanceMap:collection.mutable.Map[String,String] )= {
-		//println("DisplayParser: parseParen...: line="+line)
 		var parenthesizedComponent:ParenthesizedComponent= null
 		var lineStr=line
 						//Parenthesized components found and put in an iterated list
 						// User """(\(\s*[#%@][%]?.+[)])""" .r
 						// Each component is used to chop off a piece of line
 		var component=""
-						// regex (\([#%]) loads array of all '(#' and '(%' in line
+					// regex (\([#%]) loads array of all '(#' and '(%' in line
 		for( componentTag <- listParenthesizedTags(lineStr) ) {  // Parenthesized.scala
-							// successive components will be found by removing each from 'lineStr'.
-							// Example:  'd now (# $s) is (# $b) the (%% text) time'
-							// has the parenthesized components '(# $a), (# $b), (%% text)
-							// Only the first component is extracted and returned.
+						// successive components will be found by removing each from 'lineStr'.
+						// Example:  'd now (# $s) is (# $b) the (%% text) time'
+						// has the parenthesized components '(# $a), (# $b), (%% text)
+						// Only the first component is extracted and returned.
 			component=extractFirstParenthesizedComponent(componentTag, lineStr) // Parenthesized
-			//println("DisplayParser extractFirstPar....:  component="+component)
+						// for '\/' substitute @#$#@
+			//component=replaceBackSlash(component)
 						 // 'leading' is text preceding component. this text along 
 						 // with the component is dropped resulting in a shorter 'lineStr'.
 			val (leading, shortenLine)=extractLeadingTextAndShortenLine(lineStr, 
 																	    component) //Parenthesized.scala
-
-			//println("DisplayParser: leading="+leading+"   shortenLine="+shortenLine)
 			if(leading != "")   //if false, then there is preceding text, so create text component
 						// Store text component in component list
 				displayComponentList= TextComponent(leading, commonAppearanceMap) :: displayComponentList
@@ -123,9 +121,9 @@ object DisplayParser   {
 							}
 						// Parenthesized component without appearance parameters.
 					parenthesizedComponent= ParenthesizedComponent( 
-							component, //e.g., (# $abc) without appear...
+							component, //e.g., (# $abc) parentherized component without appearance parameters.
 							xtype,//e.g., (#, (%, (%%
-							commonAppearanceMap,  // appear.. at start of 'd' cmd
+							commonAppearanceMap,//appearance parameters at start of 'd' cmd. e.g. /color blue/
 							null, // no appeararance parameters
 							0) // no appearance parameter length
 					}
@@ -137,7 +135,7 @@ object DisplayParser   {
 						// which is used to drop appearance parameter string.
 						// 'ParenthesizeComponent via 'storeParenthesizeMap' (AppearanceParameter).
 				val mapAndLength=collectEmbeddedApppearanceParameters(component)
-				parenthesizedComponent= ParenthesizedComponent( 
+				parenthesizedComponent= ParenthesizedComponent(  // is a case class of DisplayComponent 
 						component, // e.g., (%%/size 22/now is time)
 						xtype,     // e.g., '(#', '(%', '(%%'
 						commonAppearanceMap, // appearance parameters at start of 'd' cmd
@@ -148,7 +146,8 @@ object DisplayParser   {
 			lineStr=shortenLine   // set 'LineStr' to do next component
 			}    //---end of for loop
 		if(lineStr.length > 0) // indicates text beyond last Parenthesized component
-				// Store trailing text component in component list
+				// TextComponent is a case class of DisplayComponent used to
+				// store trailing text component in component list
 			displayComponentList= TextComponent(lineStr, commonAppearanceMap) :: displayComponentList 
 		displayComponentList
 		}
@@ -161,7 +160,6 @@ object DisplayParser   {
 	def parseColumnRowAndLineAppearanceParameters(
 					lineString:String,
 				  	commonAppearanceMap:collection.mutable.Map[String,String]):String ={
-		//println("DisplayParser  parseColumnRow...  line="+lineString)
 		var line=lineString
 					// uses """^(\d?\d?)(\d?\d?)(/?).*""" to extract column/row values
 					// 'tuple' holds column/row values	
@@ -173,7 +171,6 @@ object DisplayParser   {
 					// the line has a trailing Appearance component, e.g., /color blue/
 			line=removeColumnRowComponent(line,colRowTuple) //use 'tuple' to extract col/row expression
 			}
-		//println("DisplayParser:  removeColumnRowComponent  /?    line="+line)
 					// determine if Appearance parameters follow  column/row expression
 					// Invoked in AppearanceParameter. Also validates key/value elements.
 		if(isAppearanceComponent(line)) {//determine if line begins with appearance params
@@ -185,4 +182,35 @@ object DisplayParser   {
 				}
 		line
 		}
+/*
+		// component such as (%%/color blue/5/) to display "5/" in color causes an error because
+		// '/' is a delimiter and not a printable letter. The component is replaced with 
+		// (%%/color blue/5\/) to designate that '/' following '\' is not a delimiter.
+		// Remove '\/' and substitute @#$#@ but replace it with '/' later.
+  def replaceBackSlash(s:String):String={
+	val buf=collection.mutable.ArrayBuffer[Char]()
+	var flag=false
+	for(e<-s){
+			// skip '\' to eleminate it from the string
+		if(e=='\\') {
+			flag=true
+			}
+		 else
+		 	if( ! flag){
+				buf += e
+				}
+				// change '/' to @#$#@
+			else {
+				buf +='@'
+				buf +='#'
+				buf +='$'
+				buf +='#'
+				buf +='@'
+				flag=false
+				}
+		}
+	buf.mkString("")
+	}
+*/
+
 }

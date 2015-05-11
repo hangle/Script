@@ -52,7 +52,6 @@ object DisplayScript  {
 												commonAppearanceMap,
 												appearanceMap, // could be (#.., (%.., (%%.., or (@..
 												keyLengthValue) =>
-									//		println("DisplayScript keyLengthValue="+keyLengthValue)
 					matchParenthesizedType( script,
 											overrideSetting, // default or * <parameter> values
 											component,// e.g., (# /color blue/ $abc)
@@ -70,7 +69,6 @@ object DisplayScript  {
 								xtype:String,
 								keyLengthValue:Int,
 								appearanceMap:collection.mutable.Map[String,String]) {
-		//println("DisplayScript: xtype="+xtype)
 		xtype match {
 				case "variable" =>  // (#...)
 					variableScript(script,overrideSetting, component, appearanceMap)
@@ -112,12 +110,15 @@ object DisplayScript  {
 					// e.g., '/color red/size 10/' from component. 
 					// 'init' removes ')'
 			text= text.trim.drop(keyValueLength). init 
-			//println("DisplayScript  component="+component+"    keyValueLength="+keyValueLength+"   text="+text)
+					// '/' in text portion of a ParentherizedExpression is treated as a
+					// delimiter.  If text has '/', then drop the '\' preceeding '/'
+			text=text.replace("\\", "")
+					// Code is '@#$#@' for which a '/' is substituted
+	//		text=AppearanceParameter.replaceCodeWithSlash(	text)
 
 			}
 			// scan text for '\(' and '\)' and delete '\' 
 		text=AppearanceParameter.removeEscapeSlashes(text)
-	//	println("DisplayScript: text="+text)
 			// "" changed to " ".  text"\t" in list link object. e.g., CardSet.scala' 
 			// with 'receive_objects(..)' with 'split(["[\t]")' cannot handle "".
 		if(text=="") {

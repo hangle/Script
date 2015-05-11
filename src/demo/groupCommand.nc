@@ -1,7 +1,7 @@
 c
 d 5/2/The 'c' command, having a logic expression,
 d control whether the Card Set is executed 
-d or skipped.
+d or is skipped.
 d
 d It is usefull to do the same with one or
 d more successive commands within the Card
@@ -31,15 +31,17 @@ d command.
 d
 d 
 c
-d 5/2/The scope of the Card Set extends to 
-d the end of the Set. 
+d 5/2/The scope of the CardSet extends to 
+d the end of the CardSet (or beginning of
+d the next 'c' command). 
 d
-d The 'g' command scope is the same, however,
-d an exception applies.
+d The 'g' command scope is the same, that
+d is, it ends with the CardSet unless
+d another 'g' command is encountered.
 * continue
 d 
 d The 'g' command scope ends when another 'g'
-d command is encountered within the Set.
+d command is encountered within the CardSet.
 c
 d 5/2/The 'g' command, without the logical
 d expression, ends the scope of the first
@@ -87,6 +89,34 @@ d (%%/color blue/g)
 d This line is alway shown
 d c ...
 d -------------------------------
+c
+d 5/3/The scope of the Group command within
+d the CardSet also ends when a command
+d is encountered that is not a member of
+d the CardSet.
+d
+d Recall that the File 'f' command is not
+d a member of the CardSet
+d
+d 15/--------script----------------
+d c
+d g (1)=(1)
+d d will display
+d ge
+d d not displayed
+d f nextFile
+d ------------------------------------
+* continue
+d 5/
+d The File 'f' command terminates the scope 
+d of the  Group 'g' command. 
+
+c
+d 5/3/This completes the survey of the
+d Group 'g' command.
+d
+d The next file covers the Edit 'e'
+d command.
 f editCommand
 * end
 

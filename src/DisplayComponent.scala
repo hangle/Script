@@ -19,7 +19,6 @@ package com.script
 					// Display line column/row placement locations
 		case class ColumnRowComponent(val column:String, val row:String)
 											extends DisplayComponent
-									//		{ println("DisplayComponent row="+row) }
 					// display text not included in Parentherized component
 		case class TextComponent(val text:String,
 								 val commonAppearanceMap:collection.mutable.Map[String,String])

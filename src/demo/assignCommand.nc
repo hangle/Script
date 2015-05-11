@@ -1,5 +1,5 @@
 c 
-d 5/1/The script:
+d 5/3/The script:
 d 10/--------script------------
 d d \(# $xyz) 
 d -----------------------------
@@ -7,10 +7,15 @@ d
 d 5/allows the user to input and assign a 
 d value to a $xyz.
 d
-d The script has a command that also assigns. 
+d The (%%/color blue/Assign) command also performs
+d this function.
+d
+* continue
+d It allows the script developer to load values
+d into (%% /color blue/$<variable>)s.
 c
 d 5/2/The Assign command has the tag (%%/color blue/a),
-d followed by a space and an $<variable>
+d followed by a space and a $<variable>
 d
 d Examples:
 d 10/---------------script---------------
@@ -19,30 +24,36 @@ d a $flag=1
 d a $line=now is the time for
 d ---------------------------------------
 d 5/
-d The string (%%/color blue/male) is assigned to (%%/color blue/$gender)
-d (%%/color blue/1) to (%%/color blue/$flag)
-d and (%%/color blue/now is the time for) to (%%/color blue/$line).
+d The strings:
+d 10/
+d (%%/color blue/male) is assigned to $gender.
+d (%%/color blue/1) to $flag.
+d (%%/color blue/now is the time for) to $line.
 c
 d 5/2/The 'a' command allows the developer to
-d control whether certain Cards are 
+d control whether certain CardSets are 
 d presented to a category of users. 
 d
 d 10/----------script-----------
-d a $flag=2
-d c ($flag) != (2)
+d a $flag=groupA
+d
+d c ($flag) = (groupA)
 d d How long have you been a member of A
-d c ($flag) != (2)
+d
+d c ($flag) = (groupA)
 d d When did you join A
-d c ($flag) = (2)
+d
+d c ($flag) != (groupA)
 d d How long have you been a member of B
-d c ($flag) = (2)
+d
+d c ($flag) != (groupA)
 d d When did you join B
 c
 d 5/2/The 'a' command is capable of math 
 d operations.
 d
-d This Card sets $count to zero and 
-d then d increment it by one.
+d The following initializes $count to zero and 
+d then increments it to one.
 d 10/------------script-----------------
 d a $count=0
 d a $count=$count +1
@@ -53,7 +64,7 @@ d 10/-------------script-----------------
 d a $xyz= (3+$count)/(6*($xyz)-2)
 d ---------------------------------------
 c
-d 5/1/The 'a' command has an optional logic 
+d 5/3/The 'a' command has an optional logic 
 d expression.
 d
 d A complication exists, however.
@@ -80,5 +91,11 @@ d a $one=1 (%%/color blue/if)($one)=(0)
 d a $two= $high/($low -3.3) (%%/color blue/if) ($timer)>=(22)
 
 d ---------------------------------------------------
+
+c 
+d 5/3/This completes the survey of the 
+d Assign 'a' command.
+d
+d The next file covers the File 'f' command.
 f fileCommand
 * end

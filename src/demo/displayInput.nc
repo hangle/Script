@@ -1,16 +1,36 @@
 c
-d 5/2/The 'd' command can capture a user's
-d response or input.
-* continue
+d 5/3/What makes the Display 'd' command involved
+d is that, beside displaying text, it is
+d capable of capturing the user's response
+d or input.
 d
-d This input is stored in a card variable.
+d The following Display command sets up an
+d input field:
+d 20/
+d d \(# $age)
+* continue
+d 5/
+d The user enters a value and hits the
+d 'Enter' key.
+d
+d The input is stored in a card variable.
 c
-d 5/2/A captured response is assigned to
+d 5/2/Display command:
+d
+d 20/d \(# $age)
+d
+d 5/
+d A captured response is assigned to
 d a variable whose name begins with
 d a dollar symbol (%%/color blue/$<variable>)
+d
 d Examples:
+d
 d 15/color blue/$age
-d /color blue/$xyz
+* continue
+d 5/
+d Other Notecard commands can now
+d reference (%%/color blue/$age).
 c
 d 5/2/To capture a user's input, the
 d 'd' command has a field expression
@@ -69,7 +89,7 @@ d 5/2/------------script-----------
 d d Enter name\(# $name)
 d d Enter age\(# $age)
 d -------------------------------
-d 10/color blue/(Enter key not use TAB key)
+d 10/color blue/(Enter key; do not use TAB key)
 d 5/
 d  Enter name (# $name)
 d  Enter age  (# $age)
@@ -103,6 +123,7 @@ d -------------------------------------
 * continue
 d
 d You will not be asked to enter responses
-d for this script.
-f clearLogic
+d for this script. 
+
+f parenthesized
 * end

@@ -1,5 +1,4 @@
 /* date:   Aug 31, 2012
-	Invoked by CommandMaker when 'g' tag is encountered:
 
      The Group 'g' command conditionally controls one or more
      other commands, such as, Display, Assign commands.  There 
@@ -30,20 +29,30 @@
 package com.script
 
 object GroupCommand  {
-			// extract 'e' else tag (if present?) and condition (if present?)
+			// extract 'e' else tag and condition
 	val groupRegex="""(e)?\s*(.*)?""" .r
 
 	def groupCommand(script:collection.mutable.ArrayBuffer[String],
 					 line: String)={
 		val (elseTag,condition)=extractElseAndLogic(line)
-		elseTag getOrElse("e",
-					throw new SyntaxException("letter following 'g' is not 'e'") )
-				// when condition not present, then 'c' ==""
-		val c=condition.get
+		if( !(elseTag ==null || elseTag =="e" ) )
+			throw new SyntaxException("letter following 'g' is not 'e'")
+		if(condition !=null) {
+					// '(1) <> nc ns (2)'  becomes '(1)<>ncns(2)'
+			val reduce=LogicSupport.removeSpacesInOperand(condition)
+					// check syntax of 'condition' expression--throw exceptions.
+			ValidLogic.validLogic(reduce)
+			GroupScript.groupScript(script, elseTag, reduce)
+			}
+		 else
+			GroupScript.groupScript(script, elseTag, condition)
 		}
-	def	extractElseAndLogic(line:String):(Option[String],Option[String])={
-		line match { case groupRegex(elseTag, condition)=> 
-							(Some(elseTag), Some(condition))
-		      }
+	def	extractElseAndLogic(line:String):(String,String)={
+		line match {
+			case groupRegex(elseTag, condition)=> 
+				(elseTag, condition)
+			case _=>
+				(null, null)
+			}
 		}
 }

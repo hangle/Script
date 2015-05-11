@@ -56,6 +56,12 @@ loadDictionary.nc
         l
         a $count=0
         a $flag=false
+addCardSet.nc
+    Example:
+        c
+        d This is a CardSet
+        +
+        d This is an AddCardSet
 </code></pre>
 
 <h2>Execution:</h2>

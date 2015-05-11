@@ -45,7 +45,6 @@ object Parenthesized   {
  	def listParenthesizedTags(line: String)={
 		var list=List[String]()
 		val size=line.size
-		//println("Parenthesized: line="+line+"   line.size="+size)
 		var flag=false
 		for(i <- 0 until line.size) {
 			flag=false
@@ -76,11 +75,9 @@ object Parenthesized   {
 			// Only the first component is extracted and returned.
 			// Note: 'componentKey' found by 'listParenthesizedTags'/
 	def extractFirstParenthesizedComponent( componentKey:String,line:String) ={
-		//println("Parenthesized:componentKey="+componentKey+"   line="+line)
 		val beginIndex= line.indexOf(componentKey)
 		val endIndex= indexOfClosingParenthesis( componentKey,
 												line)
-//		println("Parenthesized:  beginIndex="+beginIndex+"   endIndex="+endIndex+"   line="+componentKey)
 		val l=line.drop(beginIndex)
 		l.take(endIndex + 1)  //returned parenthesized component
 		}
@@ -121,12 +118,10 @@ object Parenthesized   {
 			// audio, multiple, yesNo). 
 			// Used in 'DisplayParser' also tag used by DisplayScript.
 	def extractParenthesizedTag(line:String):String={  //(String,String)={
-	//println("Parenthesized  extractParenthesizedTag   line="+line)
 		line match {
 			case variableRegex(variable)=>	//  .*(\(#.+\)).* 
 				"variable"
 			case textDisplayRegex(text) => // """(\(%%.+\)).*""" .r   
-				//println("Parenthesized textDisplayRegex   text")
 				"text"
 			case displayVariableRegex(display)=>  //".*(\(%.+\)).
 				"display"
@@ -149,7 +144,6 @@ object Parenthesized   {
 	def isParenthesizedComponent(line: String): Boolean ={
 		//val (target, xtype)= extractParenthesizedTag(line)
 		val xtype= extractParenthesizedTag(line)
-		//println("Parenthesized  component type="+xtype)
 		xtype != "unknown"
 		}
 	def extractLeadingTextAndShortenLine(line:String, component:String) :(String,String)= {

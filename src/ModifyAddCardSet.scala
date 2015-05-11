@@ -1,14 +1,14 @@
 
 /*
 
-	Determine if a AddCardSet (BCS) follows a CardSet (CS). 
+	Determine if a AddCardSet (ACS) follows a CardSet (CS). 
 	If so, then assign '1' to button parameter of CS.
 	The initial parameter value is '0'.
 
-	Scan the BSC's following a CS.
-		If more than one, then assign '99' to last BSC and
-		'2' to the other BSc's.
-		If only one, then assign '99' to this BSC.
+	Scan the ASC's following a CS.
+		If more than one, then assign '99' to last ASC and
+		'2' to the other ASc's.
+		If only one, then assign '99' to this ASC.
 
 */
 package com.server
@@ -31,10 +31,10 @@ object ModifyAddCardSet{
 		val list= modifyLastToFirst(listArray)
 		modifyFirstToLast(list)
 		}
-		// Reverse structure so that BCS is encountered before the associated
+		// Reverse structure so that ACS is encountered before the associated
 		// CS is encountered. When the first BSC is encountered, its button
 		// parameter is assigned '99' and a flag is set. While this flag is
-		// set, any other BCS's are ignored. When a CS is encountered, and 
+		// set, any other ACS's are ignored. When a CS is encountered, and 
 		// the flag is set, then its button parameter is assigned '1'. The
 		// flag is turned off. 
 	def modifyLastToFirst(listArray:List[Array[String]]):List[Array[String]]= {
@@ -56,9 +56,9 @@ object ModifyAddCardSet{
 		reverse
 		}
 		// Reverse structure to that the CS is encountered before its associated
-		// BSC's are encountered. The last BSC in its BSC sequence will have
+		// ASC's are encountered. The last ASC in its BSC sequence will have
 		// a button parameter of '99' and the associated CS will have a button
-		// parameter of '1'. Any BSC with parameter of '0' are assigned '2'.
+		// parameter of '1'. Any ASC with parameter of '0' are assigned '2'.
 	def modifyFirstToLast(percentList:List[Array[String]]):List[Array[String]]= {
 		val reverse=percentList.reverse
 		for( set <- reverse) {
@@ -88,7 +88,6 @@ object ModifyAddCardSet{
 						case a:String  if(a.take(2)=="%%") =>
 					//		println("%%="+a)
 							l  = l :+ a
-							//percentList= l.reverse :: percentList
 							percentList= l :: percentList
 							l=Array[String]()
 						case a:String =>

@@ -5,20 +5,20 @@ d at a time.
 d
 d 10/12/Press (%%/color orange/orange button)
 d 17/<or>
-d 10/Hit your typewriter (%%/color green/spacebar)
+d 10/Hit your typewriter (%%/color blue/spacebar)
 d 17/<to>
 d 10/present the next card or window
 c
-d 5/2/Notecard allows an developer to write
+d 5/2/Notecard allows a developer to write
 d script in order to display (%%/color blue/text). 
 d
-d And also to collect a user's (%%/color blue/response).
+d And also to collect a user's (%%/color blue/response) or (%%/color blue/input).
 d
 d
 d
 d 10/12/Press (%%/color orange/orange button)
 d 17/<or>
-d 10/Hit your typewriter (%%/color green/spacebar)
+d 10/Hit your typewriter (%%/color blue/spacebar)
 d 17/<to>
 d 10/present the next card
 c
@@ -30,7 +30,7 @@ d Display command.
 d
 d 10/13/Press (%%/color orange/orange button)
 d 15/<or>
-d 10/Hit your typewriter (%%/color green/spacebar)
+d 10/Hit your typewriter (%%/color blue/spacebar)
 c
 d 5/1/The Display commands are shown:
 d 10/--------------------   script   ------------------
@@ -46,7 +46,7 @@ d The two lines of script are referred to as
 d Display commands. 
 d 10/13/Press (%%/color orange/orange button)
 d 15/<or>
-d 10/Hit your typewriter (%%/color green/spacebar)
+d 10/Hit your typewriter (%%/color blue/spacebar)
 c
 d 5/2/Before text is displayed, the card
 d or window is cleared with the Clear
@@ -58,7 +58,7 @@ d The following card has the 'c' command
 d but no 'd' commands.
 d 10/13/Press (%%/color orange/orange button)
 d 17/<or>
-d 10/Hit your typewriter (%%/color green/spacebar)
+d 10/Hit your typewriter (%%/color blue/spacebar)
 c
 c 
 d 5/2/----'c' command script-------
@@ -108,7 +108,20 @@ d 5/2/The script for one or more cards is
 d in a file whose extension is (%%/color blue/.nc).
 d
 d The script for the current series of
-d cards is in the file (%%/color blue/card.nc).
+d CardSets is in the file (%%/color blue/card.nc).
+
+c
+d 5/3/Actually, the commands in  <file>.nc 
+d are validated by the (%%/color blue/script) program. 
+d
+d The script program converts the commands to
+d elements in the  <file>.struct which are executed 
+d by the (%%/color blue/card) program.  
+* continue
+d
+d The (%%/color blue/card) program is currently
+d executing the (%%/color blue/card.struct) elements.
+
 f overview
 * end
 
