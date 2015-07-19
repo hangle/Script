@@ -119,7 +119,7 @@ object EditCommand  {
 	def isCondition(condition:Option[String])={ condition !=None }
 		// Shorten line by removing $<variable>. If
 		// $<variable> is None, then return input line.
-	def dropDollarVariableFromLine(variableOption:Option[String], line:String)={
+	def dropDollarVariableFromLine(variableOption:Option[String], line:String):String={
 		variableOption match {
 			case Some(variable)=>
 				val index=line.indexOf(variable)+variable.size

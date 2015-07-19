@@ -41,10 +41,10 @@ object LogicSupport {
 				flag=false
 				throw new SyntaxException("qualifier unknown ="+ qualifier)
 				}
-			//println(qualifier)
+			//println(qualifier)	
 			tagString=tagString.drop(2)
 			}
-		flag
+		flag	
 		}
 		// No spaces qualifier conflicts with one
 		// space qualifier.

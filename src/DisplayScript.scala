@@ -100,7 +100,7 @@ object DisplayScript  {
                             appearanceMap:collection.mutable.Map[String,String])={
 					// copy of 1st arg elements is updated by 2nd argument elements
 		val map=copyMapToMap(overrideSetting, appearanceMap)
-		var text=""
+		var text	=""
 		if(keyValueLength==1){ // no appearance parameters
 			text=extractTextFromTextComponent(component)
 			}
@@ -109,7 +109,7 @@ object DisplayScript  {
 			text= component.drop(3)
 					// e.g., '/color red/size 10/' from component. 
 					// 'init' removes ')'
-			text= text.trim.drop(keyValueLength). init 
+			text		= text.trim.drop(keyValueLength). init 
 					// '/' in text portion of a ParentherizedExpression is treated as a
 					// delimiter.  If text has '/', then drop the '\' preceeding '/'
 			text=text.replace("\\", "")
