@@ -43,16 +43,20 @@ package com.script
 
 object AssignCommand {
 
-	val targetRegex="""\s*([$][a-zA-Z0-9-_]+)\s*[=].*""" .r
+	val numericRegex="""(\d+)""" .r
+	val backslashRegex="""\\""" .r
+	val targetRegex="""\s*([$][a-zA-Z0-9_]+)\s*[=].*""" .r
+	val sourceRegex="""\s*([$][a-zA-Z0-9_]+)\s*.*""" .r
 			// line must have 'if' and '(' which begins
 			// a conditional expression.
 	val hasIfRegex= """(.*)if\s*[(].*""" .r
 			// Is source expr empty
 	val emptyRegex="""(\s*)""" .r
-			// Is source  a math expression ?
-	val mathSymbolRegex=""".*([+-/*%]).*""" .r
+//			// Is source  a math expression ?
+//	val mathSymbolRegex=""".*([+-/*%]).*""" .r
 			// Test for ')<relation/logic>(' indicating condition construction
 	val ifRegex="""(\)[<>!=mnscandor ]+\()""" .r
+
 			// 'condition' expr is optional. 'hasConditionalExpression()' of 
 			// 'parsAssignerCommand' sets it 'true'. 'hasConditionalExpression'
 			// cannot be called again because its argument has been modified.
@@ -65,18 +69,31 @@ object AssignCommand {
 								// Assign command that belongs to either
 								// CarsSet parent or LoadDictionary parent.
 						kind: String)={
+			// Assign command consist of $<variable> target, source, and optional condition.
+			// parser extracts each component.
 		val (target,source,condition)=parseAssignerCommand(line)
-					// Check math syntax and missing 'if' tag
-		simpleSource=validateSourceExpression(source)
+				//println("AssignCommand: target="+target+"  source="+source+"  condition="+condition)
+					// Source is either a mathematical expression or a string. Both can
+					// be assigned to the Target. Set 'true/ if not math expression.
+		simpleSource=validateSourceExpression(source, line)
+			// if '\$' then replace the pair with '$' 
+		val source2=if(isBackSlashDollar(source)) {
+					removeBackslashFromDollar(source)
+					}
+				 else
+					source
+
 					// Set 'true' in parseAssignerCommand()
 		if(conditionPresent) {
 			val reduced=LogicSupport.removeSpacesInOperand(condition)
 			ValidLogic.validLogic(reduced)	
 			AssignerScript.assignerScript(
 						script, 
+
 						target,       // includes '$' symbol via 'targetRegex'
-						simpleSource, // text assignment and not math
-						source,   // item to be assigned to target
+						simpleSource, // true if text assignment and not math
+						source2,   // item to be assigned to target
+
 						reduced,  // conditional expression
 						kind)    //either "a" or "+"
 			}
@@ -84,8 +101,8 @@ object AssignCommand {
 				AssignerScript.assignerScript(
 						script, 
 						target,       // includes '$' symbol via 'targetRegex'
-						simpleSource, // text assignment and not math
-						source,   // item to be assigned to target
+						simpleSource, // true if text assignment and not math
+						source2,   // item to be assigned to target
 						condition, // condition equals ""
 						kind)     //either "a" or "+"
 		}
@@ -97,23 +114,76 @@ object AssignCommand {
 			throw new SyntaxException("missing 'if' tag starting assignment condition")	
 		}
 
-				// Source is either a mathematical expression or a string. Both can
-				// be assigned to the Target
-	def validateSourceExpression(source:String)={
+			// Source is either a mathematical expression or a string. Both can
+			// be assigned to the Target
+	def validateSourceExpression(source:String, line:String)={
 		throwExceptionIfEmpty(source)
-		if(isMathExpression(source)) {
+			// 'true' is source is not a math expression.
+		if(isSourceMathExpression(source, line)) {  
 			MathExprValidator.validate(source)
-			false
+			false   
 			}
-		 else
-		 	true
-		}
-	def isMathExpression(source:String) ={
-		source match {
-			case mathSymbolRegex(symbol)=> true
-			case _=> false
+		 else{
+		 		// throw exception if $<variable> is ill formed.
+		 	isDollarVariable(source)
+				// 'simpleSource'is true when not math expression
+		 	true   
 			}
 		}
+	def	isDollarVariable(source:String):Boolean= { source.trim.startsWith("$") }
+				
+			// Evaluates the source component of the Assign command, such as,
+			// 'a $xyx= $a + 1' where '$a +1' is the source component. A valid
+			// math expression will only contain numerics, $<variable>s and
+			// math operators.
+	def isSourceMathExpression(str:String, line:String): Boolean={
+			// Remove ')','(', and ' '
+		val component=dropParentheses(str)
+			// Split numerics and $<variables> and remove math operators
+		val splitElements=splitMathExpression(component)
+		if(splitElements.size==1)
+			false  // no math operators
+		  else {
+					// Return elements not numerics or $<variable>s.
+				val list= validateMathExpression(splitElements.toList, line)
+				if(list.isEmpty)
+						 true  //  
+					else false // found non numeric or str without '$'
+				}
+		}
+	def dropParentheses(str:String) :String={
+		val list=str.toList
+		def dropParenAndSpace(ll:List[Char]):List[Char]={
+			ll match {
+				case Nil=> Nil
+				case x::tail if(x==')' || x=='(' || x==' ') => 
+					dropParenAndSpace(tail)
+				case y::tail => y :: dropParenAndSpace(tail)
+				}
+			}
+		val l=dropParenAndSpace(str.toList)
+		l.mkString
+		}
+	def splitMathExpression(str:String):Array[String]= {
+		str.split("[-,+,*, /,]")
+
+		}
+		// Elements that are not numeric values or $<variable>s are returned
+		// in a list indicating that source contains an error or that the
+		// source is not a math expression but contains a math symbol.
+	def validateMathExpression( ll:List[String], line:String) : List[String]={
+		ll match {
+			case Nil=> Nil
+			case numericRegex(x)::tail=> validateMathExpression(tail,line)
+			case s::tail if(s.startsWith("$") )=> 
+						// applies """\s*([$][a-zA-Z0-9_]+)\s*.*""" .r
+						// to validate, otherwise throws SyntaxException.
+					detectSourceVariable(s)
+					validateMathExpression(tail,line)
+			case a::tail=> a:: validateMathExpression(tail, line)
+			}
+		}
+
 	def throwExceptionIfEmpty(source: String) ={
 		source match {
 			case emptyRegex(xx) =>
@@ -131,7 +201,7 @@ object AssignCommand {
 		var source=""
 		var condition=""
 		var line=lineStr
-					// regex= """\s*([$][a-zA-Z0-9-_]+)\s*[=].*""" .r
+					// regex= """\s*([$][a-zA-Z0-9_]+)\s*[=].*""" .r
 					// to extract 'target'.
 					// throws exception when target is empty
 		val target=detectTargetVariable(line)
@@ -175,7 +245,7 @@ object AssignCommand {
 			case _=> false
 			}
 		}
-				//
+				//validate $<variable>
 	def detectTargetVariable(line:String)={
 		line match {
 			case targetRegex(target)=> 
@@ -184,10 +254,44 @@ object AssignCommand {
 				throw new SyntaxException("missing $<variable> or '=' symbol")
 			}
 		}
+				//validate $<variable>
+	def detectSourceVariable(source:String)={
+		source match {
+			case sourceRegex(variable)=> 
+						variable
+			case _=> 
+				throw new SyntaxException("ill-formed source $<variable>")
+			}
+		}
+
 	def extractSource(line:String) ={
 		val len=line.indexOf("=")
 		if(len < 0)
 			throw new SyntaxException("missing '=' in assignment")
 		line.drop(len +1 )
 		}
+			// A backslash symbol '\' preceeding a '$' symbol indicates that
+			// source is not a $<variable>.
+	def isBackSlashDollar(str:String): Boolean ={
+		var outcome=false
+		var flag=false
+		for(e <-str){
+				//	println("\tisBack...  e="+e +"  flag="+flag)
+			if(flag==false && e=='\\'){
+						//	println("\t\t slash is true")
+					flag=true
+					}
+			if(flag==true && e=='$'){
+					outcome=true	
+							// println("\t\toutcome="+outcome)
+					}
+			}
+				//if(outcome) println("$ with preceeding \\")
+		outcome
+		}
+			// For "\$" replaces '\' in string with ''.
+	def removeBackslashFromDollar(source:String):String={
+		backslashRegex.replaceAllIn(source,  "")
+		}
+
 }

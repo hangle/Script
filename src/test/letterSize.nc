@@ -64,8 +64,8 @@ d d /size 10/size 10 \(%%/size 18/size 18) size 10
 d ----------------------------------------------
 d
 * continue
-d Text following the (%%/color blue/\(%%) component
-d reverts to the initial (%%/color blue/ /size 10/ ) value.
+d Text preceeding and following (%%/color blue/\(%%/size 18/...) )
+d reverts to the initial (%%/color blue/ \d /size 10/... ) height.
 c
 d /size 10/size 10 (%%/size 18/size 18) size 10 
 

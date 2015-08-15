@@ -21,26 +21,6 @@ object MathExprValidator  {
 	def isNotSpace(letter:Char):Boolean= {
 		if(letter==' ' || letter=='\t') false; else true
 		}
-	/*
-				// '(' push on stack. ')' pops stack. When 
-				// balanced, the stack is empty
-	def isBalancedParens(l:List[Char]) = {
-		var stack=List[Int]()
-		def push {stack=1 :: stack }
-		def pop  {stack=stack.tail}
-				try {
-		for(e<-l) if(e=='(' || e==')')
-			e match {
-				case '(' => push
-				case ')' =>
-					if( ! stack.isEmpty)
-						pop
-					    else
-						throw new SyntaxException("Unbalanced parentheses")
-				}
-		stack.isEmpty //empty signals balanced parentheses
-		}
-	*/
 					//Throw out any ')' and '(' in the List
 	def removeParens(l:List[Char]):List[Char]= {
 		def test(x:Char)={if(x =='(' || x==')') false; else true}
@@ -54,8 +34,7 @@ object MathExprValidator  {
 				// Expression, such as, "$a22+$b67+1.234+4",
 				// is reduced to "v+v+non" where 'v' is $variable
 				// and 'n' is a number.
-	def 
-collapseVariableNumber(c:List[Char],b:List[Char] ):List[Char] = {
+	def collapseVariableNumber(c:List[Char],b:List[Char] ):List[Char] = {
 		val operators=List('*','/','^','%')
 		val unary=List('+', '-')// The '+' symbol is used to denote
 					// both the binary operators ('+' & '-')
