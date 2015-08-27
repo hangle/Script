@@ -71,10 +71,10 @@ object ValidLogic  {
 	val qualifierRegex ="""((n|1).)""".r	
 
 	def validLogic(logic:String):List[String]={
+		println("ValidLogic  logic="+logic)
 		if( ! Support.isBalancedParens(logic.toList))
 			throw new SyntaxException("Unbalanced: missing ')' or '(' ")
 				//String "(abc)=($i)and(xyz)" to List((abc),=,($i),and,(xyz) )
-			//println("ValidLogic  logic="+logic)
 		val list=logicStringToListString(logic.trim)
 				//Operators (either relation or and/or) must intercede two variables
 		checkMissingOperator(list) 
@@ -82,6 +82,7 @@ object ValidLogic  {
 				// Also check if logic and relation operators are valid
 				// Finally, validates qualifiers
 		outOfSequenceOperator(list) 
+		println("ValidLogic list="+list.foreach(println))
 		list    // (relation), op, (relation), and/or, ....
 		}
 	def extractOperatorAndTag(operatorExpression:String): (Option[String],Option[String]) = {
@@ -99,12 +100,13 @@ object ValidLogic  {
 		
 		}
 		// Determines if relation operator expression is valid. 
-		// operator examples:  "=", ">=", "!=m" "=ns", "!=nsnc".
+		// operator examples:  "=", ">=", "!m" "=ns", "!=nsnc".
 		// "nc" and "ns" are optional tags to qualify the operator.
 	def validateRelationOperator(operatorExpression:String):Boolean={
 		val (opOption,tagOption)= extractOperatorAndTag(operatorExpression)
 		opOption match {
 			case Some(op)=>
+					// op match{case "=" =>true,...
 				if( ! Support.isRelationOperator(op) && ! op.contains("%"))
 					throw new SyntaxException(op+" not valid relation operator")
 			case None=> 

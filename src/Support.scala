@@ -38,7 +38,7 @@ object Support  {
 				case ')' =>
 					if( ! stack.isEmpty)
 						pop
-					    else
+					  else
 						throw new SyntaxException("Unbalanced parentheses")
 				}
 			}
@@ -56,7 +56,7 @@ object Support  {
 			case "<>"=> true
 			case "m" => true
 			case "<>m"=> true
-			case "!=m"=> true
+			case "!m"=> true
 			//case numberRegex(x)=> true  // supports '80%' operator
 			case _=>    false
 			}
