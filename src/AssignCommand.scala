@@ -89,7 +89,6 @@ object AssignCommand {
 			ValidLogic.validLogic(reduced)	
 			AssignerScript.assignerScript(
 						script, 
-
 						target,       // includes '$' symbol via 'targetRegex'
 						simpleSource, // true if text assignment and not math
 						source2,   // item to be assigned to target

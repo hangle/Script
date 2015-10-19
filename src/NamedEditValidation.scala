@@ -72,9 +72,9 @@ import collection.mutable.ArrayBuffer
 
 object NamedEditValidation  {
 	val fieldVariableRegex="""([$]\w+)""" .r // $<variable> of (# $<variable>)/
-	val fieldRegex="""(\(#.+[$].*\))""".r // (#  $<variable>)
+	//val fieldRegex="""(\(#.+[$].*\))""".r // (#  $<variable>)
 	val responseRegex="""(\(#\s*[$]\w+\s*\))""" .r	
-	val namedEditRegex="""e\s+([$].+)\s.*""" .r // detect NamedEdit edit
+	//val namedEditRegex="""e\s+([$].+)\s.*""" .r // detect NamedEdit edit
 	val namedAndEditRegex="""e\s+([$][a-zA-Z0-9_-]+)\s+(.*)""" .r // separates NameEdit and edit
 
 	var namedEditMap= Map[String, ArrayBuffer[String]]()

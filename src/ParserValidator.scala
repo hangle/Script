@@ -50,10 +50,17 @@ object ParserValidator  {
 				//									"size"-> "14",		// pixel size of lettering
 				//									"color"-> "black",	// color of lettering
 		val overrideMap= AsteriskCommand.getOverrideSetting  
-				// Read entire '*.nc' file to process '* Asterisk Appearance' commands, 
-				// NamedEdit Edit commands, and LoadScriptCommands. The latter returns
-				// script file that has been modified by 'l' command. 
-		filteredList=ScanScriptFile.scanScriptFileForSpecialProcessing(filteredList, overrideMap)
+				// Raise exceptions for the following:  (1) Validate NamedEdit edits which must match 
+				// Display's input Fields and must be in the Card set of their associated Fields. 
+				// (2) Scan '*.nc' file for all Asterisk Appearance commands to be used to update 
+				// 'overrideMap'. (3) CardSet cannot contain both an AnswerBox and '* continue'.
+		ScanScriptFile.scanScriptFileForSpecialProcessing(filteredList, overrideMap)
+				// Locate 'l' command in '*.nc' file and convert adjacent Assign tags 'a' 
+				// to '+' tags until a non 'a' tag is encountered.  E.g., 'a $one=1'
+				// is transformed to '+ $one=1'.
+				// returns modified 'filteredList'.
+		filteredList=LoadScriptCommand.findLoadTagToChangeAssignTags(filteredList)
+
 				// Default setting map was copied to overrideMap on AsteriskCommand 
 				// initalization. 'overrideMap' is Map[String,String]
 				// Passed to 'displayCommand' in 'distributeScript...'
@@ -68,7 +75,10 @@ object ParserValidator  {
 				}
 				// Indicate to user a command syntax error. The script line containing
 				// the error is printed along with the description of the error.
-			}catch{ case e:SyntaxException=> e.syntax_message("line="+lineException) }
+			}catch{ case e:SyntaxException=> e.syntax_message("line="+lineException) 
+				//println("ParserValidator")	
+				System.exit(0)
+				}
 				// Script output to <filename>.command.
 				//WriteScriptFile.writeScriptFile(script,filename)
 		script

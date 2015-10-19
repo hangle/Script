@@ -71,7 +71,6 @@ object ValidLogic  {
 	val qualifierRegex ="""((n|1).)""".r	
 
 	def validLogic(logic:String):List[String]={
-		println("ValidLogic  logic="+logic)
 		if( ! Support.isBalancedParens(logic.toList))
 			throw new SyntaxException("Unbalanced: missing ')' or '(' ")
 				//String "(abc)=($i)and(xyz)" to List((abc),=,($i),and,(xyz) )
@@ -82,17 +81,14 @@ object ValidLogic  {
 				// Also check if logic and relation operators are valid
 				// Finally, validates qualifiers
 		outOfSequenceOperator(list) 
-		println("ValidLogic list="+list.foreach(println))
 		list    // (relation), op, (relation), and/or, ....
 		}
 	def extractOperatorAndTag(operatorExpression:String): (Option[String],Option[String]) = {
 		operatorExpression match {
 			case gestaltRegex(x,y)=>
-					//println("ValidLogic x="+x+"  y="+y)
 				        val tagOption=	if(y==null) None; else Some(y)
 					(Some(x) ,tagOption)
 			case relationOperatorRegex(a,b)=> 
-					//println("ValidLogic a="+a+"  b="+b)
 				        val tagOption=	if(b==null) None; else Some(b)
 					(Some(a) ,tagOption)
 			case _=> (None,None)
@@ -119,7 +115,6 @@ object ValidLogic  {
 		// validate 'nc', 'ns',  '1s'
 	def validateQualifier(tag:String)={
 				// Add letter pairs 'nc','ns',1s' to List[String]
-		println("ValidLogic: tag="+tag)
 		LogicSupport.parseQualifiers(tag)
 				// No spaces and one space is inconsistent
 		LogicSupport.inconsistentQualifier(tag)
@@ -165,7 +160,6 @@ object ValidLogic  {
 		for(ee <-list) {
 			val e=ee.trim
 			count+=1
-			//println("ValidLogic count="+count+"   e="+e)
 			if( count % 2==1) {
 				if( ! isParenthesisOfVariable(e))
 					throw new SyntaxException("missing variable")
