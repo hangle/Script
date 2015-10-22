@@ -19,14 +19,14 @@
 	Edit edits is processed by the DisplayCommand (see description 
 	below)
 
-	The class and companion object has two maps:
+	The class and companion object has two Maps:
 		namedEditMap		-- Edit cmd		e $<variable> <logic>
 		fieldVariableMap	-- Display cmd  input $<variable>
 
 	The input-script file is passed to 'namedEditValidation' which operates on
-	the Card, Display, and Edit commands. The Field $<variables> of the
+	the 'c', Display, and Edit commands. The Field $<variables> of the
 	Display command are extracted and stored as keys in  'fieldVariableMap'. 
-	The key values of 'fieldVariableMap' are 0. The Card command causes all
+	The key values of 'fieldVariableMap' are 0. The 'c' command causes all
 	key values in 'fieldVariableMap' to be set to 1.  The Edit commands are  
 	two types (NameEdit edits and edits without NamedEdit $<variables>)
 	The NameEdit $<variable> is extracted from its edit command and matched 
@@ -37,9 +37,9 @@
 	be thrown.  First, the failure to match Field $<variable> and NamedEdit 
 	$<variable>.  Second, the Field and NamedEdit $<varaible>s match, but the 
 	key value in 'fieldVariableMap' is not 0. This could occur when the NameEdit
-	$<variable> is found in a Card set that is outside the Card containing
-	the matching Field $<variable> . Recall that the next Card command set 
-	the 0s to 1s, thus closing out the Card set scope.  The exceptions messages 
+	$<variable> is found in a 'c' set that is outside the 'c' containing
+	the matching Field $<variable> . Recall that the next 'c' command set 
+	the 0s to 1s, thus closing out the 'c' set scope.  The exceptions messages 
 	are:
 			"No match on Field Variable"
 			"NamedEdit not in range of Field Var"
@@ -72,9 +72,9 @@ import collection.mutable.ArrayBuffer
 
 object NamedEditValidation  {
 	val fieldVariableRegex="""([$]\w+)""" .r // $<variable> of (# $<variable>)/
-	//val fieldRegex="""(\(#.+[$].*\))""".r // (#  $<variable>)
-	val responseRegex="""(\(#\s*[$]\w+\s*\))""" .r	
-	//val namedEditRegex="""e\s+([$].+)\s.*""" .r // detect NamedEdit edit
+			// Find (# $abc) as well as (#/color blue/$xyz)
+	val responseRegex="""(\(#\s*.*[$]\w+\s*\))""" .r	
+			// Extract $<variable> of InputField
 	val namedAndEditRegex="""e\s+([$][a-zA-Z0-9_-]+)\s+(.*)""" .r // separates NameEdit and edit
 
 	var namedEditMap= Map[String, ArrayBuffer[String]]()
@@ -93,7 +93,7 @@ object NamedEditValidation  {
 		addAllEditsToNamedEditMap( namedEdits)
 		}
 		// Verify that NamedEdit $<variable> corresponds to a Field $<variable>
-		// within the same Card set. Routine filters our Card, Display, and
+		// within the same CardSet. Routine filters our 'c', Display, and
 		// Edit commands from the input script file. 
 	def namedEditValidation(file:List[String])={
 		for(line <- file) {
@@ -116,7 +116,7 @@ object NamedEditValidation  {
 		// Close out all keys in OpenClosMap setting all
 		// key values to one. This prevents an EditName
 		// edit to reference a input field of a different
-		// Card set. 
+		// CardSet. 
 	def closeMatchMap={
 		for((k,v)<- fieldVariableMap) {
 			fieldVariableMap=fieldVariableMap + (k -> 1)
@@ -124,13 +124,13 @@ object NamedEditValidation  {
 		}
 
 		// Holds Field $<variable> as a key along with the value 0. When
-		// a Card command is encountered, the value 0 is changed to 1.
+		// a 'c' command is encountered, the value 0 is changed to 1.
 	def getNamedEditMap=namedEditMap
 
 		// 'namedEditValidation' handed off 'edits' and 'NamedEdit' edits. Determine if
-		// NamedEdit $<variable> match Field $<variable> within the Card set. Throw
+		// NamedEdit $<variable> match Field $<variable> within the CardSet. Throw
 		// exceptions if no match, or if NamedEdit $<variable> is not within 
-		// the Card set.
+		// the CardSet.
 	def matchNamedEditVariableWithFieldVariable(edit:String)={
 		edit match {
 			case namedAndEditRegex(key, dummy) =>
@@ -145,7 +145,7 @@ object NamedEditValidation  {
 					true	
 				else {
 						// 'oneOrZero' equals 1 set by 'closeMatchMap'
-						// NamedEdit $<variable> not in the same Card group
+						// NamedEdit $<variable> not in the same CardSet group
 						// as its associated Field $<variable>
 					throw new SyntaxException("NamedEdit zzz not in range of Field Var")
 					}
@@ -155,8 +155,9 @@ object NamedEditValidation  {
 		}
 		// Extract $<variable> s from Response Fields 
 		// ( e.g., (# $abc ) ). Returns List[ArrayBuffer[String] ]
+		//
 	def extractDollarVariableFromDisplay(line:String)={ //+++ collectAllFieldVariables
-			// Extract one or more Response Fields (e.g., '(#  $abc)'  ) 
+			// Extract one or more Response Fields (e.g., '(# /color blue/ $abc)'  ) 
 			// from line
 		val it=responseRegex findAllIn line
 			// Returns string of response fields, such as: 
