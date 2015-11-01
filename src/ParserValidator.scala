@@ -59,8 +59,8 @@ object ParserValidator  {
 				// to '+' tags until a non 'a' tag is encountered.  E.g., 'a $one=1'
 				// is transformed to '+ $one=1'.
 				// returns modified 'filteredList'.
+				overrideMap.foreach{case (x,y)=> println(s"x=$x  y=$y") }
 		filteredList=LoadScriptCommand.findLoadTagToChangeAssignTags(filteredList)
-
 				// Default setting map was copied to overrideMap on AsteriskCommand 
 				// initalization. 'overrideMap' is Map[String,String]
 				// Passed to 'displayCommand' in 'distributeScript...'

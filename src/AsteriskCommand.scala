@@ -54,12 +54,14 @@ object AsteriskCommand  {
 	val keyAndValueRegex="""\s*([a-zA-Z]+)\s+([a-zA-Z0-9_/]+).*""".r
 	val keyOnlyRegex="""\s*([a-z]+).*""".r
 //	val sizeRegex="""(\d+)""" .r // Used to validate Appearance Size value
-						// 
+						// 'defaultSetting' map copied to 'overrideSetting' in createOverrideMaping()
+						// and subsequently updated if iniFile  is found.
 	var overrideSetting=collection.mutable.Map[String,String]()
 	val defaultSetting=Map (
-
-							"height"-> "300",	//window size argument
-							"width"->  "400",	//window size argument
+							"xlocate"-> "0",	// x location of Frame
+							"ylocate"-> "0",	// y location of Frame
+							"height"-> "300",	//Frame size argument
+							"width"->  "400",	//Frame size argument
 							"name"-> "TimesRoman",// name of Font
 							"size"-> "14",		// pixel size of lettering
 							"color"-> "black",	// color of lettering
@@ -78,11 +80,10 @@ object AsteriskCommand  {
 							)
 
 					// Used by 'validateAppearanceValues()' to channel a key->value
+					// Note, lists lacks some keys in 'defaultSetting' e.g., end, status, continue
 	val appearanceList=List("priorButton", "asteriskButton","height", "width", "name", "size", 
-							"color", "style", "length", "limit", "column", "noprior", "nomanage")
-					// Used in AsteriskCollect to filter '*' appearance commands
-	val getAppearanceList= appearanceList
-
+							"color", "style", "length", "limit", "column", "noprior", "nomanage",
+							"xlocate", "ylocate")
 					// Used by 'cardSetAsteriskDistribute() 
 	val writeScriptKeysList=List("end", "continue", "save", "status", "priorButton", "asteriskButton", "manage") 
 					// Invoked by ParserValidator prior to 'distributeScriptToMaker()'ag
@@ -134,7 +135,7 @@ object AsteriskCommand  {
 						// have	key and value
 			case keyOnlyRegex(key)=>
 					validateAsteriskKey(key) // throws exception if key is unknown
-						// write script for '* end' and '* continue'--"dummyValue"  lacks of a value
+						// write script for '* end' and '* continue'--"dummyValue"  lack of a value
 					AsteriskCard.distributesAsteriskCommands(key, "dummyValue", line, script)
 			case _=> throw new SyntaxException("missing key or value")
 			}				

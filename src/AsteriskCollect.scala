@@ -32,7 +32,7 @@ object  AsteriskCollect {
 		for(e <- ncScriptFile) {
 			e match {
 				case asteriskRegex(a,key,value) =>
-			      			//println("AsteriskCollect: a="+a+" key"+key+" value="+value)
+			      	//		println("AsteriskCollect: a="+a+" key="+key+" value="+value)
 						// Ignore * commands like '* manage <filename>'
 					if(AsteriskCommand.appearanceList.contains(key)){
 							var pair=(key,value)
@@ -42,9 +42,10 @@ object  AsteriskCollect {
 				}
 			}
 		for((key,value) <- appearancePairs) {
-//			println("AsteriskCollect  key="+key+"  value="+value)
-			if(appearanceMap.contains(key))
+			if(appearanceMap.contains(key)) {
+					//println("AsteriskCollect  key="+key+"  value="+value)
 					appearanceMap +=  (key -> value)
+					}
 			}
 		}
 }

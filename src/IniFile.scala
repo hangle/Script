@@ -55,9 +55,13 @@ object IniFile  {
 								// ignore blank lines in .ini file
 					if(FilterScript.isNotBlankLine(e)) {
 						val (key,value)=extractKeyAndValue(e)
-						//println("IniFile: key="+key+"  value="+value)
-						validateIniKeys(key, overrideSetting)
-						validateIniValue(key,value)
+					//	println("IniFile: key="+key+"  value="+value)
+			//			validateIniKeys(key, overrideSetting)
+			//			validateIniValue(key,value)
+						AsteriskAppearance.validateKeyAndValue(
+													AsteriskCommand.appearanceList,
+													key,
+													value)
 						overrideSetting +=(key->value) 
 						}
 					}
@@ -74,8 +78,13 @@ object IniFile  {
 		(array(0), array(1))
 		}
 
+/*
 	def validateIniValue(iniKey:String, iniValue:String) = {
 		iniKey match {
+			case "xlocate"=>
+				AppearanceParameter.validateXlocateValue(iniValue)
+			case "ylocate"=>
+				AppearanceParameter.validateYlocateValue(iniValue)
 			case "color"=> 
 				AppearanceParameter.validateColorValue(iniValue)
 			case "style"=>
@@ -104,6 +113,7 @@ object IniFile  {
 					throw new SyntaxException(key+" not a valid .ini file key")
 				}
 			}
+	*/
 
 				// If filename has no Path, then look for '.ini' file in local directory,
 				// otherwise check out path.

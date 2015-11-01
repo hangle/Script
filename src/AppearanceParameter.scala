@@ -157,6 +157,14 @@ object AppearanceParameter   {
 			case _=> removeLineUpToIncludeSlash(line.drop(1))
 			}
 		}
+	def validateXlocateValue(value:String) {
+			if(Support.isNumber(value)==false)
+					throw new SyntaxException(value+" xlocate not a number")
+				}
+	def validateYlocateValue(value:String) {
+			if(Support.isNumber(value)==false)
+					throw new SyntaxException(value+" ylocate not a number")
+				}
 	def validateColorValue(value:String){if( ! colorNames.contains(value))
 			throw new SyntaxException(value+": invalid color")
 			}

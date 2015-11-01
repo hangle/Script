@@ -15,19 +15,14 @@ object ScanScriptFile  {
 			// well as NamedEdit Edit commands. 
 	def scanScriptFileForSpecialProcessing( filteredList:List[String], 
 									//		appearanceMap:Map[String,String]):List[String]= {
-											appearanceMap:Map[String,String]) {
+											overrideMap:Map[String,String]) {
 				// Validate NamedEdit edits which must match Display's input
 				// Fields and must be in the Card set of their
 				// associated Fields. 
 		NamedEditValidation.mapNamedEdits(filteredList)   // returns Unit
 				// Scan '*.nc' file for all Asterisk Appearance commands to be used
 				// to update 'overrideMap'.
-		AsteriskCollect.collectAsterisk(filteredList, appearanceMap) // returns Unit
-				// Locate 'l' command in '*.nc' file and convert adjacent Assign tags 'a' 
-				// to '+' tags until a non 'a' tag is encountered.  E.g., 'a $one=1'
-				// is transformed to '+ $one=1'.
-				// returns modified 'filteredList'.
- 	//	LoadScriptCommand.findLoadTagToChangeAssignTags(filteredList)
+		AsteriskCollect.collectAsterisk(filteredList, overrideMap) // returns Unit
 				// An '* continue' command is not allowed in a CardSet containing
 				//  an AnswerBox input field; whereas an 'eXecute' command will 
 				// perform this "continue-like" operation.
